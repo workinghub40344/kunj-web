@@ -26,8 +26,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/old" element={<Admin />} />
+            <Route path="/admin/old" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<Admin />} />
             <Route path="*" element={
               <Layout>
                 <Routes>
