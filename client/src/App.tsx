@@ -12,7 +12,6 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,7 +25,6 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/old" element={<AdminDashboard />} />
             <Route path="/admin/dashboard" element={<Admin />} />
             <Route path="*" element={
               <Layout>
