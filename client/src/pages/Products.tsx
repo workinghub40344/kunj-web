@@ -10,9 +10,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { products as sampleProducts } from "@/data/products";
+
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(sampleProducts);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");

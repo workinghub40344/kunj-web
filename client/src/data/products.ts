@@ -34,7 +34,7 @@ export const products: Product[] = [
     sizes: [
       { size: "3-inch", price: 299 },
       { size: "4-inch", price: 349 },
-      { size: "5-inch", price: 399 }
+      { size: "5-inch", price: 3909 }
     ],
     featured: true
   },
