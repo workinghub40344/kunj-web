@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -20,13 +20,8 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [productQuantities, setProductQuantities] = useState<
-    Record<string, { size: string; quantity: number }>
-  >({});
-  const [customizations, setCustomizations] = useState<Record<string, string>>(
-    {}
-  );
+  const [productQuantities, setProductQuantities] = useState<Record<number, { size: string; quantity: number }>>({});
+  const [customizations, setCustomizations] = useState<Record<number, string>>({});
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -38,55 +33,35 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  const categories = [
-    "all",
-    ...Array.from(new Set(products.map((p) => p.category))),
-  ];
-  const sizes = [
-    "all",
-    ...Array.from(new Set(products.flatMap((p) => p.sizes.map((s) => s.size)))),
-  ];
+  const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
+  const sizes = ["all", ...Array.from(new Set(products.flatMap(p => p.sizes.map(s => s.size))))];
 
-  // helper function to filter sizes by price range
-  const filterSizesByPriceRange = (
-    sizes: { size: string; price: number }[]
-  ) => {
+  // Filter sizes by price range
+  const filterSizesByPriceRange = (sizes: { size: string; price: number }[]) => {
     if (priceRange === "all") return sizes;
-    if (priceRange === "under-1500") return sizes.filter((s) => s.price < 1500);
-    if (priceRange === "1500-3000")
-      return sizes.filter((s) => s.price >= 1500 && s.price <= 3000);
-    if (priceRange === "over-3000") return sizes.filter((s) => s.price > 3000);
+    if (priceRange === "under-1500") return sizes.filter(s => s.price < 1500);
+    if (priceRange === "1500-3000") return sizes.filter(s => s.price >= 1500 && s.price <= 3000);
+    if (priceRange === "over-3000") return sizes.filter(s => s.price > 3000);
     return sizes;
   };
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || product.category === selectedCategory;
-    const matchesSize =
-      selectedSize === "all" ||
-      product.sizes.some((s) => s.size === selectedSize);
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+    const matchesSize = selectedSize === "all" || product.sizes.some(s => s.size === selectedSize);
 
     let matchesPrice = true;
     if (priceRange !== "all") {
-      if (priceRange === "under-1500") {
-        matchesPrice = product.sizes.some((s) => s.price < 1500);
-      } else if (priceRange === "1500-3000") {
-        matchesPrice = product.sizes.some(
-          (s) => s.price >= 1500 && s.price <= 3000
-        );
-      } else if (priceRange === "over-3000") {
-        matchesPrice = product.sizes.some((s) => s.price > 3000);
-      }
+      if (priceRange === "under-1500") matchesPrice = product.sizes.some(s => s.price < 1500);
+      if (priceRange === "1500-3000") matchesPrice = product.sizes.some(s => s.price >= 1500 && s.price <= 3000);
+      if (priceRange === "over-3000") matchesPrice = product.sizes.some(s => s.price > 3000);
     }
 
     return matchesSearch && matchesCategory && matchesSize && matchesPrice;
   });
 
-  const handleCustomizationChange = (productId: string, text: string) => {
-    setCustomizations((prev) => ({ ...prev, [productId]: text }));
+  const handleCustomizationChange = (index: number, text: string) => {
+    setCustomizations(prev => ({ ...prev, [index]: text }));
   };
 
   const handleResetFilters = () => {
@@ -96,59 +71,56 @@ const Products = () => {
     setPriceRange("all");
   };
 
-  const handleSizeChange = (productId: string, size: string) => {
-    setProductQuantities((prev) => ({
+  const handleSizeChange = (index: number, size: string) => {
+    setProductQuantities(prev => ({
       ...prev,
-      [productId]: { size, quantity: prev[productId]?.quantity || 1 },
+      [index]: { size, quantity: prev[index]?.quantity || 1 },
     }));
   };
 
-  const handleQuantityChange = (productId: string, quantity: number) => {
-    setProductQuantities((prev) => ({
+  const handleQuantityChange = (index: number, quantity: number) => {
+    setProductQuantities(prev => ({
       ...prev,
-      [productId]: { ...prev[productId], quantity },
+      [index]: { ...prev[index], quantity },
     }));
   };
 
-  const handleAddToCart = (product: Product) => {
-    const selection = productQuantities[product._id];
+  const handleAddToCart = (index: number, product: Product) => {
+    const selection = productQuantities[index];
     if (!selection?.size) {
       toast({
         variant: "destructive",
         title: "Size Required",
         description: "Please select a size first!",
-        className:
-          "bg-destructive text-destructive-foreground border-destructive",
+        duration: 2000,
+        className: "bg-destructive text-destructive-foreground border-destructive",
       });
       return;
     }
 
-    const sizeOption = product.sizes.find((s) => s.size === selection.size);
+    const sizeOption = product.sizes.find(s => s.size === selection.size);
     if (!sizeOption) return;
 
     addToCart({
-      productId: product._id,
+      productId: `${index}`,
       productName: product.name,
       size: selection.size,
       quantity: selection.quantity,
       price: sizeOption.price,
       image: product.images[0],
-      customization: customizations[product._id] || "", // 👈 Added
+      customization: customizations[index] || "",
     });
   };
 
   const getProductPrice = (product: Product, selectedSize?: string) => {
     if (selectedSize) {
-      const sizeOption = product.sizes.find((s) => s.size === selectedSize);
+      const sizeOption = product.sizes.find(s => s.size === selectedSize);
       return sizeOption?.price || product.sizes[0].price;
     }
-    // agar size select nahi hai to filtered size ka pehla price dikha
-    return (
-      filterSizesByPriceRange(product.sizes)[0]?.price || product.sizes[0].price
-    );
+    return filterSizesByPriceRange(product.sizes)[0]?.price || product.sizes[0].price;
   };
 
-  const ProductModal = ({ product }: { product: Product }) => (
+  const ProductModal = ({ product, index }: { product: Product; index: number }) => (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
@@ -157,36 +129,28 @@ const Products = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div className="aspect-square overflow-hidden rounded-lg">
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
+            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
           </div>
         </div>
 
         <div className="space-y-6">
           <div>
-            <Badge variant="secondary" className="mb-2">
-              {product.category}
-            </Badge>
+            <Badge variant="secondary" className="mb-2">{product.category}</Badge>
             <p className="text-muted-foreground">{product.description}</p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">
-                Select Size:
-              </label>
+              <label className="text-sm font-medium mb-2 block">Select Size:</label>
               <Select
-                value={productQuantities[product._id]?.size || ""}
-                onValueChange={(size) => handleSizeChange(product._id, size)}
+                value={productQuantities[index]?.size || ""}
+                onValueChange={(size) => handleSizeChange(index, size)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Choose size" />
                 </SelectTrigger>
                 <SelectContent>
-                  {filterSizesByPriceRange(product.sizes).map((sizeOption) => (
+                  {filterSizesByPriceRange(product.sizes).map(sizeOption => (
                     <SelectItem key={sizeOption.size} value={sizeOption.size}>
                       {sizeOption.size} - ₹{sizeOption.price}
                     </SelectItem>
@@ -196,36 +160,30 @@ const Products = () => {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
-                Quantity:
-              </label>
+              <label className="text-sm font-medium mb-2 block">Quantity:</label>
               <Select
-                value={String(productQuantities[product._id]?.quantity || 1)}
-                onValueChange={(qty) =>
-                  handleQuantityChange(product._id, parseInt(qty))
-                }
+                value={String(productQuantities[index]?.quantity || 1)}
+                onValueChange={(qty) => handleQuantityChange(index, parseInt(qty))}
               >
                 <SelectTrigger className="w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <SelectItem key={num} value={String(num)}>
-                      {num}
-                    </SelectItem>
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <SelectItem key={num} value={String(num)}>{num}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="text-2xl font-bold text-primary">
-              ₹{getProductPrice(product, productQuantities[product._id]?.size)}
+              ₹{getProductPrice(product, productQuantities[index]?.size)}
             </div>
 
             <Button
-              onClick={() => handleAddToCart(product)}
+              onClick={() => handleAddToCart(index, product)}
               className="w-full bg-primary hover:bg-primary/90"
-              disabled={!productQuantities[product._id]?.size}
+              disabled={!productQuantities[index]?.size}
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Add to Cart
@@ -261,11 +219,9 @@ const Products = () => {
           </div>
 
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
             <SelectContent>
-              {categories.map((category) => (
+              {categories.map(category => (
                 <SelectItem key={category} value={category}>
                   {category === "all" ? "All Categories" : category}
                 </SelectItem>
@@ -274,11 +230,9 @@ const Products = () => {
           </Select>
 
           <Select value={selectedSize} onValueChange={setSelectedSize}>
-            <SelectTrigger>
-              <SelectValue placeholder="Size" />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue placeholder="Size" /></SelectTrigger>
             <SelectContent>
-              {sizes.map((size) => (
+              {sizes.map(size => (
                 <SelectItem key={size} value={size}>
                   {size === "all" ? "All Sizes" : size}
                 </SelectItem>
@@ -287,9 +241,7 @@ const Products = () => {
           </Select>
 
           <Select value={priceRange} onValueChange={setPriceRange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Price Range" />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue placeholder="Price Range" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Prices</SelectItem>
               <SelectItem value="under-1500">Under ₹1,500</SelectItem>
@@ -298,11 +250,7 @@ const Products = () => {
             </SelectContent>
           </Select>
 
-          <Button
-            onClick={handleResetFilters}
-            variant="outline"
-            className="flex items-center"
-          >
+          <Button onClick={handleResetFilters} variant="outline" className="flex items-center">
             <Filter className="mr-2 h-4 w-4" />
             Reset Filters
           </Button>
@@ -311,10 +259,10 @@ const Products = () => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {filteredProducts.map((product) => {
+        {filteredProducts.map((product, index) => {
           const availableSizes = filterSizesByPriceRange(product.sizes);
           return (
-            <Card key={product._id} className="product-card group">
+            <Card key={index} className="product-card group">
               <div className="aspect-square overflow-hidden relative">
                 <img
                   src={product.images[0]}
@@ -322,43 +270,28 @@ const Products = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="bg-white/80 hover:bg-white"
-                  >
+                  <Button size="sm" variant="ghost" className="bg-white/80 hover:bg-white">
                     <Heart className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
               <CardContent className="p-4">
-                <Badge variant="secondary" className="mb-2 text-xs">
-                  {product.category}
-                </Badge>
-                <h3 className="font-semibold text-lg mb-2 line-clamp-1">
-                  {product.name}
-                </h3>
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                  {product.description}
-                </p>
+                <Badge variant="secondary" className="mb-2 text-xs">{product.category}</Badge>
+                <h3 className="font-semibold text-lg mb-2 line-clamp-1">{product.name}</h3>
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{product.description}</p>
 
                 <div className="space-y-3">
                   <Select
-                    value={productQuantities[product._id]?.size || ""}
-                    onValueChange={(size) =>
-                      handleSizeChange(product._id, size)
-                    }
+                    value={productQuantities[index]?.size || ""}
+                    onValueChange={(size) => handleSizeChange(index, size)}
                   >
                     <SelectTrigger className="h-8 text-sm">
                       <SelectValue placeholder="Select size" />
                     </SelectTrigger>
                     <SelectContent>
-                      {availableSizes.map((sizeOption) => (
-                        <SelectItem
-                          key={sizeOption.size}
-                          value={sizeOption.size}
-                        >
+                      {availableSizes.map(sizeOption => (
+                        <SelectItem key={sizeOption.size} value={sizeOption.size}>
                           {sizeOption.size} - ₹{sizeOption.price}
                         </SelectItem>
                       ))}
@@ -367,48 +300,33 @@ const Products = () => {
 
                   <div className="flex items-center gap-2">
                     <Select
-                      value={String(
-                        productQuantities[product._id]?.quantity || 1
-                      )}
-                      onValueChange={(qty) =>
-                        handleQuantityChange(product._id, parseInt(qty))
-                      }
+                      value={String(productQuantities[index]?.quantity || 1)}
+                      onValueChange={(qty) => handleQuantityChange(index, parseInt(qty))}
                     >
-                      <SelectTrigger className="w-16 h-8 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger className="w-16 h-8 text-sm"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={String(num)}>
-                            {num}
-                          </SelectItem>
+                        {[1,2,3,4,5].map(num => (
+                          <SelectItem key={num} value={String(num)}>{num}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
 
                     <span className="font-bold text-primary flex-1 text-right">
-                      ₹
-                      {getProductPrice(
-                        product,
-                        productQuantities[product._id]?.size
-                      )}
+                      ₹{getProductPrice(product, productQuantities[index]?.size)}
                     </span>
                   </div>
 
                   <textarea
                     placeholder="Customization (optional)"
-                    value={customizations[product._id] || ""}
-                    onChange={(e) =>
-                      handleCustomizationChange(product._id, e.target.value)
-                    }
+                    value={customizations[index] || ""}
+                    onChange={(e) => handleCustomizationChange(index, e.target.value)}
                     className="w-full border rounded-md p-2 text-xs mb-2"
                   />
 
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => handleAddToCart(product)}
+                      onClick={() => handleAddToCart(index, product)}
                       className="flex-1 bg-primary hover:bg-primary/90 h-8 text-sm"
-                      disabled={!productQuantities[product._id]?.size}
                     >
                       <ShoppingCart className="mr-1 h-3 w-3" />
                       Add to Cart
@@ -420,7 +338,7 @@ const Products = () => {
                           <Eye className="h-3 w-3" />
                         </Button>
                       </DialogTrigger>
-                      <ProductModal product={product} />
+                      <ProductModal product={product} index={index} />
                     </Dialog>
                   </div>
                 </div>
@@ -432,9 +350,7 @@ const Products = () => {
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">
-            No products found matching your criteria.
-          </p>
+          <p className="text-muted-foreground text-lg">No products found matching your criteria.</p>
         </div>
       )}
     </div>
@@ -442,3 +358,4 @@ const Products = () => {
 };
 
 export default Products;
+

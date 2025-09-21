@@ -1,8 +1,20 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { Product } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText } from "lucide-react";
+import { Product as ProductType } from "@/data/products";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  LogOut,
+  Menu,
+  Box,
+  FileText,
+  X,
+} from "lucide-react";
+import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this path is correct
+
+type Product = ProductType & { _id: string };
 
 const AdminPanel = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -10,6 +22,7 @@ const AdminPanel = () => {
     "products"
   );
   const [products, setProducts] = useState<Product[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   // Redirect if no token
   useEffect(() => {
@@ -19,6 +32,7 @@ const AdminPanel = () => {
     }
   }, []);
 
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
@@ -54,7 +68,7 @@ const AdminPanel = () => {
     <div className="flex">
       {/* Sidebar */}
       <div
-        className={` fixed top-0 left-0 h-screen bg-white shadow-lg transition-all duration-300 rounded-tr-lg rounded-br-lg border-primary border-r-2  flex flex-col`}
+        className={`fixed top-0 left-0 h-screen bg-white shadow-lg transition-all duration-300 rounded-tr-lg rounded-br-lg border-primary border-r-2 flex flex-col`}
         style={{ width: sidebarOpen ? "16rem" : "4rem" }}
       >
         {/* Sidebar header */}
@@ -117,10 +131,14 @@ const AdminPanel = () => {
           <div>
             <div className="flex justify-between mb-4">
               <h2 className="text-xl font-bold">Product List</h2>
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button
+                className="bg-primary hover:bg-primary/90"
+                onClick={() => setIsModalOpen(true)} // Open modal
+              >
                 <Plus className="mr-2 h-4 w-4" /> Add Product
               </Button>
             </div>
+
             <table className="w-full table-auto border-collapse">
               <thead>
                 <tr className="bg-gray-200">
@@ -166,6 +184,35 @@ const AdminPanel = () => {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] relative flex flex-col">
+            {/* Close button */}
+            <button
+              className="absolute top-2 right-2 z-10"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <X />
+            </button>
+
+            <h3 className="text-lg font-bold mb-4 p-4 text-[hsl(338,73%,67%)]">
+              Add Product
+            </h3>
+
+            {/* Scrollable content */}
+            <div className="overflow-y-auto px-4 pb-4 flex-1">
+              <AddProductForm
+                onClose={() => setIsModalOpen(false)}
+                onProductAdded={(newProduct: Product) =>
+                  setProducts((prev) => [...prev, newProduct])
+                }
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

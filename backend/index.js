@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const adminRoutes = require("./routes/adminRoutes");
+const productRoutes = require('./routes/productRoutes.js');
 
 const app = express();
 
@@ -14,8 +15,12 @@ app.use(express.json());
 connectDB();
 
 // Admin Routes
-
 app.use("/api/admin", adminRoutes);
+
+// Product Routes
+
+app.use("/api/products", productRoutes);
+
 
 // Routes (example)
 app.get("/", (req, res) => {
