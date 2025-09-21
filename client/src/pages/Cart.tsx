@@ -51,8 +51,8 @@ const handlePlaceOrder = () => {
 
 
     message += `  Order Summary:-\n`;
-    message += `  Subtotal: ₹${subtotal}\n`;
     message += `  Total: ₹${total}\n\n`;
+    message += `  Subtotal: ₹${subtotal}\n`;
     
 
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
