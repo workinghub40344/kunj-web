@@ -1,4 +1,3 @@
-
 const Product = require("../models/Products.js");
 const cloudinary = require('../config/cloudinary.js');
 const streamifier = require("streamifier");
