@@ -4,7 +4,6 @@ import { useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 interface SizeOption {
@@ -24,6 +23,7 @@ interface AddProductFormProps {
   onClose: () => void;
   onProductAdded: (newProduct: ProductType & { _id: string }) => void;
 }
+
 
 const AddProductForm = ({ onClose, onProductAdded }: AddProductFormProps) => {
   const [name, setName] = useState("");
