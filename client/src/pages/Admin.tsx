@@ -2,16 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  LogOut,
-  Menu,
-  Box,
-  FileText,
-  X,
-} from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this path is correct
 
 type Product = ProductType & { _id: string };

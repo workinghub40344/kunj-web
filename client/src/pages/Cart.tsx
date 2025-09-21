@@ -1,6 +1,6 @@
 // src/pages/Cart.tsx
 
-import { useState } from "react";
+
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
-import { products } from "@/data/products";
 
 const Cart = () => {
   const { toast } = useToast();
@@ -19,16 +18,15 @@ const Cart = () => {
     updateQuantity(itemId, newQuantity);
   };
 
-  const handleRemoveItem = (itemId: string) => {
-    removeFromCart(itemId);
-  };
+const handleRemoveItem = (itemId: string) => {
+  removeFromCart(itemId);
+};
 
-  const subtotal = getTotalPrice();
-  const shipping = subtotal > 2500 ? 0 : 150;
-  const total = subtotal + shipping;
+const subtotal = getTotalPrice();
+const total = subtotal;
 
-  const handlePlaceOrder = () => {
-    if (cartItems.length === 0) {
+const handlePlaceOrder = () => {
+  if (cartItems.length === 0) {
       toast({
         title: "Cart is empty",
         description: "Add some products to your cart first.",
@@ -178,23 +176,7 @@ const Cart = () => {
                 <span>Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
                 <span>₹{subtotal}</span>
               </div>
-              
-              {/* <div className="flex justify-between">
-                <span>Shipping</span>
-                <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
-              </div>
-
-              {shipping === 0 && (
-                <div className="text-sm text-green-600 bg-green-50 p-2 rounded">
-                  🎉 You qualify for free shipping!
-                </div>
-              )} */}
-
-              {/* {subtotal < 2500 && (
-                <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded">
-                  Add ₹{2500 - subtotal} more to qualify for free shipping
-                </div>
-              )} */}
+            
 
               <Separator />
 
