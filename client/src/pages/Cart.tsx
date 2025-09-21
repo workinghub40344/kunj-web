@@ -1,3 +1,5 @@
+// src/pages/Cart.tsx
+
 import { useState } from "react";
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,14 +39,18 @@ const Cart = () => {
 
     // Prepare WhatsApp message
     const phoneNumber = "918504866930"; // Replace with actual WhatsApp number
-    let message = "Hello Kunj Creation, I want to purchase the following products:\n\n";
+    let message = "Hello Kunj *_Creation_*, I want to purchase the following products:\n\n";
     
     cartItems.forEach((item, index) => {
-      message += ` ${index + 1}. Product Name - ${item.productName}\n`;
-      message += `   Size: ${item.size}\n`;
-      message += `   Quantity: ${item.quantity}\n`;
-      message += `-------------------------------\n`;
-    });
+  message += `*${index + 1}. ${item.productName}*\n`; // Product name bold
+  message += `   *Size:* ${item.size}\n`;
+  message += `   *Quantity:* ${item.quantity}\n`;
+  if (item.customization) {
+    message += `   *Customization:* _${item.customization}_\n`; // italic customization
+  }
+  message += `-------------------------------\n`;
+});
+
 
     message += `  Order Summary:-\n`;
     message += `  Subtotal: ₹${subtotal}\n`;
