@@ -337,7 +337,11 @@ const Products = () => {
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {filteredProducts.map((product, index) => {
-          const availableSizes = filterSizesByPriceRange(product.sizes);
+          const availableSizes = filterSizesByPriceRange(product.sizes).sort((a, b) => {
+          const numA = parseInt(a.size); // "3-inch" => 3
+          const numB = parseInt(b.size); // "8-inch" => 8
+          return numA - numB;
+        });
           return (
             <Card key={index} className="product-card group">
               <div className="aspect-square overflow-hidden relative">
