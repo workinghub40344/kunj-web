@@ -7,20 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -54,9 +42,14 @@ const Products = () => {
     ...Array.from(new Set(products.map((p) => p.category))),
   ];
   const sizes = [
-    "all",
-    ...Array.from(new Set(products.flatMap((p) => p.sizes.map((s) => s.size)))),
-  ];
+  "all",
+  ...Array.from(new Set(products.flatMap((p) => p.sizes.map((s) => s.size))))
+    .sort((a, b) => {
+      const numA = parseInt(a); // "3-inch" => 3
+      const numB = parseInt(b); // "8-inch" => 8
+      return numA - numB;
+    }),
+];
 
   // Filter sizes by price range
   const filterSizesByPriceRange = (
@@ -173,13 +166,7 @@ const Products = () => {
     return basePrice;
   };
 
-  const ProductModal = ({
-    product,
-    index,
-  }: {
-    product: Product;
-    index: number;
-  }) => (
+  const ProductModal = ({ product, index,}: {product: Product; index: number;}) => (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
@@ -369,7 +356,7 @@ const Products = () => {
               </div>
 
               <CardContent className="p-4">
-                <Badge variant="secondary" className="mb-2 text-xs">
+                <Badge variant="secondary" className="mb-2 text-xs rounded-[3px]">
                   {product.category}
                 </Badge>
                 <h3 className="font-semibold text-lg mb-2 line-clamp-1">
