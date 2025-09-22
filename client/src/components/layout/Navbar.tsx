@@ -77,7 +77,7 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMenuOpen && <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-2">
-              {navItems.map(item => <Link key={item.name} to={item.path} onClick={() => setIsMenuOpen(false)} className={`px-4 py-2 text-sm font-medium transition-colors hover:bg-muted rounded-md ${isActive(item.path) ? "text-primary bg-muted" : "text-muted-foreground"}`}>
+              {navItems.map(item => <Link key={item.name} to={item.path} onClick={() => setIsMenuOpen(false)} className={`hidden px-4 py-2 text-sm font-medium transition-colors hover:bg-muted rounded-md ${isActive(item.path) ? "text-primary bg-muted" : "text-muted-foreground"}`}>
                   {item.name}
                 </Link>)}
               <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted rounded-md">
