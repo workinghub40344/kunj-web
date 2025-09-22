@@ -1,11 +1,8 @@
 import product1 from "@/assets/product-1.jpg";
-import product2 from "@/assets/product-2.jpg";
-import product3 from "@/assets/product-3.jpg";
-import product4 from "@/assets/product-4.jpg";
+import product2 from "@/assets/01.jpg";
+import product3 from "@/assets/05.jpg";
 import product5 from "@/assets/product-5.jpg";
-import product6 from "@/assets/product-6.jpg";
-import product7 from "@/assets/product-7.jpg";
-import product8 from "@/assets/product-8.jpg";
+
 
 
 export interface Product {
@@ -147,83 +144,40 @@ export const products: Product[] = [
     featured: true
   },
   {
-    name: "Radha Ji Blue Saree",
-    description: "Beautiful blue saree for Radha Ji, lightweight and elegant.",
+    name: "Krishna Ji Yellow Poshak",
+    description: "Beautiful yellow poshak for Krishna Ji, lightweight and elegant.",
     images: [product2],
-    category: "Radha Poshak",
+    category: "Krishna Poshak",
     sizes: [
       { size: "3-inch", price: 319 },
       { size: "4-inch", price: 369 },
       { size: "5-inch", price: 419 }
-    ],
-    featured: true
-  },
-  {
-    name: "Radha Ji Pink Ghagra",
-    description: "Soft pink ghagra for Radha Ji, decorated with intricate embroidery.",
-    images: [product3],
-    category: "Radha Poshak",
-    sizes: [
-      { size: "3-inch", price: 349 },
-      { size: "4-inch", price: 399 },
-      { size: "5-inch", price: 449 }
     ],
     featured: true
   },
   {
     name: "Radha Ji Yellow Lehenga",
     description: "Vibrant yellow lehenga for Radha Ji, perfect for celebrations.",
-    images: [product4],
-    category: "Radha Poshak",
-    sizes: [
-      { size: "3-inch", price: 359 },
-      { size: "4-inch", price: 409 },
-      { size: "5-inch", price: 459 }
-    ]
-  },
-  {
-    name: "Krishna Ji Dhoti White",
-    description: "Elegant white dhoti for Krishna Ji, simple and traditional.",
     images: [product5],
-    category: "Krishna Poshak",
-    sizes: [
-      { size: "3-inch", price: 299 },
-      { size: "4-inch", price: 349 },
-      { size: "5-inch", price: 399 }
-    ]
-  },
-  {
-    name: "Krishna Ji Yellow Dhoti",
-    description: "Bright yellow dhoti for Krishna Ji, festive look.",
-    images: [product6],
-    category: "Krishna Poshak",
-    sizes: [
-      { size: "3-inch", price: 319 },
-      { size: "4-inch", price: 369 },
-      { size: "5-inch", price: 419 }
-    ]
-  },
-  {
-    name: "Krishna Ji Blue Angarkha",
-    description: "Blue angarkha for Krishna Ji, adorned with small embellishments.",
-    images: [product7],
-    category: "Krishna Poshak",
-    sizes: [
-      { size: "3-inch", price: 349 },
-      { size: "4-inch", price: 399 },
-      { size: "5-inch", price: 449 }
-    ]
-  },
-  {
-    name: "Krishna Ji Peacock Dhoti",
-    description: "Peacock color dhoti for Krishna Ji, vibrant and stylish.",
-    images: [product8],
-    category: "Krishna Poshak",
+    category: "Radha Poshak",
     sizes: [
       { size: "3-inch", price: 359 },
       { size: "4-inch", price: 409 },
       { size: "5-inch", price: 459 }
     ],
     featured: true
-  }
+  },
+  {
+    name: "Krishna Ji Red Poshak",
+    description: "Soft red poshak for Krishna Ji, decorated with intricate embroidery.",
+    images: [product3],
+    category: "Krishna Poshak",
+    sizes: [
+      { size: "3-inch", price: 349 },
+      { size: "4-inch", price: 399 },
+      { size: "5-inch", price: 449 }
+    ],
+    featured: true
+  },
+  
 ];
