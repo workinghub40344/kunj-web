@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
+
 const AdminLogin = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -16,7 +18,7 @@ const AdminLogin = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/admin/login",
+        `${API_URL}/api/admin/login`,
         credentials
       );
       localStorage.setItem("adminInfo", JSON.stringify(data));

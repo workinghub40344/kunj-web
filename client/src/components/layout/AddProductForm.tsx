@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 
+
 interface SizeOption {
   size: string;
   price: number;
@@ -34,6 +35,7 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [sizes, setSizes] = useState<SizeOption[]>([{ size: "", price: 0 }]);
+  const API_URL = import.meta.env.VITE_API_URL;
   
   // NEW State for managing images
   const [newImages, setNewImages] = useState<File[]>([]); // For new file uploads
@@ -80,14 +82,14 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
       if (isEditMode) {
         // --- EDIT LOGIC ---
         formData.append("imagesToRemove", JSON.stringify(imagesToRemove)); // Send images to remove
-        const res = await axios.put(`http://localhost:5000/api/products/${productToEdit._id}`, formData, {
+        const res = await axios.put(`${API_URL}/api/products/${productToEdit._id}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
         toast({ title: "Product updated successfully!" });
         onProductUpdated(res.data.product); // Use the updated callback
       } else {
         // --- ADD LOGIC ---
-        const res = await axios.post("http://localhost:5000/api/products", formData, {
+        const res = await axios.post(`${API_URL}/api/products`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
         toast({ title: "Product added successfully!" });

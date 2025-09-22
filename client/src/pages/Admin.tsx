@@ -8,9 +8,11 @@ import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X } from "lucide-react
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
 
+
 type Product = ProductType & { _id: string };
 
 const AdminPanel = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedSize, setSelectedSize] = useState("");
   const [productToEdit, setProductToEdit] = useState<Product | null>(null); // State for editing
@@ -38,7 +40,7 @@ const AdminPanel = () => {
       if (!token) return;
 
       try {
-        const { data } = await axios.get("http://localhost:5000/api/products", {
+        const { data } = await axios.get(`${API_URL}/api/products`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProducts(data);
@@ -47,7 +49,7 @@ const AdminPanel = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [API_URL]);
 
   const deleteProduct = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
@@ -55,7 +57,7 @@ const AdminPanel = () => {
     if (!token) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await axios.delete(`${API_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts((prev) => prev.filter((p) => p._id !== id));

@@ -14,7 +14,9 @@ import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { products as sampleProducts } from "@/data/products";
 
+
 const Products = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [products, setProducts] = useState<Product[]>(sampleProducts);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -31,11 +33,11 @@ const Products = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await axios.get("http://localhost:5000/api/products");
+      const { data } = await axios.get(`${API_URL}/api/products`);
       setProducts(data);
     };
     fetchProducts();
-  }, []);
+  }, [API_URL]);
 
   const categories = [
     "all",

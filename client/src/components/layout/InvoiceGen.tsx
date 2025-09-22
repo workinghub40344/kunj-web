@@ -6,6 +6,7 @@ import Logo from "@/assets/Logo-1.jpg";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
+
 // Assuming these are shadcn/ui components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +43,7 @@ interface ProductRowState {
 
 const BillingSystem = () => {
   const invoiceRef = useRef<HTMLDivElement>(null);
-
+  const API_URL = import.meta.env.VITE_API_URL;
   const [products, setProducts] = useState<Product[]>([]);
   const [billItems, setBillItems] = useState<BillItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +62,7 @@ const BillingSystem = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/products");
+        const { data } = await axios.get(`${API_URL}/api/products`);
         setProducts(data);
         const initialStates: Record<string, ProductRowState> = {};
         data.forEach((p: Product) => {
@@ -77,7 +78,7 @@ const BillingSystem = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [API_URL]);
 
   const handleRowStateChange = (
     productId: string,

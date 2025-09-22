@@ -79,8 +79,8 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {featuredProducts.map((product) => (
-              <Card key={product.id} className="product-card group cursor-pointer">
+            {featuredProducts.map((product, index) => (
+              <Card key={index} className="product-card group cursor-pointer">
                 <div className="aspect-square overflow-hidden">
                   <img
                     src={product.images[0]}
