@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
 import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
+import InvoiceGen from "@/components/layout/InvoiceGen";
 
 type Product = ProductType & { _id: string };
 
@@ -283,13 +284,7 @@ const AdminPanel = () => {
 
         {/* ... (Invoice tab remains same) ... */}
          {activeTab === "invoices" && (
-          <div className="text-center">
-            <h2 className="text-xl font-bold mb-4">Invoice Generator</h2>
-            <p className="mb-4">Generate PDF invoices for completed orders</p>
-            <Button className="bg-primary hover:bg-primary/90">
-              Generate Invoice
-            </Button>
-          </div>
+          <InvoiceGen />
         )}
       </div>
 
