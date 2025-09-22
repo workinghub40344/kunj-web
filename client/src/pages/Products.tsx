@@ -7,13 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { products as sampleProducts } from "@/data/products";
-
 
 const Products = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -44,14 +55,15 @@ const Products = () => {
     ...Array.from(new Set(products.map((p) => p.category))),
   ];
   const sizes = [
-  "all",
-  ...Array.from(new Set(products.flatMap((p) => p.sizes.map((s) => s.size))))
-    .sort((a, b) => {
+    "all",
+    ...Array.from(
+      new Set(products.flatMap((p) => p.sizes.map((s) => s.size)))
+    ).sort((a, b) => {
       const numA = parseInt(a); // "3-inch" => 3
       const numB = parseInt(b); // "8-inch" => 8
       return numA - numB;
     }),
-];
+  ];
 
   // Filter sizes by price range
   const filterSizesByPriceRange = (
@@ -168,7 +180,13 @@ const Products = () => {
     return basePrice;
   };
 
-  const ProductModal = ({ product, index,}: {product: Product; index: number;}) => (
+  const ProductModal = ({
+    product,
+    index,
+  }: {
+    product: Product;
+    index: number;
+  }) => (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
@@ -206,11 +224,17 @@ const Products = () => {
                   <SelectValue placeholder="Choose size" />
                 </SelectTrigger>
                 <SelectContent>
-                  {filterSizesByPriceRange(product.sizes).map((sizeOption) => (
-                    <SelectItem key={sizeOption.size} value={sizeOption.size}>
-                      {sizeOption.size} - ₹{sizeOption.price}
-                    </SelectItem>
-                  ))}
+                  {filterSizesByPriceRange(product.sizes)
+                    .sort((a, b) => {
+                      const numA = parseInt(a.size);
+                      const numB = parseInt(b.size);
+                      return numA - numB;
+                    })
+                    .map((sizeOption) => (
+                      <SelectItem key={sizeOption.size} value={sizeOption.size}>
+                        {sizeOption.size} - ₹{sizeOption.price}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -337,11 +361,13 @@ const Products = () => {
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {filteredProducts.map((product, index) => {
-          const availableSizes = filterSizesByPriceRange(product.sizes).sort((a, b) => {
-          const numA = parseInt(a.size); // "3-inch" => 3
-          const numB = parseInt(b.size); // "8-inch" => 8
-          return numA - numB;
-        });
+          const availableSizes = filterSizesByPriceRange(product.sizes).sort(
+            (a, b) => {
+              const numA = parseInt(a.size); // "3-inch" => 3
+              const numB = parseInt(b.size); // "8-inch" => 8
+              return numA - numB;
+            }
+          );
           return (
             <Card key={index} className="product-card group">
               <div className="aspect-square overflow-hidden relative">
@@ -362,7 +388,10 @@ const Products = () => {
               </div>
 
               <CardContent className="p-4">
-                <Badge variant="secondary" className="mb-2 text-xs rounded-[3px]">
+                <Badge
+                  variant="secondary"
+                  className="mb-2 text-xs rounded-[3px]"
+                >
                   {product.category}
                 </Badge>
                 <h3 className="font-semibold text-lg mb-2 line-clamp-1">
