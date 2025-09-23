@@ -88,19 +88,37 @@ const AdminPanel = () => {
     }
   };
 
-  // MODIFIED: Function to handle opening the modal for editing
+  // Handler to toggle stock status
+  const handleToggleStock = async (id: string) => {
+    const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
+    if (!token) return;
+
+    try {
+      const { data } = await axios.patch(
+        `${API_URL}/api/products/${id}/stock`,
+        {}, // No data payload needed, just the request
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Update the local state to reflect the change immediately
+      handleProductUpdated(data.product);
+    } catch (err) {
+      console.error("Failed to toggle stock status", err);
+    }
+  };
+
+  // Function to handle opening the modal for editing
   const handleEditClick = (product: Product) => {
     setProductToEdit(product);
     setIsModalOpen(true);
   };
 
-  // MODIFIED: Function to close modal and reset editing state
+  // Function to close modal and reset editing state
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setProductToEdit(null);
   };
 
-  // NEW: Callback to update product list after editing
+  // Callback to update product list after editing
   const handleProductUpdated = (updatedProduct: Product) => {
     setProducts((prevProducts) =>
       prevProducts.map((p) =>
@@ -231,7 +249,7 @@ const AdminPanel = () => {
                     <tr>
                       <th className="p-3 text-left">Image</th>
                       <th className="p-3 text-left">Name</th>
-                      <th className="p-3 text-left">Category</th>
+                      <th className="p-3 text-left">Status</th>
                       <th className="p-3 text-left">Sizes & Prices</th>
                       <th className="p-3 text-left">Actions</th>
                     </tr>
@@ -263,9 +281,16 @@ const AdminPanel = () => {
                             />
                           </td>
                           <td className="p-2 font-medium">{p.name}</td>
+                          
                           <td className="p-2">
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                              {p.category}
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-semibold ${
+                                p.isInStock
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {p.isInStock ? "In Stock" : "Out of Stock"}
                             </span>
                           </td>
                           <td className="p-2 space-y-1 text-sm">
@@ -283,6 +308,16 @@ const AdminPanel = () => {
                               onClick={() => handleEditClick(p)} // MODIFIED
                             >
                               <Edit className="h-4 w-4 mr-1" /> Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1"
+                              onClick={() => handleToggleStock(p._id)}
+                            >
+                              {p.isInStock
+                                ? "Mark Out of Stock"
+                                : "Mark In Stock"}
                             </Button>
                             <Button
                               size="sm"

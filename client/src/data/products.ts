@@ -15,6 +15,7 @@ export interface Product {
     price: number;
   }[];
   featured?: boolean;
+  isInStock: boolean;
 }
 
 
@@ -141,7 +142,8 @@ export const products: Product[] = [
       { size: "4-inch", price: 349 },
       { size: "5-inch", price: 3909 }
     ],
-    featured: true
+    featured: true,
+    isInStock: true
   },
   {
     name: "Krishna Ji Yellow Poshak",
@@ -153,7 +155,8 @@ export const products: Product[] = [
       { size: "4-inch", price: 369 },
       { size: "5-inch", price: 419 }
     ],
-    featured: true
+    featured: true,
+    isInStock: true
   },
   {
     name: "Radha Ji Yellow Lehenga",
@@ -165,7 +168,8 @@ export const products: Product[] = [
       { size: "4-inch", price: 409 },
       { size: "5-inch", price: 459 }
     ],
-    featured: true
+    featured: true,
+    isInStock: true
   },
   {
     name: "Krishna Ji Red Poshak",
@@ -177,7 +181,8 @@ export const products: Product[] = [
       { size: "4-inch", price: 399 },
       { size: "5-inch", price: 449 }
     ],
-    featured: true
+    featured: true,
+    isInStock: false
   },
   
 ];

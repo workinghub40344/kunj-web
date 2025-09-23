@@ -1,3 +1,5 @@
+// backend/models/Products.js
+
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
@@ -7,6 +9,7 @@ const productSchema = new mongoose.Schema(
     images: [{ type: String, required: true }],
     imagePublicIds: [{ type: String, required: true }],
     category: { type: String, required: true },
+    isInStock: { type: Boolean, default: true },
     sizes: [
       {
         size: { type: String, required: true },

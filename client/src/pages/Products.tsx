@@ -66,6 +66,7 @@ const Products = () => {
   };
 
   const filteredProducts = products.filter((product) => {
+    // .filter((product) => product.isInStock) 
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -143,14 +144,6 @@ const Products = () => {
     });
   };
 
-  // const getProductPrice = (product: Product, selectedSize?: string) => {
-  //   if (selectedSize) {
-  //     const sizeOption = product.sizes.find(s => s.size === selectedSize);
-  //     return sizeOption?.price || product.sizes[0].price;
-  //   }
-  //   return filterSizesByPriceRange(product.sizes)[0]?.price || product.sizes[0].price;
-  // };
-
   const getProductPrice = (
     product: Product,
     selectedSize?: string,
@@ -168,13 +161,7 @@ const Products = () => {
     return basePrice;
   };
 
-  const ProductModal = ({
-    product,
-    index,
-  }: {
-    product: Product;
-    index: number;
-  }) => (
+  const ProductModal = ({ product, index }: { product: Product; index: number; }) => (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
@@ -262,7 +249,7 @@ const Products = () => {
             <Button
               onClick={() => handleAddToCart(index, product)}
               className="w-full bg-primary hover:bg-primary/90"
-              disabled={!productQuantities[index]?.size}
+              disabled={!product.isInStock}
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Add to Cart
@@ -364,6 +351,14 @@ const Products = () => {
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+                {/* Out of Stock Overlay */}
+                {!product.isInStock && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <span className="text-white font-bold text-lg tracking-wider">
+                      OUT OF STOCK
+                    </span>
+                  </div>
+                )}
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     size="sm"
@@ -393,6 +388,7 @@ const Products = () => {
                   <Select
                     value={productQuantities[index]?.size || ""}
                     onValueChange={(size) => handleSizeChange(index, size)}
+                    disabled={!product.isInStock}
                   >
                     <SelectTrigger className="h-8 text-sm">
                       <SelectValue placeholder="Select size" />
@@ -415,6 +411,7 @@ const Products = () => {
                       onValueChange={(qty) =>
                         handleQuantityChange(index, parseInt(qty))
                       }
+                      disabled={!product.isInStock}
                     >
                       <SelectTrigger className="w-16 h-8 text-sm">
                         <SelectValue />
@@ -451,6 +448,7 @@ const Products = () => {
                     <Button
                       onClick={() => handleAddToCart(index, product)}
                       className="flex-1 bg-primary hover:bg-primary/90 h-8 text-sm"
+                      disabled={!product.isInStock}
                     >
                       <ShoppingCart className="mr-1 h-3 w-3" />
                       Add to Cart
@@ -458,7 +456,8 @@ const Products = () => {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8">
+                        <Button variant="outline" size="sm" className="h-8"
+                        >
                           <Eye className="h-3 w-3" />
                         </Button>
                       </DialogTrigger>
