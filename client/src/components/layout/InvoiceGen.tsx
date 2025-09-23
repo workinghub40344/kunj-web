@@ -5,7 +5,7 @@ import { Plus, Trash2, FileText, User, Phone, MapPin } from "lucide-react";
 import Logo from "@/assets/Logo-1.jpg";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
+import { useToast } from "@/hooks/use-toast";
 
 // Assuming these are shadcn/ui components
 import { Button } from "@/components/ui/button";
@@ -37,11 +37,13 @@ interface BillItem {
 
 interface ProductRowState {
   selectedSize: string;
-  quantity: number;
+  quantity: number | string;
   manualSize: string;
+  manualPrice: number | string;
 }
 
 const BillingSystem = () => {
+  const { toast } = useToast();
   const invoiceRef = useRef<HTMLDivElement>(null);
   const API_URL = import.meta.env.VITE_API_URL;
   const [products, setProducts] = useState<Product[]>([]);
@@ -54,9 +56,14 @@ const BillingSystem = () => {
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [isCustomerDetailStep, setIsCustomerDetailStep] = useState(true);
-  const [rowStates, setRowStates] = useState<Record<string, ProductRowState>>(
-    {}
-  );
+  const [rowStates, setRowStates] = useState<Record<string, ProductRowState>>({});
+  const [isManualAddModalOpen, setIsManualAddModalOpen] = useState(false);
+  const [manualItem, setManualItem] = useState({
+    name: "",
+    size: "",
+    price: "",
+    quantity: "1",
+  });
 
   // useEffect and other handler functions
   useEffect(() => {
@@ -70,6 +77,7 @@ const BillingSystem = () => {
             selectedSize: p.sizes[0]?.size || "",
             quantity: 1,
             manualSize: "",
+            manualPrice: 0,
           };
         });
         setRowStates(initialStates);
@@ -91,28 +99,90 @@ const BillingSystem = () => {
     }));
   };
 
+  // Handles changes in the manual item form
+  const handleManualItemChange = (
+    field: keyof typeof manualItem,
+    value: string
+  ) => {
+    setManualItem((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Adds the manually entered item to the bill
+  const handleManualAdd = () => {
+    const { name, size } = manualItem;
+    const price = Number(manualItem.price);
+    const quantity = Number(manualItem.quantity);
+
+    if (!name || !size || price <= 0 || quantity <= 0) {
+      // Error toast
+      toast({
+        title: "Invalid Input",
+        description: "Please fill all fields with valid values.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newItem: BillItem = {
+      id: `manual-${name}-${Date.now()}`,
+      productId: "manual",
+      name,
+      size,
+      price,
+      quantity,
+    };
+
+    setBillItems((prev) => [...prev, newItem]);
+
+    // Success toast
+    toast({
+      title: "Item Added",
+      description: `"${name} (${size})" has been added to the bill.`,
+    });
+
+    setManualItem({
+      name: "",
+      size: "",
+      price: "",
+      quantity: "1",
+    });
+};
+
   const handleAddToBill = (product: Product) => {
     const currentState = rowStates[product._id];
     if (!currentState) return;
 
-    const size =
-      currentState.selectedSize === "manual"
-        ? currentState.manualSize
-        : currentState.selectedSize;
+    const quantity = Number(currentState.quantity);
+    const manualPrice = Number(currentState.manualPrice);
+    const isManual = currentState.selectedSize === "manual";
+    const size = isManual ? currentState.manualSize : currentState.selectedSize;
+
     if (!size) {
       alert("Please select or enter a size.");
       return;
     }
+    if (quantity < 1) {
+      alert("Quantity must be at least 1.");
+      return;
+    }
 
-    const sizeOption = product.sizes.find(
-      (s) => s.size === currentState.selectedSize
-    );
-    const price = sizeOption ? sizeOption.price : product.sizes[0]?.price || 0;
+    let price: number;
 
-    if (price === 0 && currentState.selectedSize === "manual") {
-      alert(
-        "Cannot determine price for manual size. Please select an available size."
-      );
+    if (isManual) {
+      if (manualPrice <= 0) {
+        // Yahan updated variable use karein
+        alert("Please enter a valid price for the manual size.");
+        return;
+      }
+      price = manualPrice;
+    } else {
+      // Normal selection ke liye, price find karein
+      const sizeOption = product.sizes.find((s) => s.size === size);
+      price = sizeOption?.price || 0;
+    }
+
+    if (price <= 0) {
+      alert("Cannot determine a valid price for the selected option.");
       return;
     }
 
@@ -123,7 +193,7 @@ const BillingSystem = () => {
 
     if (existingItemIndex > -1) {
       const updatedBillItems = [...billItems];
-      updatedBillItems[existingItemIndex].quantity += currentState.quantity;
+      updatedBillItems[existingItemIndex].quantity += quantity;
       setBillItems(updatedBillItems);
     } else {
       const newItem: BillItem = {
@@ -131,7 +201,7 @@ const BillingSystem = () => {
         productId: product._id,
         name: product.name,
         size,
-        quantity: currentState.quantity,
+        quantity: quantity,
         price,
       };
       setBillItems((prev) => [...prev, newItem]);
@@ -162,8 +232,40 @@ const BillingSystem = () => {
     () => [...new Set(products.map((p) => p.category))],
     [products]
   );
-  const allSizes = useMemo(
-    () => [...new Set(products.flatMap((p) => p.sizes.map((s) => s.size)))],
+  const allSizes = useMemo(()=>{
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL"];
+    
+    // Get all unique sizes
+    const uniqueSizes = [
+      ...new Set(products.flatMap((p) => p.sizes.map((s) => s.size))),
+    ];
+
+    // Sort the unique sizes with custom logic
+    uniqueSizes.sort((a, b) => {
+      const upperA = a.toUpperCase();
+      const upperB = b.toUpperCase();
+
+      const indexA = sizeOrder.indexOf(upperA);
+      const indexB = sizeOrder.indexOf(upperB);
+
+      // If both sizes are in our predefined order, sort by that order
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      // If only size A is in the order, it should come first
+      if (indexA !== -1) {
+        return -1;
+      }
+      // If only size B is in the order, it should come first
+      if (indexB !== -1) {
+        return 1;
+      }
+      // If neither is in the predefined order, sort them alphanumerically
+      return a.localeCompare(b, undefined, { numeric: true });
+    });
+
+    return uniqueSizes;
+  },
     [products]
   );
 
@@ -220,9 +322,15 @@ const BillingSystem = () => {
     <div className="p-6 bg-[hsl(var(--soft-beige))] min-h-screen">
       {/* (Product Selection Section ) */}
       <div className="p-4 bg-white rounded-lg shadow mb-6">
-        <h2 className="text-2xl font-bold mb-4 text-[hsl(var(--primary))]">
-          Select Products
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-[hsl(var(--primary))]">
+            Select Products
+          </h2>
+          <Button onClick={() => setIsManualAddModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Generate Manually
+          </Button>
+        </div>
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-center">
           <Input
@@ -263,7 +371,6 @@ const BillingSystem = () => {
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-3 text-left">Item</th>
-                <th className="p-3 text-left">Category</th>
                 <th className="p-3 text-left w-48">Size</th>
                 <th className="p-3 text-left w-24">Price</th>
                 <th className="p-3 text-left w-24">Quantity</th>
@@ -276,6 +383,7 @@ const BillingSystem = () => {
                   selectedSize: "",
                   quantity: 1,
                   manualSize: "",
+                  manualPrice: 0,
                 };
                 const price =
                   p.sizes.find((s) => s.size === state.selectedSize)?.price ||
@@ -290,7 +398,6 @@ const BillingSystem = () => {
                       />
                       {p.name}
                     </td>
-                    <td className="p-2">{p.category}</td>
                     <td className="p-2">
                       <select
                         value={state.selectedSize}
@@ -329,7 +436,26 @@ const BillingSystem = () => {
                         />
                       )}
                     </td>
-                    <td className="p-2 font-semibold">₹{price.toFixed(2)}</td>
+                    <td className="p-2 font-semibold">
+                      {state.selectedSize === "manual" ? (
+                        <Input
+                          type="number"
+                          placeholder="Price"
+                          min="0"
+                          value={state.manualPrice}
+                          onChange={(e) =>
+                            handleRowStateChange(
+                              p._id,
+                              "manualPrice",
+                              e.target.value
+                            )
+                          }
+                          className="w-24"
+                        />
+                      ) : (
+                        `₹${price.toFixed(2)}`
+                      )}
+                    </td>
                     <td className="p-2">
                       <Input
                         type="number"
@@ -339,7 +465,7 @@ const BillingSystem = () => {
                           handleRowStateChange(
                             p._id,
                             "quantity",
-                            parseInt(e.target.value) || 1
+                            e.target.value
                           )
                         }
                         className="w-20"
@@ -421,13 +547,10 @@ const BillingSystem = () => {
         </div>
       )}
 
-
       {/* Bill Generation Modal */}
       <Dialog open={isBillModalOpen} onOpenChange={setIsBillModalOpen}>
         {/* Added flex classes and a max-height to the modal content */}
         <DialogContent className="max-w-4xl flex flex-col max-h-[90vh]">
-          
-
           {isCustomerDetailStep ? (
             // Customer details form remains the same
             <div className="space-y-4 py-4">
@@ -573,6 +696,58 @@ const BillingSystem = () => {
                 </Button>
               </>
             )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/*Manual Add Item Modal */}
+      <Dialog open={isManualAddModalOpen} onOpenChange={setIsManualAddModalOpen}>
+        <DialogContent>
+          <h2 className="text-xl font-bold mb-4">Add Item Manually</h2>
+          <div className="space-y-4">
+            <div>
+              <label>Item Name</label>
+              <Input
+                value={manualItem.name}
+                onChange={(e) => handleManualItemChange("name", e.target.value)}
+                placeholder="e.g., Radha Ji Dress"
+              />
+            </div>
+            <div>
+              <label>Size</label>
+              <Input
+                value={manualItem.size}
+                onChange={(e) => handleManualItemChange("size", e.target.value)}
+                placeholder="e.g., 3-inch (in m , cm, etc.)"
+              />
+            </div>
+            <div>
+              <label>Price (per item)</label>
+              <Input
+                type="number"
+                min="0"
+                value={manualItem.price}
+                onChange={(e) => handleManualItemChange("price", e.target.value)}
+                placeholder="e.g., 1000"
+              />
+            </div>
+            <div>
+              <label>Quantity</label>
+              <Input
+                type="number"
+                min="1"
+                value={manualItem.quantity}
+                onChange={(e) =>
+                  handleManualItemChange("quantity", e.target.value)
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setIsManualAddModalOpen(false)}>
+              Done
+            </Button>
+            <Button onClick={handleManualAdd}>Add Item to Bill</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

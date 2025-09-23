@@ -5,60 +5,71 @@ import { Card, CardContent } from "@/components/ui/card";
 import { products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import heroBanner from "@/assets/banner.jpg";
+import BgImg from "@/assets/bg.png";
 
 const Home = () => {
-  const featuredProducts = products.filter(product => product.featured).slice(0, 6);
+  const featuredProducts = products
+    .filter((product) => product.featured)
+    .slice(0, 6);
   const { addToCart } = useCart();
 
   const features = [
     {
       icon: Shield,
       title: "Handcrafted Quality",
-      description: "Premium handcrafted Poshak made with traditional techniques"
+      description:
+        "Premium handcrafted Poshak made with traditional techniques",
     },
     {
       icon: Star,
       title: "Divine Collection",
-      description: "Authentic designs blessed for Krishna and Radha worship"
+      description: "Authentic designs blessed for Krishna and Radha worship",
     },
     {
       icon: Truck,
       title: "Free Shipping",
-      description: "Free delivery on all orders above ₹2,500 across India"
+      description: "Free delivery on all orders above ₹2,500 across India",
     },
     {
       icon: RefreshCw,
       title: "30-Day Returns",
-      description: "Full money-back guarantee if you're not satisfied"
-    }
+      description: "Full money-back guarantee if you're not satisfied",
+    },
   ];
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-top bg-no-repeat"
           style={{ backgroundImage: `url(${heroBanner})` }}
         >
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
-        
+
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto mt-24">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Divine Poshak for <br />
             <span className="text-primary">Krishna & Radha</span>
           </h1>
-      
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/products">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg"
+              >
                 Shop Collection
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/about">
-              <Button variant="outline" size="lg" className="border-white text-black hover:bg-white hover:text-foreground px-8 py-3 text-lg">
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-white text-black hover:bg-white hover:text-foreground px-8 py-3 text-lg"
+              >
                 Learn More
               </Button>
             </Link>
@@ -74,7 +85,8 @@ const Home = () => {
               Featured Collection
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Our most cherished Poshak and accessories, handpicked for their divine beauty and craftsmanship
+              Our most cherished Poshak and accessories, handpicked for their
+              divine beauty and craftsmanship
             </p>
           </div>
 
@@ -100,7 +112,11 @@ const Home = () => {
 
           <div className="text-center">
             <Link to="/products">
-              <Button variant="outline" size="lg" className="px-8 bg-primary text-white">
+              <Button
+                variant="outline"
+                size="lg"
+                className="px-8 bg-primary text-white"
+              >
                 View All Products
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -108,12 +124,12 @@ const Home = () => {
           </div>
         </div>
         <div className="mt-8">
-        <hr />
-      </div>
+          <hr />
+        </div>
       </section>
 
       {/* Why Choose Us */}
-      
+
       <section className="pb-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -121,7 +137,8 @@ const Home = () => {
               Why Choose Kunj Creation?
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              We're dedicated to providing authentic, handcrafted Poshak with traditional values
+              We're dedicated to providing authentic, handcrafted Poshak with
+              traditional values
             </p>
           </div>
 
@@ -129,13 +146,28 @@ const Home = () => {
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow">
-                  <CardContent className="pt-6">
+                <Card
+                  key={index}
+                  className="text-center p-6 hover:shadow-lg transition-shadow relative overflow-hidden" // Added relative & overflow-hidden
+                >
+                  {/* Background Image Overlay */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-20 transition-opacity duration-300 rounded-lg" // Adjust opacity and other styles as needed
+                    style={{ backgroundImage: `url(${BgImg})` }}
+                  ></div>
+
+                  <CardContent className="pt-6 relative z-10">
+                    {" "}
+                    {/* Added relative z-10 for content to be above image */}
                     <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                       <IconComponent className="h-8 w-8 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground text-sm">{feature.description}</p>
+                    <h3 className="font-semibold text-lg mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {feature.description}
+                    </p>
                   </CardContent>
                 </Card>
               );

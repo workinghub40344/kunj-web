@@ -10,7 +10,7 @@ import { X } from "lucide-react";
 
 interface SizeOption {
   size: string;
-  price: number;
+  price: number | string;
 }
 
 interface ProductType {
@@ -69,11 +69,17 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
     e.preventDefault();
     setUploading(true);
     
+    // NEW: Clean the sizes array before sending to the backend
+    const cleanedSizes = sizes.map(s => ({
+        ...s,
+        price: Number(s.price) || 0 // Ensure price is a number
+    }));
+    
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
     formData.append("category", category);
-    formData.append("sizes", JSON.stringify(sizes));
+    formData.append("sizes", JSON.stringify(cleanedSizes));
     
     // Append new images if any
     newImages.forEach((img) => formData.append("images", img));
@@ -151,11 +157,12 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
                 />
                 <Input
                 type="number"
+                min="0"
                 placeholder="Price"
                 value={size.price}
                 onChange={(e) => {
                     const updatedSizes = [...sizes];
-                    updatedSizes[index].price = Number(e.target.value);
+                    updatedSizes[index].price = e.target.value;
                     setSizes(updatedSizes);
                 }}
                 />

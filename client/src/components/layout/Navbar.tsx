@@ -4,7 +4,7 @@ import { ShoppingCart, Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/CartContext";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/Logo-1.jpg";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();

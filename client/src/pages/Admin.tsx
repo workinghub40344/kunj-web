@@ -1,13 +1,12 @@
 // client/src/pages/Admin.tsx
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
-
 
 type Product = ProductType & { _id: string };
 
@@ -24,6 +23,28 @@ const AdminPanel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  // Memoized sorted sizes for filter dropdown
+  const sortedSizes = useMemo(() => {
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL"];
+    const uniqueSizes = [
+      ...new Set(products.flatMap((p) => p.sizes.map((s) => s.size))),
+    ];
+
+    uniqueSizes.sort((a, b) => {
+      const upperA = a.toUpperCase();
+      const upperB = b.toUpperCase();
+      const indexA = sizeOrder.indexOf(upperA);
+      const indexB = sizeOrder.indexOf(upperB);
+
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return a.localeCompare(b, undefined, { numeric: true });
+    });
+
+    return uniqueSizes;
+  }, [products]);
 
   // Redirect if no token
   useEffect(() => {
@@ -52,7 +73,8 @@ const AdminPanel = () => {
   }, [API_URL]);
 
   const deleteProduct = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
     if (!token) return;
 
@@ -71,7 +93,7 @@ const AdminPanel = () => {
     setProductToEdit(product);
     setIsModalOpen(true);
   };
-    
+
   // MODIFIED: Function to close modal and reset editing state
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -95,7 +117,7 @@ const AdminPanel = () => {
         style={{ width: sidebarOpen ? "16rem" : "4rem" }}
       >
         {/* ... (Sidebar code remains same, no changes needed here) ... */}
-         {/* Sidebar header */}
+        {/* Sidebar header */}
         <div className="flex items-center justify-between p-4 border-b">
           {sidebarOpen && (
             <span className="font-bold text-lg">Admin Panel</span>
@@ -194,11 +216,7 @@ const AdminPanel = () => {
                   className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="">All Sizes</option>
-                  {[
-                    ...new Set(
-                      products.flatMap((p) => p.sizes.map((s) => s.size))
-                    ),
-                  ].map((size) => (
+                  {sortedSizes.map((size) => (
                     <option key={size} value={size}>
                       {size}
                     </option>
@@ -285,9 +303,7 @@ const AdminPanel = () => {
         )}
 
         {/* ... (Invoice tab remains same) ... */}
-         {activeTab === "invoices" && (
-          <InvoiceGen />
-        )}
+        {activeTab === "invoices" && <InvoiceGen />}
       </div>
 
       {/* Modal */}

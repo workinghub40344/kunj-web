@@ -7,28 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { products as sampleProducts } from "@/data/products";
+// import { products as sampleProducts } from "@/data/products";
 
 const Products = () => {
   const API_URL = import.meta.env.VITE_API_URL;
-  const [products, setProducts] = useState<Product[]>(sampleProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
