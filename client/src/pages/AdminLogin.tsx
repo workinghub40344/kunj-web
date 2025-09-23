@@ -81,7 +81,14 @@ const AdminLogin = () => {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Demo: admin / admin123
+            Go to Home Page?{" "}
+            <Button
+              variant="link"
+              className="p-0 text-primary hover:underline"
+              onClick={() => navigate("/")}
+            >
+              Click Here
+            </Button>
           </div>
         </CardContent>
       </Card>
