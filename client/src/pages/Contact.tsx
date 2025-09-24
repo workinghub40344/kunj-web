@@ -46,7 +46,7 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Phone",
-      content: "+1 (555) 123-4567",
+      content: "+91 9529663375",
       description: "Call us during business hours"
     },
     {
@@ -58,14 +58,14 @@ const Contact = () => {
     {
       icon: MapPin,
       title: "Address",
-      content: "123 Beauty Street, NY 10001",
+      content: "Jhotwara Jaipur,302012",
       description: "Visit our flagship store"
     },
     {
       icon: Clock,
       title: "Business Hours",
-      content: "Mon-Fri: 9AM-6PM",
-      description: "EST (Eastern Standard Time)"
+      content: "Mon-Sun: 9AM-6PM",
+      description: "IST (Indian Standard Time)"
     }
   ];
 
@@ -78,7 +78,7 @@ const Contact = () => {
             Get in Touch
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Have questions about our products or need skincare advice? We're here to help!
+            Have questions about our Poshak or need guidance in choosing the right attire for your Radha Krishna ji? We’re here to help!
           </p>
         </div>
 

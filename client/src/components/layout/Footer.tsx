@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Phone, Mail, MapPin } from "lucide-react";
-import logo from "@/assets/Logo-1.jpg";
+import logo from "@/assets/Logo-2.png";
 
 const Footer = () => {
   return (
@@ -18,18 +18,18 @@ const Footer = () => {
               <span className="font-bold text-lg text-foreground">Creation</span>
             </div>
             <p className="text-muted-foreground text-sm">
-              Premium natural skincare products crafted with lotus and leaf extracts for radiant, healthy skin.
+              Premium handcrafted Radha Krishna Poshak, made with devotion and fine detailing for your divine idols.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
               <a href="https://www.instagram.com/kunj_creation_deepak?igsh=bXMzdW9iNmU4c2t5" className="text-muted-foreground hover:text-primary transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
+              <a href="https://www.facebook.com/share/17V95tdNyX/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Facebook className="h-5 w-5" />
               </a>
+              {/* <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Twitter className="h-5 w-5" />
+              </a> */}
             </div>
           </div>
 
@@ -75,7 +75,7 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="/contact" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   FAQ
                 </a>
               </li>
@@ -93,11 +93,11 @@ const Footer = () => {
             <div className="space-y-3text-sm">
               <div className="flex items-center space-x-2 mt-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">+91 85048 66930</span>
+                <span className="text-muted-foreground">+91 9529663375</span>
               </div>
               <div className="flex items-center space-x-2 mt-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">info@Kunj Creation.com</span>
+                <span className="text-muted-foreground">info@KunjCreation.com</span>
               </div>
               <div className="flex items-center space-x-2 mt-2">
                 <MapPin className="h-4 w-4 text-primary" />

@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
 import { Plus, Trash2, FileText, User, Phone, MapPin } from "lucide-react";
-import Logo from "@/assets/Logo-1.jpg";
+import Logo from "@/assets/Logo-2.png";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useToast } from "@/hooks/use-toast";
