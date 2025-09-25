@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
-import heroBanner from "@/assets/banner.jpg";
+import heroBanner from "@/assets/B2.jpg";
+// import heroBanner from "@/assets/banner.png";
 import BgImg from "@/assets/bg.png";
 
 const Home = () => {
@@ -40,15 +41,15 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[70vh] md:h-[90vh] flex items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-top bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroBanner})` }}
         >
-          <div className="absolute inset-0 bg-black/30"></div>
+          {/* <div className="absolute inset-0 bg-black/0"></div> */}
         </div>
 
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto mt-24">
+        {/* <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto mt-24">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Divine Poshak for <br />
             <span className="text-primary">Krishna & Radha</span>
@@ -74,7 +75,8 @@ const Home = () => {
               </Button>
             </Link>
           </div>
-        </div>
+        </div> */}
+
       </section>
 
       {/* Featured Products */}

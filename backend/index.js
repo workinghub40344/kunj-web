@@ -6,6 +6,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require('./routes/productRoutes.js');
+const orderRoutes = require('./routes/orderRoutes.js');
 
 const app = express();
 
@@ -22,6 +23,9 @@ app.use("/api/admin", adminRoutes);
 // Product Routes
 
 app.use("/api/products", productRoutes);
+
+// Order Routes
+app.use('/api/orders', orderRoutes);
 
 
 // Routes (example)
