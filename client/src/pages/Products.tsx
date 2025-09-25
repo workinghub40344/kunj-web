@@ -7,7 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -66,7 +72,7 @@ const Products = () => {
   };
 
   const filteredProducts = products.filter((product) => {
-    // .filter((product) => product.isInStock) 
+    // .filter((product) => product.stock_status)
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -161,7 +167,13 @@ const Products = () => {
     return basePrice;
   };
 
-  const ProductModal = ({ product, index }: { product: Product; index: number; }) => (
+  const ProductModal = ({
+    product,
+    index,
+  }: {
+    product: Product;
+    index: number;
+  }) => (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
@@ -249,7 +261,7 @@ const Products = () => {
             <Button
               onClick={() => handleAddToCart(index, product)}
               className="w-full bg-primary hover:bg-primary/90"
-              disabled={!product.isInStock}
+              disabled={product.stock_status !== "IN_STOCK"}
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Add to Cart
@@ -351,11 +363,14 @@ const Products = () => {
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                {/* Out of Stock Overlay */}
-                {!product.isInStock && (
+    
+                {/* Status Overlay Logic */}
+                {product.stock_status !== "IN_STOCK" && (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                     <span className="text-white font-bold text-lg tracking-wider">
-                      OUT OF STOCK
+                      {product.stock_status === "OUT_OF_STOCK"
+                        ? "OUT OF STOCK"
+                        : "BOOKING CLOSED"}
                     </span>
                   </div>
                 )}
@@ -388,7 +403,7 @@ const Products = () => {
                   <Select
                     value={productQuantities[index]?.size || ""}
                     onValueChange={(size) => handleSizeChange(index, size)}
-                    disabled={!product.isInStock}
+                    disabled={product.stock_status !== "IN_STOCK"}
                   >
                     <SelectTrigger className="h-8 text-sm">
                       <SelectValue placeholder="Select size" />
@@ -411,7 +426,7 @@ const Products = () => {
                       onValueChange={(qty) =>
                         handleQuantityChange(index, parseInt(qty))
                       }
-                      disabled={!product.isInStock}
+                      disabled={product.stock_status !== "IN_STOCK"}
                     >
                       <SelectTrigger className="w-16 h-8 text-sm">
                         <SelectValue />
@@ -448,7 +463,7 @@ const Products = () => {
                     <Button
                       onClick={() => handleAddToCart(index, product)}
                       className="flex-1 bg-primary hover:bg-primary/90 h-8 text-sm"
-                      disabled={!product.isInStock}
+                      disabled={product.stock_status !== "IN_STOCK"}
                     >
                       <ShoppingCart className="mr-1 h-3 w-3" />
                       Add to Cart
@@ -456,8 +471,7 @@ const Products = () => {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8"
-                        >
+                        <Button variant="outline" size="sm" className="h-8">
                           <Eye className="h-3 w-3" />
                         </Button>
                       </DialogTrigger>

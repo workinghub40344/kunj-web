@@ -162,19 +162,25 @@ exports.deleteProduct = async (req, res) => {
       }
 };
 
-// Toggle product stock status
-exports.toggleStockStatus = async (req, res) => {
+// Update product stock status
+exports.updateStockStatus = async (req, res) => {
   try {
+
+    const { status } = req.body;
+    const validStatuses = ['IN_STOCK', 'OUT_OF_STOCK', 'BOOKING_CLOSED'];
+    if (!status || !validStatuses.includes(status)) {
+        return res.status(400).json({ success: false, message: "Invalid status provided" });
+    }
+
+   
     const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    // Flip the boolean value
-    product.isInStock = !product.isInStock;
-
+    product.stock_status = status; 
     await product.save();
-    res.status(200).json({ success: true, product });
+    res.status(200).json({ success: true, message: "Status updated successfully", product });
 
   } catch (error) {
     console.error(error);

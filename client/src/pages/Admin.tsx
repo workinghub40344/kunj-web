@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
 
@@ -88,21 +88,22 @@ const AdminPanel = () => {
     }
   };
 
-  // Handler to toggle stock status
-  const handleToggleStock = async (id: string) => {
+  // Handler to update stock status
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
     if (!token) return;
 
     try {
-      const { data } = await axios.patch(
-        `${API_URL}/api/products/${id}/stock`,
-        {}, // No data payload needed, just the request
+      const { data } = await axios.put(
+        // Hum PUT ya PATCH use kar sakte hain
+        `${API_URL}/api/products/${id}/status`, // Backend route ko match karein
+        { status: newStatus }, // IMPORTANT: Hum body mein naya status bhej rahe hain
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Update the local state to reflect the change immediately
+      // Local state ko update karein taaki badlaav turant dikhe
       handleProductUpdated(data.product);
     } catch (err) {
-      console.error("Failed to toggle stock status", err);
+      console.error("Failed to update stock status", err);
     }
   };
 
@@ -281,18 +282,31 @@ const AdminPanel = () => {
                             />
                           </td>
                           <td className="p-2 font-medium">{p.name}</td>
-                          
+
+                          {/* === UPDATED STATUS COLUMN === */}
+                          {/* Ab status display aur dropdown ek hi jagah hai */}
                           <td className="p-2">
-                            <span
-                              className={`px-2 py-1 rounded text-xs font-semibold ${
-                                p.isInStock
+                            <select
+                              value={p.stock_status}
+                              onChange={(e) =>
+                                handleUpdateStatus(p._id, e.target.value)
+                              }
+                              className={`w-full border rounded px-2 py-1 text-sm h-9 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                                p.stock_status === "IN_STOCK"
                                   ? "bg-green-100 text-green-800"
-                                  : "bg-red-100 text-red-800"
+                                  : p.stock_status === "OUT_OF_STOCK"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-yellow-100 text-yellow-800"
                               }`}
                             >
-                              {p.isInStock ? "In Stock" : "Out of Stock"}
-                            </span>
+                              <option value="IN_STOCK">In Stock</option>
+                              <option value="OUT_OF_STOCK">Out of Stock</option>
+                              <option value="BOOKING_CLOSED">
+                                Booking Closed
+                              </option>
+                            </select>
                           </td>
+
                           <td className="p-2 space-y-1 text-sm">
                             {p.sizes.map((s) => (
                               <div key={s.size}>
@@ -300,24 +314,17 @@ const AdminPanel = () => {
                               </div>
                             ))}
                           </td>
+
+                          {/* === UPDATED ACTIONS COLUMN === */}
+                          {/* Ab yahaan sirf Edit aur Delete buttons hain */}
                           <td className="p-2 flex gap-2">
                             <Button
                               size="sm"
                               variant="outline"
                               className="flex-1"
-                              onClick={() => handleEditClick(p)} // MODIFIED
+                              onClick={() => handleEditClick(p)}
                             >
                               <Edit className="h-4 w-4 mr-1" /> Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex-1"
-                              onClick={() => handleToggleStock(p._id)}
-                            >
-                              {p.isInStock
-                                ? "Mark Out of Stock"
-                                : "Mark In Stock"}
                             </Button>
                             <Button
                               size="sm"
