@@ -352,7 +352,7 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* ... (Invoice tab remains same) ... */}
+        {/* ... (Invoice tab) ... */}
         {activeTab === "invoices" && <InvoiceGen />}
         {activeTab === "downloadbill" && <DownloadBill />}
       </div>

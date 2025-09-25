@@ -21,12 +21,18 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Admin = lazy(() => import("./pages/Admin"));
 
-// A simple loading component for the fallback
+
+// Loading component for the fallback
 const LoadingFallback = () => (
-  <div className="flex justify-center items-center w-full h-screen text-primary">
-    Loading...
+  <div className="flex flex-col justify-center items-center w-full h-screen gap-4">
+    <div 
+      className="w-12 h-12 rounded-full animate-spin
+                  border-4 border-solid border-primary border-t-transparent"
+    ></div>
+    <p className="text-primary font-semibold">Loading...</p>
   </div>
 );
+
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

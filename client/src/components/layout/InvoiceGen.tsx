@@ -6,8 +6,6 @@ import Logo from "@/assets/Logo-2.png";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useToast } from "@/hooks/use-toast";
-
-// Assuming these are shadcn/ui components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
@@ -43,6 +41,7 @@ interface ProductRowState {
 }
 
 const BillingSystem = () => {
+  
   const { toast } = useToast();
   const invoiceRef = useRef<HTMLDivElement>(null);
   const API_URL = import.meta.env.VITE_API_URL;
@@ -248,19 +247,16 @@ const BillingSystem = () => {
       const indexA = sizeOrder.indexOf(upperA);
       const indexB = sizeOrder.indexOf(upperB);
 
-      // If both sizes are in our predefined order, sort by that order
+      
       if (indexA !== -1 && indexB !== -1) {
         return indexA - indexB;
       }
-      // If only size A is in the order, it should come first
       if (indexA !== -1) {
         return -1;
       }
-      // If only size B is in the order, it should come first
       if (indexB !== -1) {
         return 1;
       }
-      // If neither is in the predefined order, sort them alphanumerically
       return a.localeCompare(b, undefined, { numeric: true });
     });
 
@@ -549,10 +545,8 @@ const BillingSystem = () => {
 
       {/* Bill Generation Modal */}
       <Dialog open={isBillModalOpen} onOpenChange={setIsBillModalOpen}>
-        {/* Added flex classes and a max-height to the modal content */}
         <DialogContent className="max-w-4xl flex flex-col max-h-[90vh]">
           {isCustomerDetailStep ? (
-            // Customer details form remains the same
             <div className="space-y-4 py-4">
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -586,13 +580,11 @@ const BillingSystem = () => {
               </div>
             </div>
           ) : (
-            // Added a scrollable wrapper around the invoice content
             <div className="flex-1 overflow-y-auto pr-4">
               <div
                 ref={invoiceRef}
                 className="p-6 border rounded-lg bg-white my-4 text-sm"
               >
-                {/* The content of the bill remains exactly the same */}
                 <div className="flex justify-between items-center pb-4 border-b">
                   <img
                     src={Logo}

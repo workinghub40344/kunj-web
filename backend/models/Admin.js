@@ -13,7 +13,7 @@ const adminSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Password hash karne ke liye
+// Password hash 
 adminSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(10);
@@ -21,7 +21,7 @@ adminSchema.pre('save', async function(next) {
     next();
 });
 
-// Password match karne ke liye method
+// Password match 
 adminSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };

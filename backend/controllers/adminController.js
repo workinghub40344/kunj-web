@@ -8,14 +8,14 @@ const generateToken = (id) => {
 
 // Register
 exports.registerAdmin = async (req, res) => {
-    const { username, password } = req.body; // change here
+    const { username, password } = req.body; 
     try {
-        const adminExists = await Admin.findOne({ username }); // change here
+        const adminExists = await Admin.findOne({ username }); 
         if (adminExists) {
             return res.status(400).json({ message: "Admin already exists" });
         }
 
-        const admin = await Admin.create({ username, password }); // change here
+        const admin = await Admin.create({ username, password }); 
 
         res.status(201).json({
             _id: admin._id,
@@ -29,9 +29,9 @@ exports.registerAdmin = async (req, res) => {
 
 // Login
 exports.loginAdmin = async (req, res) => {
-    const { username, password } = req.body; // change here
+    const { username, password } = req.body; 
     try {
-        const admin = await Admin.findOne({ username }); // change here
+        const admin = await Admin.findOne({ username }); 
         if (admin && await admin.matchPassword(password)) {
             res.json({
                 _id: admin._id,

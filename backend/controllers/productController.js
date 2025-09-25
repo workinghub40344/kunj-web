@@ -20,7 +20,7 @@ const uploadToCloudinary = (fileBuffer) => {
 };
 
 
-// Add Product (No changes needed here)
+// Add Product 
 exports.addProduct = async (req, res) => {
     try {
         const { name, description, category, sizes } = req.body;
@@ -55,7 +55,7 @@ exports.addProduct = async (req, res) => {
 };
 
 
-// Get all products (No changes needed)
+// Get all products 
 exports.getProducts = async (req, res) => {
     // ... same code
     try {
@@ -67,7 +67,7 @@ exports.getProducts = async (req, res) => {
       }
 };
 
-// Get single product by ID (No changes needed)
+// Get single product by ID 
 exports.getProduct = async (req, res) => {
     // ... same code
     try {
@@ -80,7 +80,7 @@ exports.getProduct = async (req, res) => {
       }
 };
 
-// MODIFIED: Complete overhaul of the updateProduct function
+// Complete overhaul of the updateProduct function
 exports.updateProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -140,7 +140,7 @@ exports.updateProduct = async (req, res) => {
     }
 };
 
-// Delete product (No changes needed)
+// Delete product
 exports.deleteProduct = async (req, res) => {
     // ... same code
     try {

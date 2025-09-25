@@ -24,7 +24,7 @@ const Contact = () => {
     }
 
     // Create WhatsApp message
-    const phoneNumber = "918504866930"; // Replace with actual WhatsApp number
+    const phoneNumber = "918504866930";
     const message = `Hi Kunj Creation ! My name is ${name}.\n\nQuery: ${query}`;
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     

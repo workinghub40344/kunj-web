@@ -15,7 +15,6 @@ const Footer = () => {
                   className="h-16 w-auto object-contain object-center "
                   />
               </div>
-              {/* <span className="font-bold text-lg text-foreground">Creation</span> */}
             </div>
             <p className="text-muted-foreground text-sm">
               Premium handcrafted Radha Krishna Poshak, made with devotion and fine detailing for your divine idols.
@@ -27,9 +26,6 @@ const Footer = () => {
               <a href="https://www.facebook.com/share/17V95tdNyX/" className="text-muted-foreground hover:text-primary transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
-              {/* <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a> */}
             </div>
           </div>
 

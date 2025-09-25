@@ -21,7 +21,7 @@ interface ProductType {
   images: string[];
 }
 
-// MODIFIED: Added productToEdit and onProductUpdated props
+// Added productToEdit and onProductUpdated props
 interface AddProductFormProps {
   onClose: () => void;
   onProductAdded: (newProduct: ProductType & { _id: string }) => void;
@@ -47,7 +47,7 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
 
   const isEditMode = !!productToEdit;
 
-  // NEW: useEffect to pre-fill the form in edit mode
+  // useEffect to pre-fill the form in edit mode
   useEffect(() => {
     if (isEditMode) {
       setName(productToEdit.name);
@@ -64,15 +64,15 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
     setImagesToRemove([...imagesToRemove, imageUrl]);
   }
 
-  // MODIFIED: Renamed to handleSubmit and handles both add and edit
+  // Renamed to handleSubmit and handles both add and edit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
     
-    // NEW: Clean the sizes array before sending to the backend
+    // Clean the sizes array before sending to the backend
     const cleanedSizes = sizes.map(s => ({
         ...s,
-        price: Number(s.price) || 0 // Ensure price is a number
+        price: Number(s.price) || 0 
     }));
     
     const formData = new FormData();
@@ -112,9 +112,7 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
   };
 
   return (
-    // The form structure remains the same, but values and handlers are now dynamic
     <div className="max-w-3xl mx-auto rounded-lg" style={{ backgroundColor: "hsl(47, 33%, 96%)" }}>
-      {/* The h2 title is now in the parent Admin.tsx modal */}
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
@@ -143,7 +141,6 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
         {/* Sizes & Prices */}
         <div>
           <label className="block mb-1 font-medium">Sizes & Prices</label>
-          {/* ... (Size and Price logic remains exactly the same) ... */}
             {sizes.map((size, index) => (
             <div key={index} className="flex gap-2 mb-2 items-center">
                 <Input
@@ -189,8 +186,7 @@ const AddProductForm = ({ onClose, onProductAdded, productToEdit, onProductUpdat
         {/* Images */}
         <div>
             <label className="block mb-1 font-medium">Images</label>
-
-            {/* NEW: Display existing images with remove button */}
+            {/* Display existing images with remove button */}
             {isEditMode && existingImages.length > 0 && (
                 <div className="flex flex-wrap gap-2 border p-2 rounded-md mb-2">
                     {existingImages.map(url => (
