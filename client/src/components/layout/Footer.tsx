@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Phone, Mail, MapPin } from "lucide-react";
-import logo from "@/assets/Logo-2.png";
+import logo from "@/assets/Logo-3.png";
 
 const Footer = () => {
   return (
@@ -12,10 +12,10 @@ const Footer = () => {
             <div className="flex items-center ">
               <div className="mr-1">
                   <img src={logo} alt="Logo" 
-                  className="h-11 w-auto object-contain object-center "
+                  className="h-16 w-auto object-contain object-center "
                   />
               </div>
-              <span className="font-bold text-lg text-foreground">Creation</span>
+              {/* <span className="font-bold text-lg text-foreground">Creation</span> */}
             </div>
             <p className="text-muted-foreground text-sm">
               Premium handcrafted Radha Krishna Poshak, made with devotion and fine detailing for your divine idols.

@@ -58,13 +58,12 @@ const Cart = () => {
     }
 
     try {
-    // Step 1: Backend ko order data bhejein
-    const { data: savedOrder } = await axios.post(`${API_URL}/api/orders`, {
-      customerName,
-      customerPhone,
-      orderItems: cartItems,
-      totalPrice: total,
-    });
+      const { data: savedOrder } = await axios.post(`${API_URL}/api/orders/create`, {
+        customerName,
+        customerPhone,
+        orderItems: cartItems,
+        totalPrice: total,
+      });
 
     // Step 2: Backend se mile orderId ke saath WhatsApp message banayein
     const phoneNumber = "918504866930";

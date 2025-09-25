@@ -3,7 +3,6 @@ import { Star, Shield, Truck, RefreshCw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { products } from "@/data/products";
-import { useCart } from "@/context/CartContext";
 import heroBanner from "@/assets/B2.jpg";
 // import heroBanner from "@/assets/banner.png";
 import BgImg from "@/assets/bg.png";
@@ -12,8 +11,6 @@ const Home = () => {
   const featuredProducts = products
     .filter((product) => product.featured)
     .slice(0, 6);
-  const { addToCart } = useCart();
-
   const features = [
     {
       icon: Shield,
@@ -41,7 +38,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[70vh] md:h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[70vh] md:h-[90vh] flex items-end pb-20 md:pb-24 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroBanner})` }}

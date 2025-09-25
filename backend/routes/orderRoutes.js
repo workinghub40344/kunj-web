@@ -1,8 +1,13 @@
+// backend/routes/orderRoutes.js
+
 const express = require('express');
 const router = express.Router();
-const { createOrder } = require('../controllers/orderController.js');
+const { createOrder, getAllOrders, deleteOrder, resetOrders } = require('../controllers/orderController'); 
 
 
-router.route('/').post(createOrder); // Pehle protect laga sakte hain
+router.post('/create', createOrder);
+router.get('/:id', getAllOrders);
+router.delete('/reset', resetOrders);
+router.delete('/:id', deleteOrder);
 
 module.exports = router;

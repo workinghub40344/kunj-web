@@ -1,5 +1,3 @@
-// backend/index.js
-
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -14,26 +12,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect Database
+// Connect to MongoDB
 connectDB();
 
-// Admin Routes
+// Routes
 app.use("/api/admin", adminRoutes);
-
-// Product Routes
-
-app.use("/api/products", productRoutes);
-
-// Order Routes
+app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 
-
-// Routes (example)
+// Basic route to check server status
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-// Start Server
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

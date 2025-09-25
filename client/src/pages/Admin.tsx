@@ -7,6 +7,7 @@ import { Product as ProductType } from "@/data/products";
 import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
+import DownloadBill from "@/components/layout/DownloadBill";
 
 type Product = ProductType & { _id: string };
 
@@ -16,7 +17,7 @@ const AdminPanel = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [productToEdit, setProductToEdit] = useState<Product | null>(null); // State for editing
 
-  const [activeTab, setActiveTab] = useState<"products" | "invoices">(
+  const [activeTab, setActiveTab] = useState<"products" | "invoices" | "downloadbill">(
     "products"
   );
   const [products, setProducts] = useState<Product[]>([]);
@@ -95,12 +96,10 @@ const AdminPanel = () => {
 
     try {
       const { data } = await axios.put(
-        // Hum PUT ya PATCH use kar sakte hain
-        `${API_URL}/api/products/${id}/status`, // Backend route ko match karein
-        { status: newStatus }, // IMPORTANT: Hum body mein naya status bhej rahe hain
+        `${API_URL}/api/products/${id}/status`, 
+        { status: newStatus }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Local state ko update karein taaki badlaav turant dikhe
       handleProductUpdated(data.product);
     } catch (err) {
       console.error("Failed to update stock status", err);
@@ -135,7 +134,6 @@ const AdminPanel = () => {
         className={`fixed top-0 left-0 h-screen bg-white shadow-lg transition-all duration-300 rounded-tr-lg rounded-br-lg border-primary border-r-2 flex flex-col`}
         style={{ width: sidebarOpen ? "16rem" : "4rem" }}
       >
-        {/* ... (Sidebar code remains same, no changes needed here) ... */}
         {/* Sidebar header */}
         <div className="flex items-center justify-between p-4 border-b">
           {sidebarOpen && (
@@ -168,6 +166,18 @@ const AdminPanel = () => {
           >
             {sidebarOpen ? (
               <span className="flex-1">Invoice Generator</span>
+            ) : (
+              <FileText className="h-5 w-5 mx-auto" />
+            )}
+          </button>
+          <button
+            className={`flex items-center p-4 hover:bg-gray-200 ${
+              activeTab === "downloadbill" ? "bg-gray-200" : ""
+            }`}
+            onClick={() => setActiveTab("downloadbill")}
+          >
+            {sidebarOpen ? (
+              <span className="flex-1">Download Bill</span>
             ) : (
               <FileText className="h-5 w-5 mx-auto" />
             )}
@@ -206,7 +216,7 @@ const AdminPanel = () => {
 
             {/* Table */}
             <div className="p-4 bg-white rounded-lg shadow">
-              {/* Filters ... (no changes here) ... */}
+              {/* Filters  */}
               <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
                 <input
                   type="text"
@@ -284,7 +294,6 @@ const AdminPanel = () => {
                           <td className="p-2 font-medium">{p.name}</td>
 
                           {/* === UPDATED STATUS COLUMN === */}
-                          {/* Ab status display aur dropdown ek hi jagah hai */}
                           <td className="p-2">
                             <select
                               value={p.stock_status}
@@ -316,7 +325,6 @@ const AdminPanel = () => {
                           </td>
 
                           {/* === UPDATED ACTIONS COLUMN === */}
-                          {/* Ab yahaan sirf Edit aur Delete buttons hain */}
                           <td className="p-2 flex gap-2">
                             <Button
                               size="sm"
@@ -346,6 +354,7 @@ const AdminPanel = () => {
 
         {/* ... (Invoice tab remains same) ... */}
         {activeTab === "invoices" && <InvoiceGen />}
+        {activeTab === "downloadbill" && <DownloadBill />}
       </div>
 
       {/* Modal */}
@@ -355,24 +364,24 @@ const AdminPanel = () => {
             {/* Close button */}
             <button
               className="absolute top-2 right-2 z-10"
-              onClick={handleCloseModal} // MODIFIED
+              onClick={handleCloseModal} 
             >
               <X />
             </button>
 
             <h3 className="text-lg font-bold p-4 text-[hsl(338,73%,67%)] border-b">
-              {productToEdit ? "Edit Product" : "Add Product"} {/* MODIFIED */}
+              {productToEdit ? "Edit Product" : "Add Product"} 
             </h3>
 
             {/* Scrollable content */}
             <div className="overflow-y-auto p-4 flex-1">
               <AddProductForm
-                onClose={handleCloseModal} // MODIFIED
+                onClose={handleCloseModal} 
                 onProductAdded={(newProduct: Product) =>
                   setProducts((prev) => [newProduct, ...prev])
                 }
-                productToEdit={productToEdit} // NEW PROP
-                onProductUpdated={handleProductUpdated} // NEW PROP
+                productToEdit={productToEdit} 
+                onProductUpdated={handleProductUpdated}
               />
             </div>
           </div>

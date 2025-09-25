@@ -4,7 +4,10 @@ import { ShoppingCart, Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/CartContext";
-import logo from "@/assets/Logo-2.png";
+import logo from "@/assets/Logo-3.png";
+
+
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -31,7 +34,6 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center ">
             <img src={logo} alt="Kunj Creation" className="h-16 w-auto" />
-            <span className="font-bold text-xl text-foreground mx-0">Creation</span>
           </Link>
 
           {/* Desktop Navigation */}
