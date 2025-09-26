@@ -8,6 +8,9 @@ const orderRoutes = require("./routes/orderRoutes.js");
 
 const app = express();
 
+
+app.set('trust proxy', 1);
+
 // ✅ CORS options to expose rate-limit headers
 const corsOptions = {
   exposedHeaders: ["RateLimit-Remaining", "RateLimit-Reset"], 

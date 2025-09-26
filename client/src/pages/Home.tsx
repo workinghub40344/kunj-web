@@ -39,7 +39,7 @@ const Home = () => {
     <div className="min-h-screen">
 
       {/* Hero Section */}
-      <section className="relative h-[85vh] md:h-screen flex items-center justify-center text-white overflow-hidden">
+      <section className="relative h-[70vh] md:h-screen flex items-center justify-center text-white overflow-hidden">
         {/* Background Image Container */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out scale-105"
