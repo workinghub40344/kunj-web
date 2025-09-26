@@ -8,11 +8,12 @@ const { protect } = require("../middleware/authMiddleware");
 
 
 const loginLimiter = rateLimit({
-	windowMs: 20 * 60 * 1000, // 1 min.
+	windowMs: 5 * 60 * 1000, // 1 min.
 	max: 5, 
 	message: 'Too many login attempts from this IP, please try again after 15 minutes.',
 	standardHeaders: true, 
-	legacyHeaders: false, 
+	legacyHeaders: false,
+	skipSuccessfulRequests: true
 });
 
 
