@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
 import DownloadBill from "@/components/layout/DownloadBill";
@@ -179,7 +179,7 @@ const AdminPanel = () => {
             {sidebarOpen ? (
               <span className="flex-1">Download Bill</span>
             ) : (
-              <FileText className="h-5 w-5 mx-auto" />
+              <Download className="h-5 w-5 mx-auto" />
             )}
           </button>
         </div>

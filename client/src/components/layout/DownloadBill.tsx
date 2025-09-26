@@ -231,6 +231,7 @@ const DownloadBill = () => {
                                             <h4 className="font-bold mb-2">Seller Details:</h4>
                                             <p><strong>Company:</strong> Kunj Creation</p>
                                             <p><strong>Address:</strong> Jhotwara, Jaipur, Rajasthan</p>
+                                            <p><strong>Pincode:</strong> 302012</p>
                                             <p><strong>Phone:</strong> 8504866930</p>
                                         </div>
                                         <div className="text-left">

@@ -1,11 +1,24 @@
+// routes/adminRoute.js
+
 const express = require('express');
 const router = express.Router();
-const { registerAdmin, loginAdmin } = require('../controllers/adminController');
+const rateLimit = require('express-rate-limit');
+const { loginAdmin } = require('../controllers/adminController');
 const { protect } = require("../middleware/authMiddleware");
 
+
+const loginLimiter = rateLimit({
+	windowMs: 60 * 60 * 1000, // 1 min.
+	max: 5, 
+	message: 'Too many login attempts from this IP, please try again after 15 minutes.',
+	standardHeaders: true, 
+	legacyHeaders: false, 
+});
+
+
 // Public routes
-router.post('/register', registerAdmin);
-router.post('/login', loginAdmin);
+// router.post('/register', registerAdmin);  //commanted due to security risk
+router.post('/login', loginLimiter , loginAdmin);
 
 // Protected route (sirf login ke baad access)
 router.get("/dashboard", protect, (req, res) => {

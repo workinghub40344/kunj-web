@@ -37,26 +37,35 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-[70vh] md:h-[90vh] flex items-end pb-20 md:pb-24 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroBanner})` }}
-        >
-          {/* <div className="absolute inset-0 bg-black/0"></div> */}
-        </div>
 
-        {/* <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto mt-24">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+      {/* Hero Section */}
+      <section className="relative h-[85vh] md:h-screen flex items-center justify-center text-white overflow-hidden">
+        {/* Background Image Container */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out scale-105"
+          style={{ backgroundImage: `url(${heroBanner})` }}
+        />
+
+        {/* Gradient Overlay & Blur Effect */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent backdrop-blur-sm" />
+
+        {/* Content Container */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-5 leading-tight drop-shadow-xl ">
             Divine Poshak for <br />
-            <span className="text-primary">Krishna & Radha</span>
+            <span className="text-white">Krishna & Radha</span>
           </h1>
+
+          <p className="text-lg md:text-xl mb-10 text-gray-200 drop-shadow-lg max-w-2xl mx-auto">
+            Explore our exquisite collection of handcrafted dresses, designed
+            with devotion for your beloved deities.
+          </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/products">
               <Button
                 size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-semibold transition-transform duration-200 hover:scale-105"
               >
                 Shop Collection
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -66,14 +75,13 @@ const Home = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-white text-black hover:bg-white hover:text-foreground px-8 py-3 text-lg"
+                className="border-2 border-white text-primary hover:bg-white hover:text-primary  px-8 py-3 text-lg font-semibold transition-transform duration-200 hover:scale-105"
               >
                 Learn More
               </Button>
             </Link>
           </div>
-        </div> */}
-
+        </div>
       </section>
 
       {/* Featured Products */}
@@ -128,7 +136,6 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us */}
-
       <section className="pb-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -140,7 +147,6 @@ const Home = () => {
               traditional values
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
@@ -174,30 +180,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      {/* <section className="py-16 bg-[#445E47] text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Bring Divine Beauty Home?
-          </h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-            Join thousands of devotees who trust Kunj Creation for their sacred wardrobe needs
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/products">
-              <Button size="lg" variant="secondary" className="px-8 py-3 text-lg bg-primary">
-                Shop Now
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="border-white text-primary hover:bg-white hover:text-primary px-8 py-3 text-lg">
-                Contact Us
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section> */}
     </div>
   );
 };
