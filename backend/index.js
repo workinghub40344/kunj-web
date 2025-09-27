@@ -3,7 +3,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose"); // Mongoose ko import karein (health check ke liye zaroori)
+const mongoose = require("mongoose"); 
 const connectDB = require("./config/db");
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes.js");
@@ -11,20 +11,9 @@ const orderRoutes = require("./routes/orderRoutes.js");
 
 const app = express();
 
-// Trust the first proxy in front of the app (deployment ke liye important)
-app.set('trust proxy', 1);
 
-// CORS options to expose rate-limit headers
-const corsOptions = {
-  exposedHeaders: [
-    "RateLimit-Remaining", 
-    "RateLimit-Reset",
-    "ratelimit-remaining",
-    "ratelimit-reset"
-  ], 
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB

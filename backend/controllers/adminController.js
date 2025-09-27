@@ -30,7 +30,6 @@ exports.registerAdmin = async (req, res) => {
 // Login
 exports.loginAdmin = async (req, res) => {
     const { username, password } = req.body; 
-    console.log("Request received from IP:", req.ip);
     try {
         const admin = await Admin.findOne({ username }); 
         if (admin && await admin.matchPassword(password)) {
