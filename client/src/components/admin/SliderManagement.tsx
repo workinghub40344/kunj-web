@@ -64,7 +64,7 @@ const SliderManagement = () => {
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, // <-- YEH SABSE ZAROORI HAI
+          Authorization: `Bearer ${token}`,
         },
       };
 
@@ -127,7 +127,6 @@ const SliderManagement = () => {
           Upload New Image(s) ({images.length}/10)
         </h2>
         <div className="flex gap-4">
-          {/* Input mein 'multiple' attribute add kiya gaya hai */}
           <Input
             id="file-input"
             type="file"
