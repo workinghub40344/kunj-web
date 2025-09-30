@@ -8,7 +8,13 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import axios from "axios";
 
@@ -21,7 +27,7 @@ const Cart = () => {
   const [customerPhone, setCustomerPhone] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
-  
+
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     updateQuantity(itemId, newQuantity);
@@ -58,53 +64,72 @@ const Cart = () => {
     }
 
     try {
-      const { data: savedOrder } = await axios.post(`${API_URL}/api/orders/create`, {
-        customerName,
-        customerPhone,
-        orderItems: cartItems,
-        totalPrice: total,
+      const { data: savedOrder } = await axios.post(
+        `${API_URL}/api/orders/create`,
+        {
+          customerName,
+          customerPhone,
+          orderItems: cartItems,
+          totalPrice: total,
+        }
+      );
+
+      // Step 2: Backend se mile orderId ke saath WhatsApp message banayein
+      const phoneNumber = "918504866930";
+      let message = `Hello Kunj *_Creation_*, New Order Received!\n\n`;
+      message += `*Order ID:* ${savedOrder.orderId}\n`; // Nayi Order ID
+      message += `*Customer Name:* ${customerName}\n`;
+      message += `*Phone Number:* ${customerPhone}\n\n`;
+      message += `--- *Order Details* ---\n`;
+
+      cartItems.forEach((item, index) => {
+        message += `*${index + 1}. ${item.productName}*\n`;
+        message += `   *${item.sizeType} Size:* ${item.size}\n`; 
+        message += `   *Quantity:* ${item.quantity}\n`;
+        if (item.customization) {
+          message += `   *Customization:* _${item.customization}_\n`;
+        }
+        message += `-------------------------------\n`;
       });
 
-    // Step 2: Backend se mile orderId ke saath WhatsApp message banayein
-    const phoneNumber = "918504866930";
-    let message = `Hello Kunj *_Creation_*, New Order Received!\n\n`;
-    message += `*Order ID:* ${savedOrder.orderId}\n`; // Nayi Order ID
-    message += `*Customer Name:* ${customerName}\n`;
-    message += `*Phone Number:* ${customerPhone}\n\n`;
-    message += `--- *Order Details* ---\n`;
-    
-    cartItems.forEach((item, index) => {
-      message += `*${index + 1}. ${item.productName}*\n`;
-      message += `   *Size:* ${item.size}\n`;
-      message += `   *Quantity:* ${item.quantity}\n`;
-      if (item.customization) {
-        message += `   *Customization:* _${item.customization}_\n`;
-      }
-      message += `-------------------------------\n`;
-    });
+      message += `*Total Amount:* ₹${total}\n`;
 
-    message += `*Total Amount:* ₹${total}\n`;
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+        message
+      )}`;
+      window.open(url, "_blank");
 
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
+      toast({
+        title: "Order Saved & Redirecting!",
+        description: "Your order has been saved successfully.",
+      });
 
-    toast({
-      title: "Order Saved & Redirecting!",
-      description: "Your order has been saved successfully.",
-    });
+      setIsUserInfoModalOpen(false);
+      // Yahan cart clear karne ka logic bhi daal sakte hain
+      // clearCart();
+    } catch (error) {
+      console.error("Failed to save order", error);
+      toast({
+        title: "Error",
+        description: "Could not save your order. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
-    setIsUserInfoModalOpen(false);
-    // Yahan cart clear karne ka logic bhi daal sakte hain
-    // clearCart(); 
-  } catch (error) {
-    console.error("Failed to save order", error);
-    toast({
-      title: "Error",
-      description: "Could not save your order. Please try again.",
-      variant: "destructive",
-    });
-  }
-};
+  const getSizeType = (size: string): string => {
+    const upperCaseSize = size.toUpperCase();
+    if (
+      upperCaseSize.includes("INCH") ||
+      ["S", "M", "L", "XL", "XS", "XXL"].includes(upperCaseSize)
+    ) {
+      return "Metal Size";
+    }
+    if (upperCaseSize.includes("MM")) {
+      return "Marble Size";
+    }
+    return "Size";
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -174,7 +199,7 @@ const Cart = () => {
                     </div>
 
                     <div className="text-sm text-muted-foreground">
-                      Size: {item.size}
+                      <strong>{item.sizeType} Size:</strong> {item.size}
                     </div>
 
                     <div className="flex items-center justify-between">

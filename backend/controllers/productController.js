@@ -23,7 +23,7 @@ const uploadToCloudinary = (fileBuffer) => {
 // Add Product 
 exports.addProduct = async (req, res) => {
     try {
-        const { name, description, category, sizes } = req.body;
+        const { style_code, name, description, category, metal_sizes, marble_sizes, colour } = req.body;
 
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: "Images are required" });
@@ -39,10 +39,13 @@ exports.addProduct = async (req, res) => {
         }
 
         const product = await Product.create({
+            style_code,
             name,
             description,
             category,
-            sizes: JSON.parse(sizes),
+            colour,
+            metal_sizes: JSON.parse(metal_sizes),
+            marble_sizes: JSON.parse(marble_sizes),
             images: uploadedImages,
             imagePublicIds: uploadedPublicIds,
         });
@@ -88,7 +91,7 @@ exports.updateProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        const { name, description, category, sizes, imagesToRemove } = req.body;
+        const {style_code, name, description, category, colour, metal_sizes, marble_sizes, imagesToRemove } = req.body;
 
         // 1. Delete images from Cloudinary if requested
         if (imagesToRemove) {
@@ -123,11 +126,16 @@ exports.updateProduct = async (req, res) => {
         }
         
         // 3. Update text fields and sizes
+        product.style_code = style_code || product.style_code
         product.name = name || product.name;
         product.description = description || product.description;
         product.category = category || product.category;
-        if (sizes) {
-            product.sizes = JSON.parse(sizes);
+        product.colour = colour || product.colour;
+        if (marble_sizes) {
+            product.marble_sizes = JSON.parse(marble_sizes);
+        }
+        if (metal_sizes) {
+            product.metal_sizes = JSON.parse(metal_sizes);
         }
 
         const updatedProduct = await product.save();

@@ -6,15 +6,23 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true },
+    colour: { type: String },
     images: [{ type: String, required: true }],
     imagePublicIds: [{ type: String, required: true }],
     category: { type: String, required: true },
+    style_code: { type: String, required: true, trim: true },
     stock_status: {
       type: String,
       enum: ["IN_STOCK", "OUT_OF_STOCK", "BOOKING_CLOSED"],
       default: "IN_STOCK",
     },
-    sizes: [
+    metal_sizes: [
+      {
+        size: { type: String, required: true },
+        price: { type: Number, required: true },
+      },
+    ],
+    marble_sizes: [
       {
         size: { type: String, required: true },
         price: { type: Number, required: true },

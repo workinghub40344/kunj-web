@@ -1,103 +1,228 @@
-// src/components/products/ProductDetailModal.tsx
-
-import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import type { Product } from "@/data/products";
 
 interface ProductDetailModalProps {
-    product: Product;
-    selectedSize: string;
-    selectedQuantity: number;
-    customizationText: string;
-    onSizeChange: (size: string) => void;
-    onQuantityChange: (quantity: number) => void;
-    onCustomizationChange: (text: string) => void;
-    onAddToCart: () => void;
-    getProductPrice: (product: Product, size?: string, quantity?: number) => number;
+  product: Product;
+  relatedProducts: Product[];
+  onSelectVariant: (product: Product) => void;
+  selectedSize?: string;
+  selectedSizeType?: "metal" | "marble";
+  selectedQuantity: number;
+  customizationText: string;
+  onSizeSelect: (size: string, type: "metal" | "marble") => void;
+  onQuantityChange: (quantity: number) => void;
+  onCustomizationChange: (text: string) => void;
+  onAddToCart: () => void;
+  getProductPrice: (
+    product: Product,
+    size?: string,
+    quantity?: number
+  ) => number;
 }
 
 export const ProductDetailModal = ({
-    product,
-    selectedSize,
-    selectedQuantity,
-    customizationText,
-    onSizeChange,
-    onQuantityChange,
-    onCustomizationChange,
-    onAddToCart,
-    getProductPrice,
+  product,
+  relatedProducts,
+  onSelectVariant,
+  selectedSize,
+  selectedSizeType,
+  selectedQuantity,
+  customizationText,
+  onSizeSelect,
+  onQuantityChange,
+  onCustomizationChange,
+  onAddToCart,
+  getProductPrice,
 }: ProductDetailModalProps) => {
+  if (!product) return null;
 
-    const availableSizes = product.sizes.sort((a, b) => parseInt(a.size) - parseInt(b.size));
-    
-    return (
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-                <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
-            </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
-                <div className="aspect-square overflow-hidden rounded-lg">
-                    <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col space-y-6">
-                    <div>
-                        <Badge variant="secondary" className="mb-2 rounded-[2px]">{product.category}</Badge>
-                        <p className="text-muted-foreground">{product.description}</p>
+  return (
+    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
+      </DialogHeader>
+
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 py-4">
+        {/* Product Image */}
+        <div className="lg:col-span-2 lg:order-2">
+          <div className="aspect-square overflow-hidden rounded-lg">
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Colour Options */}
+        <div className="lg:col-span-1 lg:order-1">
+          {relatedProducts && relatedProducts.length > 1 && (
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Available Colours:
+              </label>
+              <div className="flex flex-row overflow-x-auto gap-3 lg:flex-col lg:overflow-y-auto lg:max-h-[24rem] lg:gap-2 lg:pr-2">
+                {relatedProducts.map((variant) => (
+                  <div
+                    key={variant._id}
+                    onClick={() => onSelectVariant(variant)}
+                    className={`cursor-pointer rounded-lg border-2 p-1 transition-all ${
+                      product._id === variant._id
+                        ? "border-primary"
+                        : "border-slate-200 hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="w-16 h-16 lg:w-full lg:h-20 overflow-hidden rounded-md">
+                      <img
+                        src={variant.images[0]}
+                        alt={variant.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-sm font-medium mb-2 block">Select Size:</label>
-                            <Select value={selectedSize} onValueChange={onSizeChange}>
-                                <SelectTrigger><SelectValue placeholder="Choose size" /></SelectTrigger>
-                                <SelectContent>
-                                    {availableSizes.map((sizeOption) => (
-                                        <SelectItem key={sizeOption.size} value={sizeOption.size}>
-                                            {sizeOption.size} - ₹{sizeOption.price}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium mb-2 block">Quantity:</label>
-                            <Select value={String(selectedQuantity)} onValueChange={(qty) => onQuantityChange(parseInt(qty))}>
-                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    {[1, 2, 3, 4, 5].map((num) => (
-                                        <SelectItem key={num} value={String(num)}>{num}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium mb-2 block">Customization (optional):</label>
-                            <textarea
-                                placeholder="Any special requests?"
-                                value={customizationText}
-                                onChange={(e) => onCustomizationChange(e.target.value)}
-                                className="w-full border rounded-md p-2 text-sm"
-                                rows={2}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex items-center justify-between mt-4">
-                        <span className="text-3xl font-bold text-primary">
-                            ₹{getProductPrice(product, selectedSize, selectedQuantity)}
-                        </span>
-                        <Button 
-                            onClick={onAddToCart} size="lg" 
-                            className="bg-primary hover:bg-primary/90"
-                            disabled={product.stock_status !== "IN_STOCK"}
-                            >
-                            <ShoppingCart className="mr-2 h-5 w-5" />
-                            Add to Cart
-                        </Button>
-                    </div>
-                </div>
+                    <p className="block lg:block text-xs text-center text-muted-foreground mt-1 truncate">
+                      {variant.colour}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-        </DialogContent>
-    );
+          )}
+        </div>
+
+        {/* Right Side Section */}
+        <div className="flex flex-col space-y-6 lg:col-span-2 lg:order-3">
+          <div>
+            <Badge variant="secondary" className="mb-2 rounded-[2px]">
+              {product.category}
+            </Badge>
+            <p className="text-muted-foreground whitespace-normal break-words">
+              {product.description}
+            </p>
+          </div>
+
+          {/* Size, Quantity & Customization */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {product.metal_sizes && product.metal_sizes.length > 0 && (
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Metal Size:
+                  </label>
+                  <Select
+                    value={selectedSizeType === "metal" ? selectedSize : ""}
+                    onValueChange={(size) => onSizeSelect(size, "metal")}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose metal size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {product.metal_sizes.map((sizeOption) => (
+                        <SelectItem
+                          key={sizeOption.size}
+                          value={sizeOption.size}
+                        >
+                          {sizeOption.size} - ₹{sizeOption.price}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              {product.marble_sizes && product.marble_sizes.length > 0 && (
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Marble Size:
+                  </label>
+                  <Select
+                    value={selectedSizeType === "marble" ? selectedSize : ""}
+                    onValueChange={(size) => onSizeSelect(size, "marble")}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose marble size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {product.marble_sizes.map((sizeOption) => (
+                        <SelectItem
+                          key={sizeOption.size}
+                          value={sizeOption.size}
+                        >
+                          {sizeOption.size} - ₹{sizeOption.price}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+
+            {/* Quantity */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Quantity:
+              </label>
+              <Select
+                value={String(selectedQuantity)}
+                onValueChange={(qty) => onQuantityChange(parseInt(qty))}
+              >
+                <SelectTrigger className="w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <SelectItem key={num} value={String(num)}>
+                      {num}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Customization */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Customization (optional):
+              </label>
+              <textarea
+                placeholder="Any special requests?"
+                value={customizationText}
+                onChange={(e) => onCustomizationChange(e.target.value)}
+                className="w-full border rounded-md p-2 text-sm"
+                rows={2}
+              />
+            </div>
+          </div>
+
+          {/* Price & Add to Cart */}
+          <div className="flex items-center justify-between mt-4">
+            <span className="text-3xl font-bold text-primary">
+              ₹{getProductPrice(product, selectedSize, selectedQuantity)}
+            </span>
+            <Button
+              onClick={onAddToCart}
+              size="lg"
+              className="bg-primary hover:bg-primary/90"
+              disabled={product.stock_status !== "IN_STOCK"}
+            >
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Add to Cart
+            </Button>
+          </div>
+        </div>
+      </div>
+    </DialogContent>
+  );
 };

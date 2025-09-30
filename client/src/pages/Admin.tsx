@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download, SlidersIcon, SlidersHorizontal } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download, SlidersHorizontal } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
 import DownloadBill from "@/components/layout/DownloadBill";
@@ -18,9 +18,9 @@ const AdminPanel = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [productToEdit, setProductToEdit] = useState<Product | null>(null); // State for editing
 
-  const [activeTab, setActiveTab] = useState<"products" | "invoices" | "downloadbill" | "slider">(
-    "products"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "products" | "invoices" | "downloadbill" | "slider"
+  >("products");
   const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,10 +28,13 @@ const AdminPanel = () => {
 
   // Memoized sorted sizes for filter dropdown
   const sortedSizes = useMemo(() => {
-    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL"];
-    const uniqueSizes = [
-      ...new Set(products.flatMap((p) => p.sizes.map((s) => s.size))),
-    ];
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
+    // Dono arrays se sizes collect karein
+    const allSizes = products.flatMap((p) => [
+      ...(p.metal_sizes || []).map((s) => s.size),
+      ...(p.marble_sizes || []).map((s) => s.size),
+    ]);
+    const uniqueSizes = [...new Set(allSizes)];
 
     uniqueSizes.sort((a, b) => {
       const upperA = a.toUpperCase();
@@ -97,8 +100,8 @@ const AdminPanel = () => {
 
     try {
       const { data } = await axios.put(
-        `${API_URL}/api/products/${id}/status`, 
-        { status: newStatus }, 
+        `${API_URL}/api/products/${id}/status`,
+        { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       handleProductUpdated(data.product);
@@ -289,7 +292,12 @@ const AdminPanel = () => {
                             ? p.category === selectedCategory
                             : true) &&
                           (selectedSize
-                            ? p.sizes.some((s) => s.size === selectedSize)
+                            ? (p.metal_sizes || []).some(
+                                (s) => s.size === selectedSize
+                              ) ||
+                              (p.marble_sizes || []).some(
+                                (s) => s.size === selectedSize
+                              )
                             : true)
                       )
                       .map((p) => (
@@ -330,11 +338,30 @@ const AdminPanel = () => {
                           </td>
 
                           <td className="p-2 space-y-1 text-sm">
-                            {p.sizes.map((s) => (
-                              <div key={s.size}>
-                                {s.size}: ₹{s.price}
+                            {p.metal_sizes && p.metal_sizes.length > 0 && (
+                              <div>
+                                <strong className="font-semibold">
+                                  Metal:
+                                </strong>
+                                {p.metal_sizes.map((s) => (
+                                  <div key={`metal-${s.size}`}>
+                                    {s.size}: ₹{s.price}
+                                  </div>
+                                ))}
                               </div>
-                            ))}
+                            )}
+                            {p.marble_sizes && p.marble_sizes.length > 0 && (
+                              <div className="mt-1">
+                                <strong className="font-semibold">
+                                  Marble:
+                                </strong>
+                                {p.marble_sizes.map((s) => (
+                                  <div key={`marble-${s.size}`}>
+                                    {s.size}: ₹{s.price}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </td>
 
                           {/* === UPDATED ACTIONS COLUMN === */}
@@ -368,7 +395,7 @@ const AdminPanel = () => {
         {/* ... (Invoice tab) ... */}
         {activeTab === "invoices" && <InvoiceGen />}
         {activeTab === "downloadbill" && <DownloadBill />}
-        {activeTab === "slider" && < SliderManagement />}
+        {activeTab === "slider" && <SliderManagement />}
       </div>
 
       {/* Modal */}
@@ -378,23 +405,23 @@ const AdminPanel = () => {
             {/* Close button */}
             <button
               className="absolute top-2 right-2 z-10"
-              onClick={handleCloseModal} 
+              onClick={handleCloseModal}
             >
               <X />
             </button>
 
             <h3 className="text-lg font-bold p-4 text-[hsl(338,73%,67%)] border-b">
-              {productToEdit ? "Edit Product" : "Add Product"} 
+              {productToEdit ? "Edit Product" : "Add Product"}
             </h3>
 
             {/* Scrollable content */}
             <div className="overflow-y-auto p-4 flex-1">
               <AddProductForm
-                onClose={handleCloseModal} 
+                onClose={handleCloseModal}
                 onProductAdded={(newProduct: Product) =>
                   setProducts((prev) => [newProduct, ...prev])
                 }
-                productToEdit={productToEdit} 
+                productToEdit={productToEdit}
                 onProductUpdated={handleProductUpdated}
               />
             </div>
