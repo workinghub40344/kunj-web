@@ -45,40 +45,40 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const { toast } = useToast();
 
   const addToCart = (newItem: Omit<CartItem, "id">) => {
-    setCartItems((prev) => {
-      const existingItem = prev.find(
-        (item) =>
-          item.productId === newItem.productId &&
-          item.size === newItem.size &&
-          item.customization === newItem.customization
+  setCartItems((prev) => {
+    const existingItem = prev.find(
+      (item) =>
+        item.productId === newItem.productId &&
+        item.size === newItem.size &&
+        item.sizeType === newItem.sizeType && // <-- YEH NAYA CHECK ADD KIYA GAYA HAI
+        item.customization === newItem.customization
+    );
+
+    if (existingItem) {
+      toast({
+        title: "Cart Updated",
+        description: `${newItem.productName} quantity updated in cart.`,
+      });
+      return prev.map((item) =>
+        item.id === existingItem.id
+          ? { ...item, quantity: item.quantity + newItem.quantity }
+          : item
       );
+    } else {
+      const cartItem: CartItem = {
+        ...newItem,
+        id: Date.now().toString() + Math.random().toString(36),
+      };
 
-      if (existingItem) {
-        toast({
-          title: "Cart Updated",
-          description: `${newItem.productName} quantity updated in cart.`,
-        });
-        return prev.map((item) =>
-          item.id === existingItem.id
-            ? { ...item, quantity: item.quantity + newItem.quantity }
-            : item
-        );
-      } else {
-        const cartItem: CartItem = {
-          ...newItem,
-          id: Date.now().toString() + Math.random().toString(36),
-        };
+      toast({
+        title: "Added to Cart",
+        description: `${newItem.productName} has been added to your cart.`,
+      });
 
-        toast({
-          title: "Added to Cart",
-          description: `${newItem.productName} has been added to your cart.`,
-        });
-
-        return [...prev, cartItem];
-      }
-    });
-  };
-
+      return [...prev, cartItem];
+    }
+  });
+};
   const updateQuantity = (itemId: string, quantity: number) => {
     if (quantity < 1) return;
     setCartItems((prev) =>
