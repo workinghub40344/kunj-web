@@ -1,2 +1,6 @@
 # Ignore Firebase service account key
 backend/kunjcreationfirebase.json
+
+
+client/.env
+backend/.env
