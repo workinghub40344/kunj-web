@@ -9,6 +9,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes.js");
 const orderRoutes = require("./routes/orderRoutes.js");
 const sliderRoutes = require('./routes/sliderRoutes');
+const userRoutes = require('./routes/userRoutes.js');
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use('/api/slider', sliderRoutes);
+app.use('/api/users', userRoutes);
 
 // Basic route to check server status
 app.get("/", (req, res) => {
