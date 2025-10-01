@@ -452,7 +452,7 @@ const Navbar = () => {
                           className="h-16 w-16 rounded-full mr-2"
                         />
                       </div>
-                      <div className="flex flex-col space-y-1">
+                      <div className="flex flex-col space-y-1 text-center">
                         <p className="text-sm font-medium leading-none">{userInfo.name}</p>
                         <p className="text-xs leading-none text-muted-foreground">{userInfo.email}</p>
                       </div>
@@ -507,7 +507,7 @@ const Navbar = () => {
                           className="h-16 w-16 rounded-full mr-2"
                         />
                       </div>
-                      <div className="flex flex-col space-y-1">
+                      <div className="flex flex-col space-y-1 text-center">
                         <p className="text-sm font-medium leading-none">{userInfo.name}</p>
                         <p className="text-xs leading-none text-muted-foreground">{userInfo.email}</p>
                       </div>
