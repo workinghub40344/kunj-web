@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { googleLogin } = require('../controllers/userController'); // Path sahi karein
+const { googleLogin, getAllUsers, deleteUser } = require('../controllers/userController');
+const { protect } = require('../middleware/authMiddleware');
 
 // ... aapke doosre routes ...
 router.post('/google-login', googleLogin);
+router.get('/', protect, getAllUsers);
+router.delete('/:id', protect, deleteUser);
 
 module.exports = router;

@@ -92,6 +92,30 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+const getOrdersByUserId = async (req, res) => {
+  try {
+    const userIdToFind = req.params.userId;
+
+    // ===== DEBUGGING LOGS START =====
+    console.log("-----------------------------------------");
+    console.log("Searching for orders for User ID:", userIdToFind);
+
+    const orders = await Order.find({ user: userIdToFind }).sort({ createdAt: -1 });
+
+    console.log("Query Result (Orders Found):", orders.length);
+    if (orders.length > 0) {
+      console.log("First order found:", orders[0]);
+    }
+    console.log("-----------------------------------------");
+    // ===== DEBUGGING LOGS END =====
+
+    res.json(orders);
+  } catch (error) {
+    console.error("Error in getOrdersByUserId:", error); // Error ko aache se log karein
+    res.status(500).json({ message: "Error fetching user's orders" });
+  }
+};
+
 const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);
@@ -130,6 +154,7 @@ const resetOrders = async (req, res) => {
 module.exports = {
     createOrder,
     getAllOrders,
+    getOrdersByUserId,
     deleteOrder,
     resetOrders,
 };

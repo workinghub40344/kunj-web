@@ -4,11 +4,11 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Product as ProductType } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download, SlidersHorizontal } from "lucide-react";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download, SlidersHorizontal, User, ListOrdered } from "lucide-react";
 import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
 import InvoiceGen from "@/components/layout/InvoiceGen";
-import DownloadBill from "@/components/layout/DownloadBill";
 import SliderManagement from "@/components/admin/SliderManagement";
+import UserInfo from "@/components/admin/UserInfo";
 
 type Product = ProductType & { _id: string };
 
@@ -19,7 +19,7 @@ const AdminPanel = () => {
   const [productToEdit, setProductToEdit] = useState<Product | null>(null); // State for editing
 
   const [activeTab, setActiveTab] = useState<
-    "products" | "invoices" | "downloadbill" | "slider"
+    "products" | "invoices" | "downloadbill" | "slider" | "userinfo" | "allorders"
   >("products");
   const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -176,14 +176,14 @@ const AdminPanel = () => {
           </button>
           <button
             className={`flex items-center p-4 hover:bg-gray-200 ${
-              activeTab === "downloadbill" ? "bg-gray-200" : ""
+              activeTab === "userinfo" ? "bg-gray-200" : ""
             }`}
-            onClick={() => setActiveTab("downloadbill")}
+            onClick={() => setActiveTab("userinfo")}
           >
             {sidebarOpen ? (
-              <span className="flex-1">Download Bill</span>
+              <span className="flex-1">User Information</span>
             ) : (
-              <Download className="h-5 w-5 mx-auto" />
+              <User className="h-5 w-5 mx-auto" />
             )}
           </button>
           <button
@@ -196,6 +196,18 @@ const AdminPanel = () => {
               <span className="flex-1">Slider</span>
             ) : (
               <SlidersHorizontal className="h-5 w-5 mx-auto" />
+            )}
+          </button>
+          <button
+            className={`flex items-center p-4 hover:bg-gray-200 ${
+              activeTab === "allorders" ? "bg-gray-200" : ""
+            }`}
+            onClick={() => setActiveTab("allorders")}
+          >
+            {sidebarOpen ? (
+              <span className="flex-1">All Orders</span>
+            ) : (
+              <ListOrdered className="h-5 w-5 mx-auto" />
             )}
           </button>
         </div>
@@ -394,7 +406,7 @@ const AdminPanel = () => {
 
         {/* ... (Invoice tab) ... */}
         {activeTab === "invoices" && <InvoiceGen />}
-        {activeTab === "downloadbill" && <DownloadBill />}
+        {activeTab === "userinfo" && <UserInfo />}
         {activeTab === "slider" && <SliderManagement />}
       </div>
 
