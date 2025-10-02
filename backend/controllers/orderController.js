@@ -1,5 +1,6 @@
 const Order = require('../models/orderModel.js');
 const Counter = require('../models/counterModel.js');
+const User = require('../models/userModel.js');
 
 async function getNextSequenceValue(sequenceName) {
   const sequenceDocument = await Counter.findByIdAndUpdate(
@@ -10,9 +11,46 @@ async function getNextSequenceValue(sequenceName) {
   return sequenceDocument.seq;
 }
 
+// const createOrder = async (req, res) => {
+//   try {
+//     const { customerName, customerPhone, orderItems, totalPrice } = req.body;
+
+//     const orderNumber = await getNextSequenceValue('orderId');
+//     const date = new Date();
+//     const year = date.getFullYear().toString().slice(-2);
+//     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+//     const customOrderId = `${year}${orderNumber}${month}`;
+
+//     const order = new Order({
+//         orderId: customOrderId,
+//         customerName,
+//         customerPhone,
+//         orderItems,
+//         totalPrice,
+//     });
+
+//     const createdOrder = await order.save();
+//     const user = await User.findById(req.user._id);
+//     if (user && !user.phone) {
+//       user.phone = req.body.customerPhone;
+//       await user.save();
+//     }
+//     res.status(201).json(createdOrder);
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server Error creating order' });
+//   }
+// };
+
 const createOrder = async (req, res) => {
   try {
-    const { customerName, customerPhone, orderItems, totalPrice } = req.body;
+    const { customerPhone, orderItems, totalPrice } = req.body;
+
+    if (!orderItems || orderItems.length === 0) {
+      res.status(400);
+      throw new Error('No order items in cart');
+    }
 
     const orderNumber = await getNextSequenceValue('orderId');
     const date = new Date();
@@ -22,17 +60,24 @@ const createOrder = async (req, res) => {
 
     const order = new Order({
         orderId: customOrderId,
-        customerName,
-        customerPhone,
         orderItems,
         totalPrice,
+        customerPhone,
+        user: req.user._id,
+        customerName: req.user.name,
     });
 
     const createdOrder = await order.save();
+
+    if (req.user && !req.user.phone) {
+        req.user.phone = customerPhone;
+        await req.user.save();
+    }
+    
     res.status(201).json(createdOrder);
 
   } catch (error) {
-    console.error(error);
+    console.error("Error creating order:", error);
     res.status(500).json({ message: 'Server Error creating order' });
   }
 };
@@ -63,11 +108,7 @@ const deleteOrder = async (req, res) => {
 
 const resetOrders = async (req, res) => {
   try {
-    // Step 1: Delete all documents from the Order collection
     await Order.deleteMany({});
-
-    // Step 2: Reset the counter sequence to 0
-    // Agli order ID 1 se start hogi kyunki getNextSequenceValue pehle 1 se increment karta hai
     await Counter.updateOne(
       { _id: 'orderId' },
       { $set: { seq: 0 } },

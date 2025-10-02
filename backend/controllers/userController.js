@@ -30,6 +30,7 @@ exports.googleLogin = async (req, res) => {
       email: user.email,
       profilePicture: user.profilePicture,
       isAdmin: user.isAdmin,
+      phone: user.phone,
       token: generateToken(user._id),
     });
 

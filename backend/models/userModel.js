@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    phone: {
+      type: String,
+    },
     profilePicture: {
       type: String,
       default: 'https://i.pravatar.cc/150', 
