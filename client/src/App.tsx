@@ -11,7 +11,6 @@ import Layout from "./components/layout/Layout";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
-import UserInfo from "./components/admin/UserInfo";
 
 const queryClient = new QueryClient();
 
@@ -65,7 +64,6 @@ const App = () => (
                   <Suspense fallback={<LoadingFallback />}>
                     <Routes>
                       <Route path="/" element={<Home />} />
-                      <Route path="/a" element={<UserInfo />} />
                       <Route path="/products" element={<Products />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />

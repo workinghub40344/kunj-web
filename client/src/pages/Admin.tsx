@@ -9,6 +9,7 @@ import AddProductForm from "@/components/layout/AddProductForm"; // Make sure th
 import InvoiceGen from "@/components/layout/InvoiceGen";
 import SliderManagement from "@/components/admin/SliderManagement";
 import UserInfo from "@/components/admin/UserInfo";
+import AllOrders from "@/components/admin/AllOrders";
 
 type Product = ProductType & { _id: string };
 
@@ -162,7 +163,7 @@ const AdminPanel = () => {
               <Box className="h-5 w-5 mx-auto" />
             )}
           </button>
-          <button
+          {/* <button
             className={`flex items-center p-4 hover:bg-gray-200 ${
               activeTab === "invoices" ? "bg-gray-200" : ""
             }`}
@@ -173,7 +174,7 @@ const AdminPanel = () => {
             ) : (
               <FileText className="h-5 w-5 mx-auto" />
             )}
-          </button>
+          </button> */}
           <button
             className={`flex items-center p-4 hover:bg-gray-200 ${
               activeTab === "userinfo" ? "bg-gray-200" : ""
@@ -408,6 +409,7 @@ const AdminPanel = () => {
         {activeTab === "invoices" && <InvoiceGen />}
         {activeTab === "userinfo" && <UserInfo />}
         {activeTab === "slider" && <SliderManagement />}
+        {activeTab === "allorders" && <AllOrders />}
       </div>
 
       {/* Modal */}
