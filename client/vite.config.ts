@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   build: {
-    outDir: "../dist/client",
+    outDir: "dist",
     emptyOutDir: true,
     sourcemap: false,
   },
