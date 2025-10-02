@@ -134,34 +134,50 @@ const LatestProducts = () => {
   };
 
   const handleAddToCart = (product: Product) => {
-    const state = productStates[product._id];
-    if (!state?.selectedSize) {
-      toast({
-        variant: "destructive",
-        title: "Size Required",
-        description: "Please select a size first!",
-      });
-      return;
-    }
-    const sizeOption = getAllSizes(product).find(
-      (s) => s.size === state.selectedSize
-    );
-    if (!sizeOption) return;
-    addToCart({
-      productId: product._id,
-      productName: product.name,
-      size: state.selectedSize,
-      sizeType: state.selectedSizeType === "metal" ? "Metal" : "Marble",
-      quantity: state.quantity || 1,
-      price: sizeOption.price,
-      image: product.images[0],
-      customization: state.customization || "",
-    });
+  const state = productStates[product._id];
+  const selectedSize = state?.selectedSize;
+  const selectedType = state?.selectedSizeType;
+
+  if (!selectedSize || !selectedType) {
     toast({
-      title: "Success!",
-      description: `${product.name} has been added to your cart.`,
+      variant: "destructive",
+      title: "Size Required",
+      description: "Please select a size first!",
     });
-  };
+    return;
+  }
+
+  let sizeOption;
+  // Agar 'metal' select hai, to sirf metal_sizes mein dhoondho
+  if (selectedType === 'metal') {
+    sizeOption = product.metal_sizes?.find(s => s.size === selectedSize);
+  } 
+  // Agar 'marble' select hai, to sirf marble_sizes mein dhoondho
+  else {
+    sizeOption = product.marble_sizes?.find(s => s.size === selectedSize);
+  }
+  
+  if (!sizeOption) {
+    console.error("Could not find the selected size option for the given type.");
+    return;
+  }
+
+  addToCart({
+    productId: product._id,
+    productName: product.name,
+    size: selectedSize,
+    sizeType: selectedType === "metal" ? "Metal" : "Marble",
+    quantity: state.quantity || 1,
+    price: sizeOption.price, // Ab yahan hamesha sahi price aayegi
+    image: product.images[0],
+    customization: state.customization || "",
+  });
+
+  toast({
+    title: "Success!",
+    description: `${product.name} has been added to your cart.`,
+  });
+};
 
   const relatedProducts = useMemo(() => {
     if (!selectedProduct) return [];
