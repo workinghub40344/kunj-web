@@ -10,6 +10,7 @@ import Layout from "./components/layout/Layout";
 // Keep static imports for components used frequently or as fallbacks
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const LoadingFallback = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <AuthProvider>
     <CartProvider>
       <TooltipProvider>
         <Toaster />
@@ -76,6 +78,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </CartProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

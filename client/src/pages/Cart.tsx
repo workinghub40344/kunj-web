@@ -11,8 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import axios from "axios";
 import { auth, googleProvider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
+import { useAuth } from "@/context/AuthContext"; 
 
-interface UserInfo {
+interface user {
   _id: string; name: string; email: string; profilePicture: string; isAdmin: boolean; token: string; phone?: string;
 }
 
@@ -29,24 +30,12 @@ const GoogleIcon = () => (
 const Cart = () => {
   const { toast } = useToast();
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
-  
-  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
+  const { user, login } = useAuth();
+  const [isuserModalOpen, setIsuserModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [customerPhone, setCustomerPhone] = useState(user?.phone || "");
 
   const API_URL = import.meta.env.VITE_API_URL;
-
-  useEffect(() => {
-    const storedUserInfo = localStorage.getItem("userInfo");
-    if (storedUserInfo) {
-      const user: UserInfo = JSON.parse(storedUserInfo);
-      setUserInfo(user);
-      if (user.phone) {
-      setCustomerPhone(user.phone);
-    }
-    }
-  }, []);
 
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -66,8 +55,8 @@ const Cart = () => {
       return;
     }
     
-    if (userInfo) {
-      setIsUserInfoModalOpen(true);
+    if (user) {
+      setIsuserModalOpen(true);
     } else {
       setIsLoginModalOpen(true);
     }
@@ -81,11 +70,10 @@ const Cart = () => {
       const res = await axios.post(`${API_URL}/api/users/google-login`, { token: idToken });
 
       if (res.data) {
-        localStorage.setItem("userInfo", JSON.stringify(res.data));
-        setUserInfo(res.data);
+        login(res.data);
         setCustomerPhone(res.data.phone || "");
         setIsLoginModalOpen(false);
-        setIsUserInfoModalOpen(true);
+        setIsuserModalOpen(true);
       }
     } catch (error) {
       console.error("Google login failed:", error);
@@ -99,7 +87,7 @@ const Cart = () => {
       return;
     }
 
-    if (!userInfo) {
+    if (!user) {
         toast({ title: "Login Required", description: "Something went wrong. Please log in again.", variant: "destructive" });
         return;
     }
@@ -107,12 +95,12 @@ const Cart = () => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${userInfo.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
 
       const orderData = {
-        customerName: userInfo.name,
+        customerName: user.name,
         customerPhone,
         orderItems: cartItems,
         totalPrice: total,
@@ -142,7 +130,7 @@ const Cart = () => {
 
       toast({ title: "Order Saved & Redirecting!", description: "Your order has been saved successfully." });
       
-      setIsUserInfoModalOpen(false);
+      setIsuserModalOpen(false);
       clearCart();
       setCustomerPhone("");
 
@@ -253,7 +241,7 @@ const Cart = () => {
         </div>
       </div>
 
-      <Dialog open={isUserInfoModalOpen} onOpenChange={setIsUserInfoModalOpen}>
+      <Dialog open={isuserModalOpen} onOpenChange={setIsuserModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Confirm Your Details</DialogTitle>
@@ -261,7 +249,7 @@ const Cart = () => {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label className="text-right">Name</label>
-              <Input value={userInfo?.name || ''} className="col-span-3" readOnly disabled />
+              <Input value={user?.name || ''} className="col-span-3" readOnly disabled />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="phone" className="text-right">Phone</label>
@@ -271,8 +259,8 @@ const Cart = () => {
                 onChange={(e) => setCustomerPhone(e.target.value)} 
                 className="col-span-3" 
                 placeholder="Enter your phone number" 
-                readOnly={!!userInfo?.phone && userInfo.phone !== ""}
-                disabled={!!userInfo?.phone && userInfo.phone !== ""}
+                readOnly={!!user?.phone && user.phone !== ""}
+                disabled={!!user?.phone && user.phone !== ""}
               />
             </div>
           </div>
