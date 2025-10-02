@@ -83,7 +83,7 @@ const Cart = () => {
       if (res.data) {
         localStorage.setItem("userInfo", JSON.stringify(res.data));
         setUserInfo(res.data);
-        
+        setCustomerPhone(res.data.phone || "");
         setIsLoginModalOpen(false);
         setIsUserInfoModalOpen(true);
       }
@@ -271,8 +271,8 @@ const Cart = () => {
                 onChange={(e) => setCustomerPhone(e.target.value)} 
                 className="col-span-3" 
                 placeholder="Enter your phone number" 
-                readOnly={!!userInfo?.phone}
-                disabled={!!userInfo?.phone}
+                readOnly={!!userInfo?.phone && userInfo.phone !== ""}
+                disabled={!!userInfo?.phone && userInfo.phone !== ""}
               />
             </div>
           </div>
