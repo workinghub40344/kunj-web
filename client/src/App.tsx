@@ -11,6 +11,7 @@ import Layout from "./components/layout/Layout";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
+import { ProductProvider } from "./context/ProductContext";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const LoadingFallback = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+    <ProductProvider>
     <CartProvider>
       <TooltipProvider>
         <Toaster />
@@ -78,6 +80,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </CartProvider>
+    </ProductProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

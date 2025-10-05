@@ -5,17 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
 import { ProductDetailModal } from "@/components/products/ProductDetailModal";
+import { ProductGrid } from "@/components/products/ProductGrid"; // Naya component import karein
+import { useProducts } from "@/context/ProductContext";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 
-// State ke liye ek saaf Type banaya
-type ProductState = {
+export type ProductState = {
   selectedSize?: string;
   selectedSizeType?: "metal" | "marble";
   quantity: number;
@@ -23,9 +34,7 @@ type ProductState = {
 };
 
 const Products = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { products, loading, error } = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
@@ -39,15 +48,10 @@ const Products = () => {
   const { addToCart } = useCart();
   const { toast } = useToast();
 
-useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`${API_URL}/api/products`);
-      setProducts(data);
-
+  useEffect(() => {
+    if (products.length > 0) {
       const initialStates: Record<string, ProductState> = {};
-      data.forEach((product: Product) => {
+      products.forEach((product) => {
         let defaultSize: string | undefined = undefined;
         let defaultSizeType: "metal" | "marble" | undefined = undefined;
 
@@ -69,19 +73,8 @@ useEffect(() => {
         }
       });
       setProductStates(initialStates);
-
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Could not fetch products.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
-  fetchProducts();
-}, [API_URL, toast]);
+  }, [products]);
 
   const getAllSizes = (product: Product) => [
     ...(product.metal_sizes || []),
@@ -126,48 +119,50 @@ useEffect(() => {
     }));
   };
 
-const handleAddToCart = (product: Product) => {
-  const state = productStates[product._id];
-  const selectedSize = state?.selectedSize;
-  const selectedType = state?.selectedSizeType;
+  const handleAddToCart = (product: Product) => {
+    const state = productStates[product._id];
+    const selectedSize = state?.selectedSize;
+    const selectedType = state?.selectedSizeType;
 
-  if (!selectedSize || !selectedType) {
-    toast({
-      variant: "destructive",
-      title: "Size Required",
-      description: "Please select a size first!",
+    if (!selectedSize || !selectedType) {
+      toast({
+        variant: "destructive",
+        title: "Size Required",
+        description: "Please select a size first!",
+      });
+      return;
+    }
+
+    let sizeOption;
+    if (selectedType === "metal") {
+      sizeOption = product.metal_sizes?.find((s) => s.size === selectedSize);
+    } else {
+      sizeOption = product.marble_sizes?.find((s) => s.size === selectedSize);
+    }
+
+    if (!sizeOption) {
+      console.error(
+        "Could not find the selected size option for the given type."
+      );
+      return;
+    }
+
+    addToCart({
+      productId: product._id,
+      productName: product.name,
+      size: selectedSize,
+      sizeType: selectedType === "metal" ? "Metal" : "Marble",
+      quantity: state?.quantity || 1,
+      price: sizeOption.price,
+      image: product.images[0],
+      customization: state?.customization || "",
     });
-    return;
-  }
 
-  let sizeOption;
-  if (selectedType === 'metal') {
-    sizeOption = product.metal_sizes?.find(s => s.size === selectedSize);
-  } else {
-    sizeOption = product.marble_sizes?.find(s => s.size === selectedSize);
-  }
-  
-  if (!sizeOption) {
-    console.error("Could not find the selected size option for the given type.");
-    return;
-  }
-
-  addToCart({
-    productId: product._id,
-    productName: product.name,
-    size: selectedSize,
-    sizeType: selectedType === "metal" ? "Metal" : "Marble",
-    quantity: state?.quantity || 1,
-    price: sizeOption.price,
-    image: product.images[0],
-    customization: state?.customization || "",
-  });
-
-  toast({
-    title: "Success!",
-    description: `${product.name} has been added to your cart.`,
-  });
-};
+    toast({
+      title: "Success!",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   const getProductPrice = (
     product: Product,
@@ -176,7 +171,7 @@ const handleAddToCart = (product: Product) => {
   ) => {
     if (!size) return 0;
 
-    // Agar type 'metal' hai, to sirf metal_sizes mein dhoondhein
+
     if (type === "metal") {
       return product.metal_sizes?.find((s) => s.size === size)?.price || 0;
     }
@@ -188,6 +183,33 @@ const handleAddToCart = (product: Product) => {
     // Fallback (agar type na mile to dono mein dhoondhein)
     const allSizes = getAllSizes(product);
     return allSizes.find((s) => s.size === size)?.price || 0;
+  };
+
+  const getStockBadge = (status: Product["stock_status"]) => {
+    const baseClasses =
+      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center";
+    switch (status) {
+      case "OUT_OF_STOCK":
+        return (
+          <Badge
+            variant="destructive"
+            className={`${baseClasses} rounded-none bg-gray-400 text-sm font-bold`}
+          >
+            Out of Stock
+          </Badge>
+        );
+      case "BOOKING_CLOSED":
+        return (
+          <Badge
+            variant="secondary"
+            className={`${baseClasses} rounded-none bg-gray-400 text-sm font-bold`}
+          >
+            Booking Closed
+          </Badge>
+        );
+      default:
+        return null;
+    }
   };
 
   const categories = useMemo(
@@ -268,35 +290,12 @@ const handleAddToCart = (product: Product) => {
     setSelectedColour("all");
   };
 
-  const getStockBadge = (status: Product["stock_status"]) => {
-    const baseClasses =
-      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center";
-    switch (status) {
-      case "OUT_OF_STOCK":
-        return (
-          <Badge
-            variant="destructive"
-            className={`${baseClasses} rounded-none bg-gray-400 text-sm font-bold`}
-          >
-            Out of Stock
-          </Badge>
-        );
-      case "BOOKING_CLOSED":
-        return (
-          <Badge
-            variant="secondary"
-            className={`${baseClasses} rounded-none bg-gray-400 text-sm font-bold`}
-          >
-            Booking Closed
-          </Badge>
-        );
-      default:
-        return null;
-    }
-  };
+  if (loading) return <p className="text-center text-lg p-8">Loading products...</p>;
+  if (error) return <p className="text-center text-lg p-8 text-destructive">{error}</p>;
 
   return (
     <div className="container mx-auto px-8 py-8">
+      {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
           Our Divine Collection
@@ -305,62 +304,74 @@ const handleAddToCart = (product: Product) => {
           Handcrafted Poshak and accessories for Lord Krishna and Radha Rani
         </p>
       </div>
-
+      {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-8 sticky top-[65px] z-20">
         <div className="hidden lg:grid grid-flow-col auto-cols-max gap-8 items-center">
-  <div className="relative ">
-    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-    <Input
-      placeholder="Search products..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="pl-10 w-[30vw]"
-    />
-  </div>
-  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-    <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
-    <SelectContent>
-      {categories.map((c) => (
-        <SelectItem key={c} value={c}>
-          {c === "all" ? "All Categories" : c}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-  <Select value={selectedColour} onValueChange={setSelectedColour}>
-    <SelectTrigger><SelectValue placeholder="Colour" /></SelectTrigger>
-    <SelectContent>
-      {colours.map((c) => (
-        <SelectItem key={c} value={c}>
-          {c === "all" ? "All Colours" : c}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-  <Select value={selectedSize} onValueChange={setSelectedSize}>
-    <SelectTrigger><SelectValue placeholder="Size" /></SelectTrigger>
-    <SelectContent>
-      {sizes.map((s) => (
-        <SelectItem key={s} value={s}>
-          {s === "all" ? "All Sizes" : s}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-  <Select value={priceRange} onValueChange={setPriceRange}>
-    <SelectTrigger><SelectValue placeholder="Price Range" /></SelectTrigger>
-    <SelectContent>
-      <SelectItem value="all">All Prices</SelectItem>
-      <SelectItem value="under-1500">Under ₹1,500</SelectItem>
-      <SelectItem value="1500-3000">₹1,500 - ₹3,000</SelectItem>
-      <SelectItem value="over-3000">Over ₹3,000</SelectItem>
-    </SelectContent>
-  </Select>
-  <Button onClick={handleResetFilters} variant="outline" className="flex items-center">
-    <Filter className="mr-2 h-4 w-4" /> Reset Filters
-  </Button>
-</div>
-
+          <div className="relative ">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-[30vw]"
+            />
+          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c === "all" ? "All Categories" : c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedColour} onValueChange={setSelectedColour}>
+            <SelectTrigger>
+              <SelectValue placeholder="Colour" />
+            </SelectTrigger>
+            <SelectContent>
+              {colours.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c === "all" ? "All Colours" : c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedSize} onValueChange={setSelectedSize}>
+            <SelectTrigger>
+              <SelectValue placeholder="Size" />
+            </SelectTrigger>
+            <SelectContent>
+              {sizes.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s === "all" ? "All Sizes" : s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={priceRange} onValueChange={setPriceRange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Price Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Prices</SelectItem>
+              <SelectItem value="under-1500">Under ₹1,500</SelectItem>
+              <SelectItem value="1500-3000">₹1,500 - ₹3,000</SelectItem>
+              <SelectItem value="over-3000">Over ₹3,000</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            onClick={handleResetFilters}
+            variant="outline"
+            className="flex items-center"
+          >
+            <Filter className="mr-2 h-4 w-4" /> Reset Filters
+          </Button>
+        </div>
+        {/* Mobile Filters */}
         <div className="grid grid-cols-5 gap-4 lg:hidden">
           <div className="relative col-span-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -457,181 +468,17 @@ const handleAddToCart = (product: Product) => {
           </DropdownMenu>
         </div>
       </div>
-
-      {loading ? (
-        <p className="text-center text-lg">Loading products...</p>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {filteredProducts.map((product) => {
-              const state = productStates[product._id];
-              return (
-                <Card
-                  key={product._id}
-                  className="product-card group flex flex-col"
-                >
-                  <div
-                    className="aspect-square overflow-hidden relative cursor-pointer"
-                    onClick={() => setSelectedProduct(product)}
-                  >
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    {getStockBadge(product.stock_status)}
-                    {product.stock_status !== "IN_STOCK" && (
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center"></div>
-                    )}
-                  </div>
-
-                  <CardContent className="p-4 flex flex-col flex-grow">
-                    <Badge
-                      variant="secondary"
-                      className="mb-2 w-fit rounded-[2px]"
-                    >
-                      {product.category}
-                    </Badge>
-                    <h3
-                      className="font-semibold text-lg mb-2 line-clamp-1 cursor-pointer hover:text-primary"
-                      onClick={() => setSelectedProduct(product)}
-                    >
-                      {product.name}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2 flex-grow">
-                      {product.description}
-                    </p>
-
-                    <div className="space-y-3 mt-auto">
-                      {product.metal_sizes &&
-                        product.metal_sizes.length > 0 && (
-                          <div>
-                            <label className="text-xs text-muted-foreground">
-                              Metal Size
-                            </label>
-                            <Select
-                              value={
-                                state?.selectedSizeType === "metal"
-                                  ? state.selectedSize
-                                  : ""
-                              }
-                              onValueChange={(size) =>
-                                handleSizeSelect(product._id, size, "metal")
-                              }
-                              disabled={product.stock_status !== "IN_STOCK"}
-                            >
-                              <SelectTrigger className="h-9 text-sm">
-                                <SelectValue placeholder="Select size" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {product.metal_sizes.map((s) => (
-                                  <SelectItem key={s.size} value={s.size}>
-                                    {s.size} - ₹{s.price}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        )}
-                      {product.marble_sizes &&
-                        product.marble_sizes.length > 0 && (
-                          <div>
-                            <label className="text-xs text-muted-foreground">
-                              Marble Size
-                            </label>
-                            <Select
-                              value={
-                                state?.selectedSizeType === "marble"
-                                  ? state.selectedSize
-                                  : ""
-                              }
-                              onValueChange={(size) =>
-                                handleSizeSelect(product._id, size, "marble")
-                              }
-                              disabled={product.stock_status !== "IN_STOCK"}
-                            >
-                              <SelectTrigger className="h-9 text-sm">
-                                <SelectValue placeholder="Select size" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {product.marble_sizes.map((s) => (
-                                  <SelectItem key={s.size} value={s.size}>
-                                    {s.size} - ₹{s.price}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        )}
-                      <div className="flex items-center gap-2">
-                        <Select
-                          value={String(state?.quantity || 1)}
-                          onValueChange={(qty) =>
-                            handleOtherStateChange(
-                              product._id,
-                              "quantity",
-                              parseInt(qty)
-                            )
-                          }
-                          disabled={product.stock_status !== "IN_STOCK"}
-                        >
-                          <SelectTrigger className="w-20 h-9 text-sm">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[1, 2, 3, 4, 5].map((num) => (
-                              <SelectItem key={num} value={String(num)}>
-                                {num}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <span className="font-bold text-primary flex-1 text-right text-lg">
-                          ₹
-                          {getProductPrice(
-                            product,
-                            state?.selectedSize,
-                            state?.selectedSizeType
-                          ) * (state?.quantity || 1)}
-                        </span>
-                      </div>
-                      <textarea
-                        placeholder="Customization (optional)"
-                        value={state?.customization || ""}
-                        onChange={(e) =>
-                          handleOtherStateChange(
-                            product._id,
-                            "customization",
-                            e.target.value
-                          )
-                        }
-                        className="w-full border rounded-md p-2 text-xs"
-                        rows={1}
-                        disabled={product.stock_status !== "IN_STOCK"}
-                      />
-                      <Button
-                        onClick={() => handleAddToCart(product)}
-                        className="w-full bg-primary hover:bg-primary/90 h-9 text-sm"
-                        disabled={product.stock_status !== "IN_STOCK"}
-                      >
-                        <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-          {!loading && filteredProducts.length === 0 && (
-            <div className="text-center py-16 col-span-full">
-              <p className="text-muted-foreground text-xl">
-                No products found matching your criteria.
-              </p>
-            </div>
-          )}
-        </>
-      )}
-
+      {/* Product Cards */}
+      <ProductGrid 
+        products={filteredProducts}
+        productStates={productStates}
+        setSelectedProduct={setSelectedProduct}
+        handleSizeSelect={handleSizeSelect}
+        handleOtherStateChange={handleOtherStateChange}
+        handleAddToCart={handleAddToCart}
+        getProductPrice={getProductPrice}
+        getStockBadge={getStockBadge}
+      />
       <Dialog
         open={!!selectedProduct}
         onOpenChange={(isOpen) => {
