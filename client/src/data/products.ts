@@ -21,6 +21,8 @@ export interface Product {
     size: string;
     price: number;
   }[];
+  metal_pagdi?: { size: string; price: number; }[];
+  marble_pagdi?: { size: string; price: number; }[];
   featured?: boolean;
   stock_status: "IN_STOCK" | "OUT_OF_STOCK" | "BOOKING_CLOSED";
 }

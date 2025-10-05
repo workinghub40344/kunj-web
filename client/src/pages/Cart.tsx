@@ -6,12 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
+import { useAuth, type UserInfo } from "@/context/AuthContext"; // useAuth aur UserInfo import karein
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import axios from "axios";
 import { auth, googleProvider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
-import { useAuth } from "@/context/AuthContext"; 
 
 interface user {
   _id: string; name: string; email: string; profilePicture: string; isAdmin: boolean; token: string; phone?: string;
@@ -31,11 +31,19 @@ const Cart = () => {
   const { toast } = useToast();
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
   const { user, login } = useAuth();
-  const [isuserModalOpen, setIsuserModalOpen] = useState(false);
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [customerPhone, setCustomerPhone] = useState(user?.phone || "");
+  const [customerPhone, setCustomerPhone] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    if (user && user.phone) {
+      setCustomerPhone(user.phone);
+    } else {
+      setCustomerPhone("");
+    }
+  }, [user]);
 
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -56,7 +64,7 @@ const Cart = () => {
     }
     
     if (user) {
-      setIsuserModalOpen(true);
+      setIsUserInfoModalOpen(true);
     } else {
       setIsLoginModalOpen(true);
     }
@@ -73,7 +81,7 @@ const Cart = () => {
         login(res.data);
         setCustomerPhone(res.data.phone || "");
         setIsLoginModalOpen(false);
-        setIsuserModalOpen(true);
+        setIsUserInfoModalOpen(true);
       }
     } catch (error) {
       console.error("Google login failed:", error);
@@ -82,30 +90,16 @@ const Cart = () => {
   };
 
   const handleConfirmOrder = async () => {
-    if (!customerPhone.trim()) {
-      toast({ title: "Phone Number Required", description: "Please enter your phone number.", variant: "destructive" });
+    if (!customerPhone.trim()) { toast({ title: "Phone Number Required", description: "Please enter your phone number.", variant: "destructive" });
       return;
     }
 
-    if (!user) {
-        toast({ title: "Login Required", description: "Something went wrong. Please log in again.", variant: "destructive" });
+    if (!user) { toast({ title: "Login Required", description: "Something went wrong. Please log in again.", variant: "destructive" });
         return;
     }
 
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-
-      const orderData = {
-        customerName: user.name,
-        customerPhone,
-        orderItems: cartItems,
-        totalPrice: total,
-      };
-
+    try { const config = { headers: { Authorization: `Bearer ${user.token}` } };
+      const orderData = { customerName: user.name, customerPhone, orderItems: cartItems, totalPrice: total };
       const { data: savedOrder } = await axios.post(`${API_URL}/api/orders/create`, orderData, config);
 
       const phoneNumber = "918504866930";
@@ -117,6 +111,9 @@ const Cart = () => {
       cartItems.forEach((item, index) => {
         message += `*${index + 1}. ${item.productName}*\n`;
         message += `   *${item.sizeType} Size:* ${item.size}\n`;
+        if (item.pagdi) {
+          message += `   *+ Pagdi:* ${item.pagdi.type} (${item.pagdi.size}) - ₹${item.pagdi.price}\n`;
+        }
         message += `   *Quantity:* ${item.quantity}\n`;
         if (item.customization) {
           message += `   *Customization:* _${item.customization}_\n`;
@@ -130,10 +127,9 @@ const Cart = () => {
 
       toast({ title: "Order Saved & Redirecting!", description: "Your order has been saved successfully." });
       
-      setIsuserModalOpen(false);
+      setIsUserInfoModalOpen(false);
       clearCart();
       setCustomerPhone("");
-
     } catch (error) {
       console.error("Failed to save order", error);
       toast({ title: "Error", description: "Could not save your order. Please try again.", variant: "destructive" });
@@ -189,10 +185,19 @@ const Cart = () => {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
+
+                    {/* Size and Pagdi details */}
                     <div className="text-sm text-muted-foreground">
                       <strong>{item.sizeType} Size:</strong> {item.size}
                     </div>
-                    <div className="flex items-center justify-between">
+                    {item.pagdi && (
+                      <div className="text-xs text-green-600 font-semibold pl-4">
+                        + Pagdi ({item.pagdi.size})
+                      </div>
+                    )}                  
+
+                    {/* Quantity controls aur Total Price*/}
+                    <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center space-x-2">
                         <Button variant="outline" size="sm" onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
                           <Minus className="h-3 w-3" />
@@ -203,10 +208,13 @@ const Cart = () => {
                         </Button>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold text-primary text-lg">₹{item.price * item.quantity}</div>
-                        <div className="text-sm text-muted-foreground">₹{item.price} each</div>
+                        <div className="font-bold text-primary text-lg">
+                          {/* Yahan par bhi Total Price ka logic theek kiya gaya hai */}
+                          ₹{(item.price + (item.pagdi?.price || 0)) * item.quantity}
+                        </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
               </CardContent>
@@ -241,11 +249,9 @@ const Cart = () => {
         </div>
       </div>
 
-      <Dialog open={isuserModalOpen} onOpenChange={setIsuserModalOpen}>
+      <Dialog open={isUserInfoModalOpen} onOpenChange={setIsUserInfoModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Confirm Your Details</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Confirm Your Details</DialogTitle></DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label className="text-right">Name</label>
@@ -253,22 +259,10 @@ const Cart = () => {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="phone" className="text-right">Phone</label>
-              <Input 
-                id="phone" 
-                value={customerPhone} 
-                onChange={(e) => setCustomerPhone(e.target.value)} 
-                className="col-span-3" 
-                placeholder="Enter your phone number" 
-                readOnly={!!user?.phone && user.phone !== ""}
-                disabled={!!user?.phone && user.phone !== ""}
-              />
+              <Input id="phone" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="col-span-3" placeholder="Enter your phone number" readOnly={!!user?.phone} disabled={!!user?.phone} />
             </div>
           </div>
-          <DialogFooter>
-            <Button onClick={handleConfirmOrder} className="w-full bg-primary hover:bg-primary/90">
-              Confirm & Place Order
-            </Button>
-          </DialogFooter>
+          <DialogFooter><Button onClick={handleConfirmOrder} className="w-full ...">Confirm & Place Order</Button></DialogFooter>
         </DialogContent>
       </Dialog>
       

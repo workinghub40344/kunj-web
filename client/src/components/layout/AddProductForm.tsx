@@ -7,10 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 
-interface SizeOption {
-  size: string;
-  price: number | string;
-}
+interface SizeOption { size: string; price: number | string; }
 
 interface ProductType {
   name: string;
@@ -19,6 +16,8 @@ interface ProductType {
   colour: string;
   metal_sizes: SizeOption[];
   marble_sizes: SizeOption[];
+  metal_pagdi: SizeOption[];
+  marble_pagdi: SizeOption[];
   images: string[];
   style_code: string;
 }
@@ -40,12 +39,10 @@ const AddProductForm = ({
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [colour, setColour] = useState("");
-  const [marble_sizes, setMarbleSizes] = useState<SizeOption[]>([
-    { size: "", price: 0 },
-  ]);
-  const [metal_sizes, setMetalSizes] = useState<SizeOption[]>([
-    { size: "", price: 0 },
-  ]);
+  const [marble_sizes, setMarbleSizes] = useState<SizeOption[]>([{ size: "", price: 0 }]);
+  const [metal_sizes, setMetalSizes] = useState<SizeOption[]>([{ size: "", price: 0 }]);
+  const [marble_pagdi, setMarblePagdi] = useState<SizeOption[]>([{ size: "", price: 0 }]);
+  const [metal_pagdi, setMetalPagdi] = useState<SizeOption[]>([{ size: "", price: 0 }]);
   const [styleCode, setStyleCode] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -53,7 +50,6 @@ const AddProductForm = ({
   const [newImages, setNewImages] = useState<File[]>([]); // For new file uploads
   const [existingImages, setExistingImages] = useState<string[]>([]); // For URLs from DB
   const [imagesToRemove, setImagesToRemove] = useState<string[]>([]); // URLs to be deleted
-
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
@@ -66,6 +62,16 @@ const AddProductForm = ({
       setDescription(productToEdit.description);
       setCategory(productToEdit.category);
       setColour(productToEdit.colour || "");
+      setMetalPagdi(
+        productToEdit.metal_pagdi.length > 0
+          ? productToEdit.metal_pagdi
+          : [{ size: "", price: "" }]
+      );
+      setMarblePagdi(
+        productToEdit.marble_pagdi.length > 0
+          ? productToEdit.marble_pagdi
+          : [{ size: "", price: "" }]
+      )
       setMetalSizes(
         productToEdit.metal_sizes.length > 0
           ? productToEdit.metal_sizes
@@ -104,6 +110,8 @@ const AddProductForm = ({
     formData.append("description", description);
     formData.append("category", category);
     formData.append("colour", colour);
+    formData.append("metal_pagdi", JSON.stringify(metal_pagdi));
+    formData.append("marble_pagdi", JSON.stringify(marble_pagdi));
     formData.append("metal_sizes", JSON.stringify(cleanedMetalSizes));
     formData.append("marble_sizes", JSON.stringify(cleanedMarbleSizes));
     formData.append("style_code", styleCode);
@@ -114,7 +122,7 @@ const AddProductForm = ({
     try {
       if (isEditMode) {
         // --- EDIT LOGIC ---
-        formData.append("imagesToRemove", JSON.stringify(imagesToRemove)); // Send images to remove
+        formData.append("imagesToRemove", JSON.stringify(imagesToRemove)); 
         const res = await axios.put(
           `${API_URL}/api/products/${productToEdit._id}`,
           formData,
@@ -123,7 +131,7 @@ const AddProductForm = ({
           }
         );
         toast({ title: "Product updated successfully!" });
-        onProductUpdated(res.data.product); // Use the updated callback
+        onProductUpdated(res.data.product); 
       } else {
         // --- ADD LOGIC ---
         const res = await axios.post(`${API_URL}/api/products`, formData, {
@@ -209,7 +217,7 @@ const AddProductForm = ({
 
         {/* Metal Sizes & Prices */}
         <div className="p-3 border rounded-md">
-          <label className="block mb-2 font-medium">Metal Sizes & Prices</label>
+          <label className="block mb-2 font-medium text-red-600">Metal Sizes & Prices</label>
           {metal_sizes.map((size, index) => (
             <div key={index} className="flex gap-2 mb-2 items-center">
               <Input
@@ -254,10 +262,57 @@ const AddProductForm = ({
             Add Metal Size
           </Button>
         </div>
+        {/* Metal Pagdi */}
+        <div className="p-3 border rounded-md">
+          <label className="block mb-2 font-medium text-red-600">Metal Pagdi Sizes & Prices</label>
+          {metal_pagdi.map((size, index) => (
+            <div key={index} className="flex gap-2 mb-2 items-center">
+              <Input
+                placeholder="Size (e.g., S, M, L)"
+                value={size.size}
+                onChange={(e) => {
+                  const updatedSizes = [...metal_pagdi];
+                  updatedSizes[index].size = e.target.value;
+                  setMetalPagdi(updatedSizes);
+                }}
+              />
+              <Input
+                type="number"
+                min="0"
+                placeholder="Price"
+                value={size.price}
+                onChange={(e) => {
+                  const updatedSizes = [...metal_pagdi];
+                  updatedSizes[index].price = e.target.value;
+                  setMetalPagdi(updatedSizes);
+                }}
+              />
+              {index > 0 && (
+                <Button
+                  type="button"
+                  onClick={() =>
+                    setMetalPagdi(metal_pagdi.filter((_, i) => i !== index))
+                  }
+                  variant="destructive"
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            type="button"
+            onClick={() =>
+              setMetalPagdi([...metal_pagdi, { size: "", price: "" }])
+            }
+          >
+            Add Metal Pagdi Size
+          </Button>
+        </div>
 
         {/* Marble Sizes & Prices */}
         <div className="p-3 border rounded-md">
-          <label className="block mb-2 font-medium">
+          <label className="block mb-2 font-medium text-green-600">
             Marble Sizes & Prices
           </label>
           {marble_sizes.map((size, index) => (
@@ -302,6 +357,53 @@ const AddProductForm = ({
             }
           >
             Add Marble Size
+          </Button>
+        </div>
+        {/* Marble Pagdi */}
+        <div className="p-3 border rounded-md">
+          <label className="block mb-2 font-medium text-green-600">Marble Pagdi Sizes & Prices</label>
+          {marble_pagdi.map((size, index) => (
+            <div key={index} className="flex gap-2 mb-2 items-center">
+              <Input
+                placeholder="Size (e.g., S, M, L)"
+                value={size.size}
+                onChange={(e) => {
+                  const updatedSizes = [...marble_pagdi];
+                  updatedSizes[index].size = e.target.value;
+                  setMarblePagdi(updatedSizes);
+                }}
+              />
+              <Input
+                type="number"
+                min="0"
+                placeholder="Price"
+                value={size.price}
+                onChange={(e) => {
+                  const updatedSizes = [...marble_pagdi];
+                  updatedSizes[index].price = e.target.value;
+                  setMarblePagdi(updatedSizes);
+                }}
+              />
+              {index > 0 && (
+                <Button
+                  type="button"
+                  onClick={() =>
+                    setMarblePagdi(marble_pagdi.filter((_, i) => i !== index))
+                  }
+                  variant="destructive"
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            type="button"
+            onClick={() =>
+              setMarblePagdi([...marble_pagdi, { size: "", price: "" }])
+            }
+          >
+            Add Marble Pagdi Size
           </Button>
         </div>
 

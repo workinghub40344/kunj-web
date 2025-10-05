@@ -23,7 +23,7 @@ const uploadToCloudinary = (fileBuffer) => {
 // Add Product 
 exports.addProduct = async (req, res) => {
     try {
-        const { style_code, name, description, category, metal_sizes, marble_sizes, colour } = req.body;
+        const { style_code, name, description, category, metal_pagdi, marble_pagdi, metal_sizes, marble_sizes, colour, pagdi } = req.body;
 
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: "Images are required" });
@@ -41,9 +41,12 @@ exports.addProduct = async (req, res) => {
         const product = await Product.create({
             style_code,
             name,
+            pagdi,
             description,
             category,
             colour,
+            metal_pagdi: JSON.parse(metal_pagdi),
+            marble_pagdi: JSON.parse(marble_pagdi),
             metal_sizes: JSON.parse(metal_sizes),
             marble_sizes: JSON.parse(marble_sizes),
             images: uploadedImages,
@@ -72,7 +75,6 @@ exports.getProducts = async (req, res) => {
 
 // Get single product by ID 
 exports.getProduct = async (req, res) => {
-    // ... same code
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ success: false, message: "Product not found" });
@@ -91,7 +93,7 @@ exports.updateProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        const {style_code, name, description, category, colour, metal_sizes, marble_sizes, imagesToRemove } = req.body;
+        const {style_code, name, pagdi, description, category, colour, metal_pagdi, marble_pagdi, metal_sizes, marble_sizes, imagesToRemove } = req.body;
 
         // 1. Delete images from Cloudinary if requested
         if (imagesToRemove) {
@@ -128,9 +130,16 @@ exports.updateProduct = async (req, res) => {
         // 3. Update text fields and sizes
         product.style_code = style_code || product.style_code
         product.name = name || product.name;
+        product.pagdi = pagdi || product.pagdi;
         product.description = description || product.description;
         product.category = category || product.category;
         product.colour = colour || product.colour;
+        if (metal_pagdi) {
+            product.metal_pagdi = JSON.parse(metal_pagdi);
+        }
+        if (marble_pagdi) {
+            product.marble_pagdi = JSON.parse(marble_pagdi);
+        }
         if (marble_sizes) {
             product.marble_sizes = JSON.parse(marble_sizes);
         }

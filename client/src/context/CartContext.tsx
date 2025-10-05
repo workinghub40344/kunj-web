@@ -9,6 +9,11 @@ export interface CartItem {
   productName: string;
   size: string;
   sizeType: string;
+  pagdi?: {
+    size: string;
+    price: number;
+    type: string; 
+  };
   quantity: number;
   price: number;
   image: string;
@@ -50,8 +55,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       (item) =>
         item.productId === newItem.productId &&
         item.size === newItem.size &&
-        item.sizeType === newItem.sizeType && // <-- YEH NAYA CHECK ADD KIYA GAYA HAI
-        item.customization === newItem.customization
+        item.sizeType === newItem.sizeType && 
+        item.customization === newItem.customization &&
+        (!!item.pagdi === !!newItem.pagdi)
     );
 
     if (existingItem) {
@@ -99,10 +105,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return cartItems.reduce((total, item) => {
+      const itemPrice = item.price + (item.pagdi?.price || 0);
+      return total + itemPrice * item.quantity;
+    }, 0);
   };
 
   const clearCart = () => {

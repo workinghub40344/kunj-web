@@ -9,6 +9,7 @@ import { ProductDetailModal } from "@/components/products/ProductDetailModal";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { PagdiModal } from "@/components/products/PagdiSizeModal";
 
 
 type ProductState = {
@@ -26,9 +27,8 @@ const LatestProducts = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [productStates, setProductStates] = useState<
-    Record<string, ProductState>
-  >({});
+  const [pagdiModalProduct, setPagdiModalProduct] = useState<Product | null>(null);
+  const [productStates, setProductStates] = useState<Record<string, ProductState>>({});
 
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -133,50 +133,95 @@ const LatestProducts = () => {
     return getAllSizes(product).find((s) => s.size === size)?.price || 0;
   };
 
+//   const handleAddToCart = (product: Product) => {
+//   const state = productStates[product._id];
+//   const selectedSize = state?.selectedSize;
+//   const selectedType = state?.selectedSizeType;
+
+//   if (!selectedSize || !selectedType) {
+//     toast({
+//       variant: "destructive",
+//       title: "Size Required",
+//       description: "Please select a size first!",
+//     });
+//     return;
+//   }
+
+//   let sizeOption;
+//   if (selectedType === 'metal') {
+//     sizeOption = product.metal_sizes?.find(s => s.size === selectedSize);
+//   } 
+//   else {
+//     sizeOption = product.marble_sizes?.find(s => s.size === selectedSize);
+//   }
+  
+//   if (!sizeOption) {
+//     console.error("Could not find the selected size option for the given type.");
+//     return;
+//   }
+
+//   addToCart({
+//     productId: product._id,
+//     productName: product.name,
+//     size: selectedSize,
+//     sizeType: selectedType === "metal" ? "Metal" : "Marble",
+//     quantity: state.quantity || 1,
+//     price: sizeOption.price,
+//     image: product.images[0],
+//     customization: state.customization || "",
+//   });
+
+//   toast({
+//     title: "Success!",
+//     description: `${product.name} has been added to your cart.`,
+//   });
+// };
+
   const handleAddToCart = (product: Product) => {
   const state = productStates[product._id];
-  const selectedSize = state?.selectedSize;
-  const selectedType = state?.selectedSizeType;
-
-  if (!selectedSize || !selectedType) {
+  if (!state?.selectedSize) {
     toast({
       variant: "destructive",
       title: "Size Required",
       description: "Please select a size first!",
     });
-    return;
-  }
+      return;
+    }
+      setPagdiModalProduct(product);
+  };
 
-  let sizeOption;
-  // Agar 'metal' select hai, to sirf metal_sizes mein dhoondho
-  if (selectedType === 'metal') {
-    sizeOption = product.metal_sizes?.find(s => s.size === selectedSize);
-  } 
-  // Agar 'marble' select hai, to sirf marble_sizes mein dhoondho
-  else {
-    sizeOption = product.marble_sizes?.find(s => s.size === selectedSize);
-  }
-  
-  if (!sizeOption) {
-    console.error("Could not find the selected size option for the given type.");
-    return;
-  }
+  const handleConfirmAddToCart = (product: Product, pagdiOption?: { size: string; price: number; type: string }) => {
+    const state = productStates[product._id];
+    const selectedSize = state?.selectedSize;
+    const selectedType = state?.selectedSizeType;
+    
+    let sizeOption;
+    if (selectedType === 'metal') {
+      sizeOption = product.metal_sizes?.find(s => s.size === selectedSize);
+    } else {
+      sizeOption = product.marble_sizes?.find(s => s.size === selectedSize);
+    }
 
-  addToCart({
-    productId: product._id,
-    productName: product.name,
-    size: selectedSize,
-    sizeType: selectedType === "metal" ? "Metal" : "Marble",
-    quantity: state.quantity || 1,
-    price: sizeOption.price, // Ab yahan hamesha sahi price aayegi
-    image: product.images[0],
-    customization: state.customization || "",
-  });
+    if (!state || !selectedSize || !selectedType || !sizeOption) {
+        console.error("Missing state to add to cart");
+        return;
+    };
 
-  toast({
-    title: "Success!",
-    description: `${product.name} has been added to your cart.`,
-  });
+    addToCart({
+      productId: product._id,
+      productName: product.name,
+      size: selectedSize,
+      sizeType: selectedType === "metal" ? "Metal" : "Marble",
+      quantity: state.quantity || 1,
+      price: sizeOption.price,
+      image: product.images[0],
+      customization: state.customization || "",
+      pagdi: pagdiOption,
+    });
+
+    toast({ title: "Success!", description: `${product.name} has been added to your cart.` });
+    setPagdiModalProduct(null);
+    setSelectedProduct(null);
 };
 
   const relatedProducts = useMemo(() => {
@@ -295,6 +340,15 @@ const LatestProducts = () => {
           />
         )}
       </Dialog>
+
+      {/* Pagdi Size Modal */}
+      <PagdiModal
+        isOpen={!!pagdiModalProduct}
+        onClose={() => setPagdiModalProduct(null)}
+        product={pagdiModalProduct}
+        productState={pagdiModalProduct ? productStates[pagdiModalProduct._id] : undefined}
+        onConfirm={handleConfirmAddToCart}
+      />
     </section>
   );
 };

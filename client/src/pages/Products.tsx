@@ -1,17 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import axios from "axios";
 import { Search, Filter, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
 import { ProductDetailModal } from "@/components/products/ProductDetailModal";
 import { ProductGrid } from "@/components/products/ProductGrid"; // Naya component import karein
@@ -19,19 +11,11 @@ import { useProducts } from "@/context/ProductContext";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
+import { PagdiModal } from "@/components/products/PagdiSizeModal";
 
-export type ProductState = {
-  selectedSize?: string;
-  selectedSizeType?: "metal" | "marble";
-  quantity: number;
-  customization: string;
-};
+export type ProductState = { selectedSize?: string; selectedSizeType?: "metal" | "marble"; quantity: number; customization: string; };
 
 const Products = () => {
   const { products, loading, error } = useProducts();
@@ -40,10 +24,9 @@ const Products = () => {
   const [selectedSize, setSelectedSize] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [selectedColour, setSelectedColour] = useState("all");
-  const [productStates, setProductStates] = useState<
-    Record<string, ProductState>
-  >({});
+  const [productStates, setProductStates] = useState<Record<string, ProductState>>({});
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [pagdiModalProduct, setPagdiModalProduct] = useState<Product | null>(null);
 
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -81,11 +64,7 @@ const Products = () => {
     ...(product.marble_sizes || []),
   ];
 
-  const handleSizeSelect = (
-    productId: string,
-    size: string,
-    type: "metal" | "marble"
-  ) => {
+  const handleSizeSelect = ( productId: string, size: string, type: "metal" | "marble" ) => {
     setProductStates((prev) => ({
       ...prev,
       [productId]: {
@@ -98,11 +77,7 @@ const Products = () => {
     }));
   };
 
-  const handleOtherStateChange = (
-    productId: string,
-    field: "quantity" | "customization",
-    value: string | number
-  ) => {
+  const handleOtherStateChange = ( productId: string, field: "quantity" | "customization", value: string | number ) => {
     setProductStates((prev) => ({
       ...prev,
       [productId]: {
@@ -120,67 +95,42 @@ const Products = () => {
   };
 
   const handleAddToCart = (product: Product) => {
-    const state = productStates[product._id];
-    const selectedSize = state?.selectedSize;
-    const selectedType = state?.selectedSizeType;
-
-    if (!selectedSize || !selectedType) {
-      toast({
-        variant: "destructive",
-        title: "Size Required",
-        description: "Please select a size first!",
-      });
-      return;
-    }
-
-    let sizeOption;
-    if (selectedType === "metal") {
-      sizeOption = product.metal_sizes?.find((s) => s.size === selectedSize);
-    } else {
-      sizeOption = product.marble_sizes?.find((s) => s.size === selectedSize);
-    }
-
-    if (!sizeOption) {
-      console.error(
-        "Could not find the selected size option for the given type."
-      );
-      return;
-    }
-
-    addToCart({
-      productId: product._id,
-      productName: product.name,
-      size: selectedSize,
-      sizeType: selectedType === "metal" ? "Metal" : "Marble",
-      quantity: state?.quantity || 1,
-      price: sizeOption.price,
-      image: product.images[0],
-      customization: state?.customization || "",
-    });
-
-    toast({
-      title: "Success!",
-      description: `${product.name} has been added to your cart.`,
-    });
+  const state = productStates[product._id];
+  if (!state?.selectedSize) {
+    toast({ title: "Size Required", description: "Please select a size first!" });
+    return;
+  }
+  setPagdiModalProduct(product); // Modal kholne ke liye state set karein
   };
+  
+  const handleConfirmAddToCart = (product: Product, pagdiOption?: { size: string; price: number; type: string }) => {
+  const state = productStates[product._id];
+  const selectedSize = state?.selectedSize;
+  const selectedType = state?.selectedSizeType;
+  const sizeOption = getAllSizes(product).find(s => s.size === selectedSize);
 
-  const getProductPrice = (
-    product: Product,
-    size?: string,
-    type?: "metal" | "marble"
-  ) => {
+  if (!state || !selectedSize || !selectedType || !sizeOption) return;
+
+  addToCart({
+    productId: product._id,
+    productName: product.name,
+    size: selectedSize,
+    sizeType: selectedType === "metal" ? "Metal" : "Marble",
+    quantity: state.quantity || 1,
+    price: sizeOption.price,
+    image: product.images[0],
+    customization: state.customization || "",
+    pagdi: pagdiOption, // Pagdi ki details yahan se jayengi
+  });
+
+  toast({ title: "Success!", description: `${product.name} has been added to your cart.` });
+  setPagdiModalProduct(null); // Modal band kar dein
+};
+
+  const getProductPrice = ( product: Product, size?: string, type?: "metal" | "marble") => {
     if (!size) return 0;
-
-
-    if (type === "metal") {
-      return product.metal_sizes?.find((s) => s.size === size)?.price || 0;
-    }
-    // Agar type 'marble' hai, to sirf marble_sizes mein dhoondhein
-    if (type === "marble") {
-      return product.marble_sizes?.find((s) => s.size === size)?.price || 0;
-    }
-
-    // Fallback (agar type na mile to dono mein dhoondhein)
+    if (type === "metal") { return product.metal_sizes?.find((s) => s.size === size)?.price || 0; }
+    if (type === "marble") { return product.marble_sizes?.find((s) => s.size === size)?.price || 0; }
     const allSizes = getAllSizes(product);
     return allSizes.find((s) => s.size === size)?.price || 0;
   };
@@ -212,16 +162,10 @@ const Products = () => {
     }
   };
 
-  const categories = useMemo(
-    () => ["all", ...Array.from(new Set(products.map((p) => p.category)))],
-    [products]
-  );
-  const sizes = useMemo(
-    () => [
-      "all",
-      ...Array.from(
-        new Set(products.flatMap((p) => getAllSizes(p).map((s) => s.size)))
-      ).sort((a, b) => {
+  const categories = useMemo( () => ["all", ...Array.from(new Set(products.map((p) => p.category)))], [products]);
+
+  const sizes = useMemo( () => [ 
+        "all", ...Array.from( new Set(products.flatMap((p) => getAllSizes(p).map((s) => s.size)))).sort((a, b) => {
         const numA = parseInt(a);
         const numB = parseInt(b);
         if (!isNaN(numA) && !isNaN(numB)) {
@@ -232,13 +176,7 @@ const Products = () => {
     ],
     [products]
   );
-  const colours = useMemo(
-    () => [
-      "all",
-      ...Array.from(new Set(products.map((p) => p.colour).filter(Boolean))),
-    ],
-    [products]
-  );
+  const colours = useMemo( () => [ "all", ...Array.from(new Set(products.map((p) => p.colour).filter(Boolean))),], [products]);
 
   const relatedProducts = useMemo(() => {
     if (!selectedProduct) return [];
@@ -273,14 +211,7 @@ const Products = () => {
 
       return matchesSearch && matchesCategory && matchesColour && meetsCriteria;
     });
-  }, [
-    products,
-    searchTerm,
-    selectedCategory,
-    selectedSize,
-    priceRange,
-    selectedColour,
-  ]);
+  }, [ products, searchTerm, selectedCategory, selectedSize, priceRange, selectedColour ]);
 
   const handleResetFilters = () => {
     setSearchTerm("");
@@ -479,34 +410,19 @@ const Products = () => {
         getProductPrice={getProductPrice}
         getStockBadge={getStockBadge}
       />
-      <Dialog
-        open={!!selectedProduct}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setSelectedProduct(null);
-        }}
-      >
+      <Dialog open={!!selectedProduct} onOpenChange={(isOpen) => { if (!isOpen) setSelectedProduct(null); }}>
         {selectedProduct && (
           <ProductDetailModal
             product={selectedProduct}
             relatedProducts={relatedProducts}
             onSelectVariant={setSelectedProduct}
             selectedSize={productStates[selectedProduct._id]?.selectedSize}
-            selectedSizeType={
-              productStates[selectedProduct._id]?.selectedSizeType
-            }
+            selectedSizeType={productStates[selectedProduct._id]?.selectedSizeType}
             selectedQuantity={productStates[selectedProduct._id]?.quantity || 1}
-            customizationText={
-              productStates[selectedProduct._id]?.customization || ""
-            }
-            onSizeSelect={(size, type) =>
-              handleSizeSelect(selectedProduct._id, size, type)
-            }
-            onQuantityChange={(qty) =>
-              handleOtherStateChange(selectedProduct._id, "quantity", qty)
-            }
-            onCustomizationChange={(text) =>
-              handleOtherStateChange(selectedProduct._id, "customization", text)
-            }
+            customizationText={productStates[selectedProduct._id]?.customization || ""}
+            onSizeSelect={(size, type) => handleSizeSelect(selectedProduct._id, size, type)}
+            onQuantityChange={(qty) => handleOtherStateChange(selectedProduct._id, "quantity", qty)}
+            onCustomizationChange={(text) => handleOtherStateChange(selectedProduct._id, "customization", text)}
             onAddToCart={() => handleAddToCart(selectedProduct)}
             getProductPrice={(p, s, q) =>
               getProductPrice(
@@ -518,6 +434,15 @@ const Products = () => {
           />
         )}
       </Dialog>
+
+      <PagdiModal
+        isOpen={!!pagdiModalProduct}
+        onClose={() => setPagdiModalProduct(null)}
+        product={pagdiModalProduct}
+        productState={pagdiModalProduct ? productStates[pagdiModalProduct._id] : undefined}
+        onConfirm={handleConfirmAddToCart}
+      />
+
     </div>
   );
 };
