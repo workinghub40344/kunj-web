@@ -98,9 +98,18 @@ const AddProductForm = ({
     setUploading(true);
 
     // Clean the sizes array before sending to the backend
+    const cleanedMetalPagdi = metal_pagdi
+      .filter((s) => s.size)
+      .map((s) => ({ ...s, price: Number(s.price) || 0 }));
+
+    const cleanedMarblePagdi = marble_pagdi
+      .filter((s) => s.size)
+      .map((s) => ({ ...s, price: Number(s.price) || 0 }));
+
     const cleanedMetalSizes = metal_sizes
       .filter((s) => s.size)
       .map((s) => ({ ...s, price: Number(s.price) || 0 }));
+
     const cleanedMarbleSizes = marble_sizes
       .filter((s) => s.size)
       .map((s) => ({ ...s, price: Number(s.price) || 0 }));
@@ -110,12 +119,12 @@ const AddProductForm = ({
     formData.append("description", description);
     formData.append("category", category);
     formData.append("colour", colour);
-    formData.append("metal_pagdi", JSON.stringify(metal_pagdi));
-    formData.append("marble_pagdi", JSON.stringify(marble_pagdi));
+    formData.append("metal_pagdi", JSON.stringify(cleanedMetalPagdi));
+    formData.append("marble_pagdi", JSON.stringify(cleanedMarblePagdi));
     formData.append("metal_sizes", JSON.stringify(cleanedMetalSizes));
     formData.append("marble_sizes", JSON.stringify(cleanedMarbleSizes));
     formData.append("style_code", styleCode);
-
+  
     // Append new images if any
     newImages.forEach((img) => formData.append("images", img));
 

@@ -7,14 +7,14 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     metal_pagdi: [
       {
-        size: { type: String, required: true },
-        price: { type: Number, required: true },
+        size: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, trim: true },
       },
     ],
     marble_pagdi: [
       {
-        size: { type: String, required: true },
-        price: { type: Number, required: true },
+        size: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, trim: true },
       },
     ],
     description: { type: String, required: true },
@@ -30,14 +30,14 @@ const productSchema = new mongoose.Schema(
     },
     metal_sizes: [
       {
-        size: { type: String, required: true },
-        price: { type: Number, required: true },
+        size: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, trim: true },
       },
     ],
     marble_sizes: [
       {
-        size: { type: String, required: true },
-        price: { type: Number, required: true },
+        size: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, trim: true },
       },
     ],
     featured: { type: Boolean, default: false },
