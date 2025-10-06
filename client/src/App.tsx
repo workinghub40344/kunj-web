@@ -12,6 +12,7 @@ import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { ProductProvider } from "./context/ProductContext";
+import MyOrders from "./components/layout/MyOrders";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/cart" element={<Cart />} />
+                      <Route path="/my-orders" element={<MyOrders />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>

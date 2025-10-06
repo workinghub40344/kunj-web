@@ -116,6 +116,16 @@ const getOrdersByUserId = async (req, res) => {
   }
 };
 
+const getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    console.error("Error in getMyOrders:", error);
+    res.status(500).json({ message: "Error fetching user's orders" });
+  }
+};
+
 const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);
@@ -155,6 +165,7 @@ module.exports = {
     createOrder,
     getAllOrders,
     getOrdersByUserId,
+    getMyOrders,
     deleteOrder,
     resetOrders,
 };

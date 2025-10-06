@@ -95,6 +95,7 @@ const Navbar = () => {
             </Link>
             {user ? (
               <>
+                {!user.isAdmin && (<Link to="/my-orders"><Button variant="outline" size="sm">My Orders</Button></Link>)}
                 {user.isAdmin && (<Link to="/admin"><Button variant="outline" size="sm">Admin</Button></Link>)}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

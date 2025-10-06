@@ -3,7 +3,7 @@ const router = express.Router();
 const { googleLogin, getAllUsers, deleteUser } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
-// ... aapke doosre routes ...
+
 router.post('/google-login', googleLogin);
 router.get('/', protect, getAllUsers);
 router.delete('/:id', protect, deleteUser);
