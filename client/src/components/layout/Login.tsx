@@ -4,7 +4,7 @@ import { auth, googleProvider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
 import axios from "axios";
 
-// Google Icon ka SVG
+// Google Icon SVG
 const GoogleIcon = () => (
   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -21,23 +21,19 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // 1. Firebase ka popup kholega
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // 2. User se ID Token lein (yeh security ke liye hai)
       const idToken = await user.getIdToken();
 
-      // 3. Is ID Token ko apne backend par bhejein
       const res = await axios.post(`${API_URL}/api/users/google-login`, {
         token: idToken,
       });
 
-      // 4. Backend se user data aur aapka custom token milne par
       if (res.data) {
         localStorage.setItem("userInfo", JSON.stringify(res.data));
         toast({ title: "Login Successful!", description: `Welcome, ${user.displayName}` });
-        window.location.href = "/"; // User ko home page par bhej dein
+        window.location.href = "/";
       }
     } catch (error) {
       console.error("Google login failed:", error);
