@@ -17,6 +17,11 @@ const orderSchema = new mongoose.Schema({
       price: { type: Number, required: true },
       image: { type: String, required: true },
       customization: { type: String },
+      pagdi: {
+        type: { type: String },
+        size: { type: String },
+        price: { type: Number }
+      }
     }
   ],
   totalPrice: { type: Number, required: true },

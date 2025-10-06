@@ -17,8 +17,12 @@ interface IOrderItem {
   image: string;
   customization?: string;
   _id: string;
+  pagdi?: {
+    type: string;
+    size: string;
+    price: number;
+  };
 }
-
 interface IOrder {
   _id: string;
   orderId: string;
@@ -40,6 +44,8 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const invoiceRef = useRef<HTMLDivElement>(null);
+  const [shippingCharge, setShippingCharge] = useState<string>("");
+  const [showShippingModal, setShowShippingModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -103,45 +109,49 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
 
   const handleDeleteOrder = async (orderId: string) => {
     if (!window.confirm("Are you sure you want to delete this order?")) {
-        return;
+      return;
     }
     try {
-        // Token ke saath config object banayein
-        const config = {
-            headers: { Authorization: `Bearer ${adminUser?.token}` }
-        };
-        await axios.delete(`${API_URL}/api/orders/${orderId}`, config); // config ko yahan pass karein
-        
-        setOrders(orders.filter(order => order._id !== orderId));
-        alert("Order deleted successfully!");
+      // Token ke saath config object banayein
+      const config = {
+        headers: { Authorization: `Bearer ${adminUser?.token}` },
+      };
+      await axios.delete(`${API_URL}/api/orders/${orderId}`, config); // config ko yahan pass karein
+
+      setOrders(orders.filter((order) => order._id !== orderId));
+      alert("Order deleted successfully!");
     } catch (error) {
-        console.error("Failed to delete order:", error);
-        alert("Failed to delete the order. Please try again.");
+      console.error("Failed to delete order:", error);
+      alert("Failed to delete the order. Please try again.");
     }
-};
+  };
 
   // Reset Order IDs and Delete all
   const handleResetOrders = async () => {
-    const confirmationMessage = "WARNING: This will permanently delete ALL orders...";
-    
+    const confirmationMessage =
+      "WARNING: This will permanently delete ALL orders...";
+
     if (!window.confirm(confirmationMessage)) {
-        return;
+      return;
     }
 
     try {
-        // Token ke saath config object banayein
-        const config = {
-            headers: { Authorization: `Bearer ${adminUser?.token}` }
-        };
-        const response = await axios.delete(`${API_URL}/api/orders/reset`, config); // config ko yahan pass karein
+      // Token ke saath config object banayein
+      const config = {
+        headers: { Authorization: `Bearer ${adminUser?.token}` },
+      };
+      const response = await axios.delete(
+        `${API_URL}/api/orders/reset`,
+        config
+      ); // config ko yahan pass karein
 
-        alert(response.data.message);
-        setOrders([]);
+      alert(response.data.message);
+      setOrders([]);
     } catch (error) {
-        console.error("Failed to reset orders:", error);
-        alert("Failed to reset orders. Please try again.");
+      console.error("Failed to reset orders:", error);
+      alert("Failed to reset orders. Please try again.");
     }
-};
+  };
 
   // Corrected filter logic
   const filteredOrders = searchTerm
@@ -160,6 +170,7 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
         <h1 className="text-3xl font-bold text-gray-800">
           Download Previous Bills
         </h1>
+        {/* Search Input */}
         <div className="relative w-1/3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <Input
@@ -174,9 +185,9 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
         <Button
           variant="destructive"
           onClick={handleResetOrders}
-          className="flex-shrink-0"
+          className="w-fit text-xs px-2"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="h-2 w-2 mr-0" />
           Reset All Orders
         </Button>
       </div>
@@ -217,14 +228,19 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
                     ₹{order.totalPrice.toFixed(2)}
                   </td>
                   <td className="p-3 text-center space-x-2">
+                    {/* Shipping Charges Modal Open */}
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setSelectedOrder(order)}
+                      onClick={() => {
+                        // setSelectedOrder(order);
+                        setShowShippingModal(true);
+                      }}
                     >
                       <FileDown className="h-4 w-4 mr-2" />
                       Bill
                     </Button>
+                    {/* Delete Order Button */}
                     <Button
                       variant="destructive"
                       size="sm"
@@ -240,7 +256,30 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
           </table>
         </div>
       )}
+      {/* Shipping Charges Modal */}
+      <Dialog open={showShippingModal} onOpenChange={setShowShippingModal}>
+        <DialogContent className="sm:max-w-sm">
+          <h3 className="text-lg font-bold mb-2">Add Shipping Charges</h3>
+          <Input
+            type="number"
+            placeholder="Enter shipping amount (₹)"
+            value={shippingCharge}
+            onChange={(e) => setShippingCharge(e.target.value)}
+          />
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowShippingModal(false);
+                setSelectedOrder(orders[0]); // ensure selected order still active
+              }}
+            >
+              Add
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
+      {/* Invoice Modal */}
       <Dialog
         open={!!selectedOrder}
         onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}
@@ -314,29 +353,51 @@ const DownloadBill = ({ userId }: DownloadBillProps) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedOrder.orderItems.map((item) => (
-                        <tr key={item._id} className="border-b">
-                          <td className="p-2">{item.productName}</td>
-                          <td className="p-2 text-center">{item.size}</td>
-                          <td className="p-2 text-center">{item.quantity}</td>
-                          <td className="p-2 text-right">
-                            ₹{item.price.toFixed(2)}
-                          </td>
-                          <td className="p-2 text-right font-semibold">
-                            ₹{(item.price * item.quantity).toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
+                      {selectedOrder.orderItems.map((item) => {
+                        const unitPrice = item.price + (item.pagdi?.price || 0);
+                        const totalItemPrice = unitPrice * item.quantity;
+                        return (
+                          <tr key={item._id} className="border-b">
+                            <td className="p-2">
+                              {item.productName}
+                              {item.pagdi && (
+                                <span className="text-xs text-gray-500 block">
+                                  + {item.pagdi.type} ({item.pagdi.size})
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-2 text-center">{item.size}</td>
+                            <td className="p-2 text-center">{item.quantity}</td>
+                            <td className="p-2 text-right">
+                              ₹{unitPrice.toFixed(2)}
+                            </td>
+                            <td className="p-2 text-right font-semibold">
+                              ₹{totalItemPrice.toFixed(2)}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
 
                   <div className="text-right mt-6">
-                    <p className="text-xl font-bold">
-                      Grand Total:{" "}
-                      <span className="text-gray-900">
-                        ₹{selectedOrder.totalPrice.toFixed(2)}
-                      </span>
-                    </p>
+                    <div className="text-right mt-6 space-y-1">
+                      <p>Subtotal: ₹{selectedOrder.totalPrice.toFixed(2)}</p>
+                      <p>
+                        Shipping Charges: ₹
+                        {(Number(shippingCharge) || 0).toFixed(2)}
+                      </p>
+                      <p className="text-xl font-bold">
+                        Grand Total:{" "}
+                        <span className="text-gray-900">
+                          ₹
+                          {(
+                            selectedOrder.totalPrice +
+                            (Number(shippingCharge) || 0)
+                          ).toFixed(2)}
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
