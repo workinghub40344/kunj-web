@@ -4,12 +4,10 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Search, FileDown } from "lucide-react";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import { Search } from "lucide-react";
 import Logo from "@/assets/Logo-1.jpg";
 
-// Interfaces (Aapke DownloadBill se li gayi hain)
+// Interfaces
 interface IOrderItem { productName: string; quantity: number; size: string; price: number; _id: string; }
 interface IOrder {
   _id: string;
@@ -36,7 +34,6 @@ const AllOrders = () => {
         try {
           const config = { headers: { Authorization: `Bearer ${adminUser.token}` } };
           const { data } = await axios.get(`${API_URL}/api/orders`, config);
-          // Naye orders ko sabse upar rakhne ke liye sort karein
           const sortedOrders = data.sort(
             (a: IOrder, b: IOrder) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
@@ -52,23 +49,6 @@ const AllOrders = () => {
     };
     fetchOrders();
   }, [adminUser, API_URL]);
-
-  const handleDownloadPdf = () => {
-    const input = invoiceRef.current;
-    if (input && selectedOrder) {
-      html2canvas(input, { scale: 2 }).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = imgWidth / pdfWidth;
-        const pdfHeight = imgHeight / ratio;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`invoice-${selectedOrder.orderId}.pdf`);
-      });
-    }
-  };
 
   const filteredOrders = orders.filter(order =>
     order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,7 +108,11 @@ const AllOrders = () => {
         <DialogContent className="max-w-3xl flex flex-col max-h-[90vh]">
           {selectedOrder && (
             <>
-              <DialogHeader><DialogTitle>Invoice: {selectedOrder.orderId}</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>
+                  Invoice: {selectedOrder.orderId}
+                </DialogTitle>
+              </DialogHeader>
               <div className="flex-1 overflow-y-auto pr-4">
                 <div ref={invoiceRef} className="p-8 bg-white text-black text-sm">
                   {/* Invoice Content Start */}
@@ -172,12 +156,10 @@ const AllOrders = () => {
                   <div className="text-right mt-6">
                     <p className="text-xl font-bold">Grand Total: <span className="text-gray-900">₹{selectedOrder.totalPrice.toFixed(2)}</span></p>
                   </div>
-                  {/* Invoice Content End */}
                 </div>
               </div>
               <DialogFooter className="mt-4 flex-shrink-0">
                 <Button variant="secondary" onClick={() => setSelectedOrder(null)}>Close</Button>
-                <Button onClick={handleDownloadPdf}><FileDown className="h-4 w-4 mr-2" />Download PDF</Button>
               </DialogFooter>
             </>
           )}

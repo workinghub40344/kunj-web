@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Trash2, Eye, Search } from "lucide-react";
-import DownloadBill from "@/components/layout/DownloadBill";
+import DownloadBill from "@/components/admin/DownloadBill";
 import { useToast } from "@/hooks/use-toast";
 
 interface IUser {
