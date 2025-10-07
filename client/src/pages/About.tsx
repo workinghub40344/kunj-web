@@ -7,26 +7,26 @@ const About = () => {
       icon: Heart,
       title: "Devotion in Every Stitch",
       description:
-        "Each poshak is crafted with bhakti and love, ensuring that Radha Rani and Shri Krishna receive nothing less than divine elegance."
+        "Each poshak is crafted with bhakti and love, ensuring that Radha Rani and Shri Krishna receive nothing less than divine elegance.",
     },
     {
       icon: Leaf,
       title: "Traditional Craftsmanship",
       description:
-        "Our artisans follow age-old traditions, using fine fabrics, zardozi, and embroidery that reflect the eternal beauty of Vrindavan culture."
+        "Our artisans follow age-old traditions, using fine fabrics, zardozi, and embroidery that reflect the eternal beauty of Vrindavan culture.",
     },
     {
       icon: Users,
       title: "Serving the Devotees",
       description:
-        "We are dedicated to serving devotees worldwide, bringing sacred attire that enhances every puja, festival, and darshan."
+        "We are dedicated to serving devotees worldwide, bringing sacred attire that enhances every puja, festival, and darshan.",
     },
     {
       icon: Award,
       title: "Unmatched Quality",
       description:
-        "From fabric selection to finishing, every poshak undergoes careful inspection so that it meets the highest standards of devotion and quality."
-    }
+        "From fabric selection to finishing, every poshak undergoes careful inspection so that it meets the highest standards of devotion and quality.",
+    },
   ];
 
   return (
@@ -38,10 +38,11 @@ const About = () => {
             About Kunj Creation
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            At Kunj Creation, we specialize in designing and handcrafting sacred poshaks 
-            for Radha Rani and Shri Krishna. Our work is inspired by devotion and the rich 
-            heritage of Vrindavan, combining traditional artistry with fine fabrics to 
-            bring divine beauty into every home temple.
+            At Kunj Creation, we specialize in designing and handcrafting sacred
+            poshaks for Radha Rani and Shri Krishna. Our work is inspired by
+            devotion and the rich heritage of Vrindavan, combining traditional
+            artistry with fine fabrics to bring divine beauty into every home
+            temple.
           </p>
         </div>
       </section>
@@ -56,38 +57,50 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p className="text-lg">
-                  Founded in 2020, Kunj Creation began with a simple mission: 
-                  to provide devotees with beautifully designed, handcrafted poshaks 
-                  that reflect both tradition and devotion. 
+                  Founded in 2015, Kunj Creation began with a simple mission —
+                  to provide devotees with beautifully designed, handcrafted
+                  poshaks that reflect both tradition and devotion.
                 </p>
                 <p className="text-lg">
-                  Our inspiration comes from the eternal love of Shri Radha Krishna. 
-                  Each design draws from the colors of Vrindavan, the grace of Radha Rani, 
-                  and the playful charm of Shri Krishna. 
+                  Our inspiration flows from the eternal love of Shri Radha Krishna.
+                  Each design captures the colors of Vrindavan, the grace of
+                  Radha Rani, and the playful charm of Shri Krishna.
                 </p>
                 <p className="text-lg">
-                  Today, we are humbled to serve thousands of devotees across the world 
-                  who trust Kunj Creation for their daily darshan, festive occasions, 
-                  and temple celebrations.
+                  Today, we are blessed to serve thousands of devotees across India and
+                  around the world who trust Kunj Creation for their daily
+                  darshan, festive occasions, and temple celebrations.
                 </p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-primary/10 p-6 rounded-lg text-center">
-                <div className="text-3xl font-bold text-primary mb-2">100K+</div>
-                <div className="text-sm text-muted-foreground">Devotees Served</div>
+                <div className="text-3xl font-bold text-primary mb-2">
+                  100K+
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Devotees Served
+                </div>
               </div>
               <div className="bg-secondary/10 p-6 rounded-lg text-center">
-                <div className="text-3xl font-bold text-secondary mb-2">500+</div>
-                <div className="text-sm text-muted-foreground">Unique Designs</div>
+                <div className="text-3xl font-bold text-secondary mb-2">
+                  500+
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Unique Designs
+                </div>
               </div>
               <div className="bg-primary/10 p-6 rounded-lg text-center">
                 <div className="text-3xl font-bold text-primary mb-2">4.9</div>
-                <div className="text-sm text-muted-foreground">Average Rating</div>
+                <div className="text-sm text-muted-foreground">
+                  Average Rating
+                </div>
               </div>
               <div className="bg-secondary/10 p-6 rounded-lg text-center">
                 <div className="text-3xl font-bold text-secondary mb-2">3+</div>
-                <div className="text-sm text-muted-foreground">Years of Excellence</div>
+                <div className="text-sm text-muted-foreground">
+                  Years of Excellence
+                </div>
               </div>
             </div>
           </div>
@@ -103,10 +116,13 @@ const About = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Heart className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">Our Mission</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-4">
+                  Our Mission
+                </h3>
                 <p className="text-muted-foreground">
-                  To create divine attire for Radha Krishna that inspires devotion, 
-                  preserves tradition, and brings beauty to every darshan.
+                  To create divine attire for Radha Krishna that inspires
+                  devotion, preserves tradition, and brings beauty to every
+                  darshan.
                 </p>
               </CardContent>
             </Card>
@@ -116,10 +132,13 @@ const About = () => {
                 <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Leaf className="h-8 w-8 text-secondary" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">Our Vision</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-4">
+                  Our Vision
+                </h3>
                 <p className="text-muted-foreground">
-                  To become the most trusted brand for Radha Krishna poshaks worldwide, 
-                  known for devotion, craftsmanship, and cultural authenticity.
+                  To become the most trusted brand for Radha Krishna poshaks
+                  worldwide, known for devotion, craftsmanship, and cultural
+                  authenticity.
                 </p>
               </CardContent>
             </Card>
@@ -143,13 +162,20 @@ const About = () => {
             {values.map((value, index) => {
               const IconComponent = value.icon;
               return (
-                <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow">
+                <Card
+                  key={index}
+                  className="text-center p-6 hover:shadow-lg transition-shadow"
+                >
                   <CardContent className="pt-6">
                     <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                       <IconComponent className="h-8 w-8 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-3">{value.title}</h3>
-                    <p className="text-muted-foreground text-sm">{value.description}</p>
+                    <h3 className="font-semibold text-lg mb-3">
+                      {value.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {value.description}
+                    </p>
                   </CardContent>
                 </Card>
               );

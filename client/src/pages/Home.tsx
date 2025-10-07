@@ -16,12 +16,12 @@ const Home = () => {
       icon: Shield,
       title: "Handcrafted Quality",
       description:
-        "Premium handcrafted Poshak made with traditional techniques",
+        "Every piece is made with love, purity, and faith — to adorn your beloved Thakur ji, Radha-Krishna, and divine idols with grace.",
     },
     {
       icon: Star,
       title: "Divine Collection",
-      description: "Authentic designs blessed for Krishna and Radha worship",
+      description: "Discover our collection of handcrafted deity dresses, jewelry, and festive ensembles — each piece telling a story of tradition and creativity.",
     },
     {
       icon: Truck,
@@ -30,8 +30,8 @@ const Home = () => {
     },
     {
       icon: RefreshCw,
-      title: "30-Day Returns",
-      description: "Full money-back guarantee if you're not satisfied",
+      title: "Replacement",
+      description: "If you have any issue with size we will exchange the product",
     },
   ];
 

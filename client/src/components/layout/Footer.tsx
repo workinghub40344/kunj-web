@@ -17,7 +17,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground text-sm">
-              Premium handcrafted Radha Krishna Poshak, made with devotion and fine detailing for your divine idols.
+              Premium handcrafted Radha Krishna Poshak, made with devotion and fine detailing for your beloved Thakur ji.
             </p>
             <div className="flex space-x-3">
               <a href="https://www.instagram.com/kunj_creation_deepak?igsh=bXMzdW9iNmU4c2t5" className="text-muted-foreground hover:text-primary transition-colors">
