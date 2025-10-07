@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import { Star, Shield, Truck, RefreshCw, ArrowRight } from "lucide-react";
+import { Star, Shield, Truck, RefreshCw, ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { products } from "@/data/products";
 import BgImg from "@/assets/bg.png";
 import HeroSlider from "@/components/layout/HeroSlider";
-import LatestProducts from '@/components/products/LatestProducts';
+import LatestProducts from "@/components/products/LatestProducts";
 
 const Home = () => {
   const featuredProducts = products
@@ -21,29 +21,31 @@ const Home = () => {
     {
       icon: Star,
       title: "Divine Collection",
-      description: "Discover our collection of handcrafted deity dresses, jewelry, and festive ensembles — each piece telling a story of tradition and creativity.",
+      description:
+        "Discover our collection of handcrafted deity dresses, jewelry, and festive ensembles — each piece telling a story of tradition and creativity.",
     },
     {
-      icon: Truck,
-      title: "Free Shipping",
-      description: "Free delivery on all orders above ₹2,500 across India",
+      icon: Users,
+      title: "Trusted by Devotees",
+      description:
+        "Serving thousands of devotees with premium quality products crafted with devotion and care.",
     },
     {
       icon: RefreshCw,
       title: "Replacement",
-      description: "If you have any issue with size we will exchange the product",
+      description:
+        "If you have any issue with size we will exchange the product",
     },
   ];
 
   return (
     <div className="min-h-screen">
-
       {/* Hero Section */}
       <section className="relative h-[30vh] md:h-[80vh] flex items-center justify-center text-white overflow-hidden">
         {/* Background Image Slider */}
         <HeroSlider />
       </section>
-      
+
       {/* Latest Products */}
       <section className="">
         <LatestProducts />
