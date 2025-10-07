@@ -87,7 +87,6 @@ exports.getProduct = async (req, res) => {
 
 // Complete overhaul of the updateProduct function
 exports.updateProduct = async (req, res) => {
-    console.log("Received marble_pagdi data:", req.body.marble_pagdi);
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
