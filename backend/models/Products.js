@@ -45,4 +45,10 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+productSchema.index({ name: 'text', description: 'text' }); // Indexing for search functionality
+productSchema.index({ category: 1 }); // Indexing for category filtering
+productSchema.index({ colour: 1 }); // Indexing for colour filtering
+productSchema.index({ style_code: 1 }); // Indexing for product variants
+productSchema.index({ createdAt: -1 }); // Indexing for sorting by newest products
+
 module.exports = mongoose.model("Products", productSchema);

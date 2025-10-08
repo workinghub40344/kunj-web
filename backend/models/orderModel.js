@@ -27,6 +27,9 @@ const orderSchema = new mongoose.Schema({
   totalPrice: { type: Number, required: true },
 }, { timestamps: true });
 
+orderSchema.index({ user: 1 }); // 'user' field indexing for faster queries
+orderSchema.index({ createdAt: -1 });  // 'createdAt' field indexing for sorting by most recent orders
+
 const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;
