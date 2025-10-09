@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
+import { SizeCombobox } from "@/components/layout/SizeCombobox";
 
 interface SizeOption { size: string; price: number | string; }
 
@@ -35,6 +36,7 @@ const AddProductForm = ({
   productToEdit,
   onProductUpdated,
 }: AddProductFormProps) => {
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -174,6 +176,7 @@ const AddProductForm = ({
             Style Code (Group ID)
           </label>
           <Input
+            className="border border-gray-400 focus:border-none"
             value={styleCode}
             onChange={(e) => setStyleCode(e.target.value)}
             placeholder="e.g., RJL001"
@@ -185,6 +188,7 @@ const AddProductForm = ({
         <div>
           <label className="block mb-1 font-medium">Name</label>
           <Input
+            className="border border-gray-400 focus:border-none"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -207,6 +211,7 @@ const AddProductForm = ({
         <div>
           <label className="block mb-1 font-medium">Category</label>
           <Input
+            className="border border-gray-400 focus:border-none"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
@@ -217,6 +222,7 @@ const AddProductForm = ({
         <div>
           <label className="block mb-1 font-medium">Colour</label>
           <Input
+            className="border border-gray-400 focus:border-none"
             value={colour}
             onChange={(e) => setColour(e.target.value)}
             placeholder="e.g., Red, Blue, Golden"
@@ -229,16 +235,17 @@ const AddProductForm = ({
           <label className="block mb-2 font-medium text-red-600">Metal Sizes & Prices</label>
           {metal_sizes.map((size, index) => (
             <div key={index} className="flex gap-2 mb-2 items-center">
-              <Input
-                placeholder="Size (e.g., S, M, L)"
+              <SizeCombobox
+                placeholder="Size"
                 value={size.size}
-                onChange={(e) => {
+                onChange={(newValue) => {
                   const updatedSizes = [...metal_sizes];
-                  updatedSizes[index].size = e.target.value;
+                  updatedSizes[index].size = newValue;
                   setMetalSizes(updatedSizes);
                 }}
               />
               <Input
+                className="border border-gray-400 focus:border-none"
                 type="number"
                 min="0"
                 placeholder="Price"
@@ -276,16 +283,17 @@ const AddProductForm = ({
           <label className="block mb-2 font-medium text-red-600">Metal Pagdi Sizes & Prices</label>
           {metal_pagdi.map((size, index) => (
             <div key={index} className="flex gap-2 mb-2 items-center">
-              <Input
+              <SizeCombobox
                 placeholder="Size (e.g., S, M, L)"
                 value={size.size}
-                onChange={(e) => {
+                onChange={(newValue) => {
                   const updatedSizes = [...metal_pagdi];
-                  updatedSizes[index].size = e.target.value;
+                  updatedSizes[index].size = newValue;
                   setMetalPagdi(updatedSizes);
                 }}
               />
               <Input
+                className="border border-gray-400 focus:border-none"
                 type="number"
                 min="0"
                 placeholder="Price"
@@ -326,16 +334,17 @@ const AddProductForm = ({
           </label>
           {marble_sizes.map((size, index) => (
             <div key={index} className="flex gap-2 mb-2 items-center">
-              <Input
+              <SizeCombobox
                 placeholder="Size (e.g., 8mm, 10mm)"
                 value={size.size}
-                onChange={(e) => {
+                onChange={(newValue) => {
                   const updatedSizes = [...marble_sizes];
-                  updatedSizes[index].size = e.target.value;
+                  updatedSizes[index].size = newValue;
                   setMarbleSizes(updatedSizes);
                 }}
               />
               <Input
+                className="border border-gray-400 focus:border-none"
                 type="number"
                 min="0"
                 placeholder="Price"
@@ -373,16 +382,17 @@ const AddProductForm = ({
           <label className="block mb-2 font-medium text-green-600">Marble Pagdi Sizes & Prices</label>
           {marble_pagdi.map((size, index) => (
             <div key={index} className="flex gap-2 mb-2 items-center">
-              <Input
+              <SizeCombobox
                 placeholder="Size (e.g., S, M, L)"
                 value={size.size}
-                onChange={(e) => {
+                onChange={(newValue) => {
                   const updatedSizes = [...marble_pagdi];
-                  updatedSizes[index].size = e.target.value;
+                  updatedSizes[index].size = newValue;
                   setMarblePagdi(updatedSizes);
                 }}
               />
               <Input
+                className="border border-gray-400 focus:border-none"
                 type="number"
                 min="0"
                 placeholder="Price"
@@ -445,6 +455,7 @@ const AddProductForm = ({
             {isEditMode ? "Upload New Images" : "Upload Images"}
           </label>
           <input
+            className="border border-gray-400 focus:border-none"
             type="file"
             multiple
             onChange={(e) => setNewImages(Array.from(e.target.files || []))}
@@ -469,3 +480,8 @@ const AddProductForm = ({
 };
 
 export default AddProductForm;
+
+
+
+
+const sizeArr = [ "1-no", "2-no", "3-no", "4-no", "5-no", "6-no", "7-no", "8-no", "9-no", "10-no", "11-no", "12-no", "13-no", "14-no", "15-no", "16-no", "17-no", "18-no", "19-no", "20-no", "21-no", "22-no", "23-no", "24-no", "25-no", "26-no", "27-no", "28-no", "29-no", "30-no", "1-inch", "2-inch", "3-inch", "4-inch", "5-inch", "6-inch", "7-inch", "8-inch", "9-inch", "10-inch", "11-inch", "12-inch", "13-inch", "14-inch", "15-inch", "16-inch", "17-inch", "18-inch", "19-inch", "20-inch", "21-inch", "22-inch", "23-inch", "24-inch", "25-inch", "26-inch", "27-inch", "28-inch", "29-inch", "30-inch", ]
