@@ -110,9 +110,23 @@ const Products = () => {
   const state = productStates[product._id];
   const selectedSize = state?.selectedSize;
   const selectedType = state?.selectedSizeType;
-  const sizeOption = getAllSizes(product).find(s => s.size === selectedSize);
 
-  if (!state || !selectedSize || !selectedType || !sizeOption) return;
+  let sizeOption;
+  if (selectedType === 'metal') {
+    sizeOption = product.metal_sizes?.find(s => s.size === selectedSize);
+  } else {
+    sizeOption = product.marble_sizes?.find(s => s.size === selectedSize);
+  }
+
+  if (!sizeOption) {
+    console.error("Could not find matching size option");
+    return;
+  }
+
+  if (!state || !selectedSize || !selectedType || !sizeOption) {
+    toast({ title: "Error", description: "Invalid product state. Please try again." });
+    return
+  };
 
   addToCart({
     productId: product._id,
@@ -123,11 +137,11 @@ const Products = () => {
     price: sizeOption.price,
     image: product.images[0],
     customization: state.customization || "",
-    pagdi: pagdiOption, // Pagdi ki details yahan se jayengi
+    pagdi: pagdiOption, 
   });
 
   toast({ title: "Success!", description: `${product.name} has been added to your cart.` });
-  setPagdiModalProduct(null); // Modal band kar dein
+  setPagdiModalProduct(null); 
 };
 
   const getProductPrice = ( product: Product, size?: string, type?: "metal" | "marble") => {
