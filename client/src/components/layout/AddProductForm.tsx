@@ -246,7 +246,7 @@ const AddProductForm = ({
               />
               <Input
                 className="border border-gray-400 focus:border-none"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Price"
                 value={size.price}
@@ -294,7 +294,7 @@ const AddProductForm = ({
               />
               <Input
                 className="border border-gray-400 focus:border-none"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Price"
                 value={size.price}
@@ -345,7 +345,7 @@ const AddProductForm = ({
               />
               <Input
                 className="border border-gray-400 focus:border-none"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Price"
                 value={size.price}
@@ -393,7 +393,7 @@ const AddProductForm = ({
               />
               <Input
                 className="border border-gray-400 focus:border-none"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Price"
                 value={size.price}
