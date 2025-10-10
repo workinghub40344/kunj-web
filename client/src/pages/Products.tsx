@@ -97,7 +97,10 @@ const Products = () => {
   const handleAddToCart = (product: Product) => {
   const state = productStates[product._id];
   if (!state?.selectedSize) {
-    toast({ title: "Size Required", description: "Please select a size first!" });
+    toast({ 
+      title: "Size Required", 
+      description: "Please select a size first!" 
+    });
     return;
   }
   setPagdiModalProduct(product); // Modal kholne ke liye state set karein
