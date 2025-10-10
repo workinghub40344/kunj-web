@@ -117,7 +117,7 @@ const UserInfo = () => {
             </div>
 
             <Dialog open={!!selectedUserForOrders} onOpenChange={(isOpen) => !isOpen && setSelectedUserForOrders(null)}>
-                <DialogContent className="max-w-4xl max-h-[90vh]">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Orders for {selectedUserForOrders?.name}</DialogTitle>
                     </DialogHeader>

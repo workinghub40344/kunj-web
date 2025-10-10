@@ -1,5 +1,6 @@
 const admin = require('../config/firebaseAdmin');
 const User = require('../models/userModel');
+const Order = require('../models/orderModel');
 const generateToken = require('../utils//generateTokens');
 
 exports.googleLogin = async (req, res) => {
@@ -53,6 +54,7 @@ exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (user) {
+            await Order.deleteMany({ user: user._id });
             await user.deleteOne();
             res.json({ message: 'User removed' });
         } else {
