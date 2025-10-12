@@ -102,7 +102,7 @@ const Cart = () => {
       const orderData = { customerName: user.name, customerPhone, orderItems: cartItems, totalPrice: total };
       const { data: savedOrder } = await axios.post(`${API_URL}/api/orders/create`, orderData, config);
 
-      const phoneNumber = "918504866930";
+      const phoneNumber = "919529663375";
       let message = `Hello Kunj *_Creation_*, New Order Received!\n\n`;
       message += `*Order ID:* ${savedOrder.orderId}\n`;
       message += `*Customer Name:* ${orderData.customerName}\n`;

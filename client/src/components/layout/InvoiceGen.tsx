@@ -442,7 +442,7 @@ const BillingSystem = () => {
                     {/* <p><strong>GST:</strong> 08AAAAA0000A1Z5</p> */}
                     <p><strong>Address:</strong> Jhotwara, Jaipur, Rajasthan</p>
                     <p><strong>Pincode:</strong> 302012</p>
-                    <p><strong>Phone:</strong> 8504866930</p>
+                    <p><strong>Phone:</strong> 9529663375</p>
                   </div>
                   <div className="text-left">
                     <p className="mb-2 text-gray-500"><strong>Order ID:</strong> {orderId || "N/A"}</p>
