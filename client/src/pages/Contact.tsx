@@ -52,7 +52,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email",
-      content: "info@kunjcreation.com",
+      content: "d29kumawat@gmail.com",
       description: "We'll respond within 24 hours"
     },
     {
