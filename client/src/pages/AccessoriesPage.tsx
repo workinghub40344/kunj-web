@@ -36,7 +36,7 @@ const AccessoriesPage = () => {
       <h1 className="text-3xl font-bold mb-6">Accessories</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {accessories.map((acc) => (
-          <Link to={`/accessory/${acc._id}`} key={acc._id}>
+          <Link to={`/accessories/${acc._id}`} key={acc._id}>
             <Card className="h-full">
               <div className="aspect-square overflow-hidden rounded-t-lg">
                   <img src={acc.images[0]} alt={acc.name} className="w-full h-full object-cover"/>
@@ -54,3 +54,4 @@ const AccessoriesPage = () => {
 };
 
 export default AccessoriesPage;
+

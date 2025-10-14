@@ -14,6 +14,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ProductProvider } from "./context/ProductContext";
 import MyOrders from "./components/layout/MyOrders";
 import AccessoriesPage from "./pages/AccessoriesPage";
+import AccessoriesDetailPage from "./pages/AccessoriesDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
                       <Route path="/" element={<Home />} />
                       <Route path="/products" element={<Products />} />
                       <Route path="/accessories" element={<AccessoriesPage />} />
+                      <Route path="/accessories/:id" element={<AccessoriesDetailPage />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/cart" element={<Cart />} />
