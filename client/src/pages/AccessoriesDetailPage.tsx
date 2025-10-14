@@ -68,9 +68,9 @@ const AccessoriesDetailPage = () => {
 
   return (
     <div className="container mx-auto py-8 px-3">
-      <div className="flex justify-evenly items-center gap-8 flex-wrap md:flex-nowrap">
+      <div className="flex flex-col md:flex-row justify-evenly items-center gap-8 flex-wrap md:flex-nowrap">
         {/* 🖼️ Product Image */}
-        <div className="relative rounded-lg overflow-hidden shadow-md w-[30%]">
+        <div className="relative rounded-lg overflow-hidden shadow-md md:w-[30%]">
           <img
             src={product.images[0]}
             alt={product.name}
@@ -79,7 +79,7 @@ const AccessoriesDetailPage = () => {
         </div>
 
         {/* 🧾 Product Details */}
-        <div className="flex flex-col w-[60%]">
+        <div className="flex flex-col md:w-[60%]">
           <p className="text-sm text-muted-foreground">{product.deity}</p>
           <h1 className="text-xl md:text-2xl font-bold mt-1">{product.name}</h1>
           <p className="text-sm text-secondary">{product.category}</p>
@@ -129,7 +129,7 @@ const AccessoriesDetailPage = () => {
       </div>
       <hr className="mt-10 bg-gray-400 h-[2px]" />
       {/* 🎨 Related Variants */}
-      <div className="px-8 mt-2">
+      <div className="md:px-8 mt-2">
         {relatedProducts.length > 0 && (
           <div className="mt-5">
             <h3 className="text-sm font-semibold mb-2">Also Available In:</h3>
