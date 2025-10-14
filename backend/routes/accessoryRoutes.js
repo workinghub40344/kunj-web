@@ -4,11 +4,11 @@ const {  createAccessory, getAllAccessories, getAccessoryById, updateAccessory, 
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-// Public Routes (Sabhi dekh sakte hain)
+// Public Routes
 router.get('/', getAllAccessories);
 router.get('/:id', getAccessoryById);
 
-// Admin Only Routes (Sirf admin access kar sakta hai)
+// Admin Only Routes
 router.post('/', protect, upload.array('images', 1), createAccessory);
 router.put('/:id', protect, upload.array('images', 1), updateAccessory);
 router.delete('/:id', protect, deleteAccessory);

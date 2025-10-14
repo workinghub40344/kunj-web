@@ -16,11 +16,11 @@ const uploadFromBuffer = (fileBuffer) => {
   });
 };
 
-// Naya Accessory Create Karna
+// Create Accessories
 const createAccessory = async (req, res) => {
     let imagePublicIds = [];
     try {
-        const { name, description, colour, price, style_code, deity } = req.body;
+        const { name, description, category, colour, price, style_code, deity } = req.body;
         
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: 'At least one image is required.' });
@@ -34,7 +34,7 @@ const createAccessory = async (req, res) => {
         }
 
         const newAccessory = new Accessory({
-            name, description, colour, price: Number(price), style_code, deity, images, imagePublicIds,
+            name, description, category, colour, price: Number(price), style_code, deity, images, imagePublicIds,
         });
 
         const savedAccessory = await newAccessory.save();
@@ -43,18 +43,17 @@ const createAccessory = async (req, res) => {
     } catch (error) {
         console.error("Error creating accessory:", error);
 
-        // Agar DB mein save karte waqt error aaye, to upload hui images ko delete kar dein
+        // Cloudinary Rollback
         if (imagePublicIds.length > 0) {
             console.log("Rolling back Cloudinary uploads due to DB error...");
             await Promise.all(imagePublicIds.map(id => cloudinary.uploader.destroy(id)));
         }
         
-        // Duplicate key wala check hata diya gaya hai
         res.status(500).json({ message: "Server error while creating accessory." });
     }
 };
 
-// Sabhi Accessories ko Fetch Karna
+// Fetch All Accessories
 const getAllAccessories = async (req, res) => {
     try {
         const accessories = await Accessory.find({}).sort({ createdAt: -1 });
@@ -64,7 +63,7 @@ const getAllAccessories = async (req, res) => {
     }
 };
 
-// Ek Accessory ko ID se Fetch Karna
+// Fetch by Accessory ID
 const getAccessoryById = async (req, res) => {
     try {
         const accessory = await Accessory.findById(req.params.id);
@@ -78,17 +77,17 @@ const getAccessoryById = async (req, res) => {
     }
 };
 
-// Accessory ko Update Karna
+// Update Accessory 
 const updateAccessory = async (req, res) => {
     try {
         const accessory = await Accessory.findById(req.params.id);
         if (!accessory) return res.status(404).json({ message: "Accessory not found" });
 
-        const { name, description, colour, price, style_code, deity, removedImages } = req.body;
+        const { name, description, category, colour, price, style_code, deity, removedImages } = req.body;
 
         // 1️⃣ Remove images
         if (removedImages) {
-            const urlsToRemove = JSON.parse(removedImages); // frontend se JSON array
+            const urlsToRemove = JSON.parse(removedImages); 
             for (const url of urlsToRemove) {
                 const index = accessory.images.indexOf(url);
                 if (index > -1) {
@@ -113,6 +112,7 @@ const updateAccessory = async (req, res) => {
         // 3️⃣ Update other fields
         accessory.name = name || accessory.name;
         accessory.description = description || accessory.description;
+        accessory.category = category || accessory.category;
         accessory.colour = colour || accessory.colour;
         accessory.price = price ? Number(price) : accessory.price;
         accessory.style_code = style_code || accessory.style_code;
@@ -128,7 +128,7 @@ const updateAccessory = async (req, res) => {
 };
 
 
-// Accessory ko Delete Karna
+// Delete Accessory
 const deleteAccessory = async (req, res) => {
     try {
         const accessory = await Accessory.findById(req.params.id);
@@ -136,7 +136,7 @@ const deleteAccessory = async (req, res) => {
             return res.status(404).json({ message: "Accessory not found" });
         }
 
-        // Cloudinary se saari images delete karein
+        // Delete Images form Cloudinary
         if (accessory.imagePublicIds && accessory.imagePublicIds.length > 0) {
             await Promise.all(accessory.imagePublicIds.map(id => cloudinary.uploader.destroy(id)));
         }

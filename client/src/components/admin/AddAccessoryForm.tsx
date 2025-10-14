@@ -48,12 +48,13 @@ const accessoryNames = [
   "Mukut",
 ];
 
-interface Accessory {
+export interface Accessory {
   _id?: string;
   name: string;
   price: number;
   colour?: string;
   description?: string;
+  category?: string;
   style_code?: string;
   deity?: string;
   images?: string[];
@@ -76,6 +77,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [colour, setColour] = useState("");
   const [price, setPrice] = useState("");
   const [styleCode, setStyleCode] = useState("");
@@ -91,6 +93,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     if (existingData) {
       setName(existingData.name || "");
       setDescription(existingData.description || "");
+      setCategory(existingData.category || "");
       setColour(existingData.colour || "");
       setPrice(existingData.price?.toString() || "");
       setStyleCode(existingData.style_code || "");
@@ -102,6 +105,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const resetForm = () => {
     setName("");
     setDescription("");
+    setCategory("");
     setColour("");
     setPrice("");
     setStyleCode("");
@@ -128,6 +132,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
+    formData.append("category", category);
     formData.append("colour", colour);
     formData.append("price", price);
     formData.append("style_code", styleCode);
@@ -283,6 +288,14 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
           required
         />
       </div>
+      
+      {/* Category */}
+      <div className="">
+        <label className="block mb-1 font-medium">Category</label>
+        <Input type="text" placeholder="e.g., Jewelry"
+          value={category} onChange={(e) => setCategory(e.target.value)} required
+        />
+      </div>
 
       {/* Price */}
       <div>
@@ -304,8 +317,8 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Radha Ji">Radha Ji</SelectItem>
-            <SelectItem value="Krishna">Krishna</SelectItem>
-            <SelectItem value="Radha and Krishan ji">
+            <SelectItem value="Krishna Ji">Krishna Ji</SelectItem>
+            <SelectItem value="Radha and Krishna">
               Radha & Krishna (Common)
             </SelectItem>
           </SelectContent>

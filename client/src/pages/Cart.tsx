@@ -110,7 +110,7 @@ const Cart = () => {
       message += `--- *Order Details* ---\n`;
       cartItems.forEach((item, index) => {
         message += `*${index + 1}. ${item.productName}*\n`;
-        message += `   *${item.sizeType} Size:* ${item.size}\n`;
+        message += `   *${item.sizeType} ${item.sizeType === "Accessory" ? `Type: ${item.size}` : `Size: ${item.size}`}*\n`;
         if (item.pagdi) {
           message += `   *+ Pagdi:* ${item.pagdi.type} (${item.pagdi.size}) - ₹${item.pagdi.price}\n`;
         }
