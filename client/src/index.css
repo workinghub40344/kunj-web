@@ -105,3 +105,15 @@
     @apply fixed bottom-20 md:bottom-6 right-6 bg-green-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50;
   }
 }
+
+  /* Chrome, Safari, Edge, Opera browsers ke liye */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox browser ke liye */
+input[type=number] {
+  -moz-appearance: textfield;
+}

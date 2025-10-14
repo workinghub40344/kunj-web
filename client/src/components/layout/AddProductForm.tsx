@@ -21,6 +21,7 @@ interface ProductType {
   marble_pagdi: SizeOption[];
   images: string[];
   style_code: string;
+  stock_status: "IN_STOCK" | "OUT_OF_STOCK" | "BOOKING_CLOSED";
 }
 
 interface AddProductFormProps {

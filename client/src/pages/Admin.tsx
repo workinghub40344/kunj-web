@@ -1,58 +1,521 @@
-// client/src/pages/Admin.tsx
+// // client/src/pages/Admin.tsx
+
+// import { useState, useEffect, useMemo } from "react";
+// import axios from "axios";
+// import { Button } from "@/components/ui/button";
+// import { Product as ProductType } from "@/data/products";
+// import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download, SlidersHorizontal, User, ListOrdered } from "lucide-react";
+// import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
+// import InvoiceGen from "@/components/layout/InvoiceGen";
+// import SliderManagement from "@/components/admin/SliderManagement";
+// import UserInfo from "@/components/admin/UserInfo";
+// import AllOrders from "@/components/admin/AllOrders";
+
+// type Product = ProductType & { _id: string };
+
+// const AdminPanel = () => {
+//   const API_URL = import.meta.env.VITE_API_URL;
+//   const [sidebarOpen, setSidebarOpen] = useState(true);
+//   const [selectedSize, setSelectedSize] = useState("");
+//   const [productToEdit, setProductToEdit] = useState<Product | null>(null); // State for editing
+
+//   const [activeTab, setActiveTab] = useState<
+//     "products" | "invoices" | "downloadbill" | "slider" | "userinfo" | "allorders" | "accessories"
+//   >("products");
+//   const [products, setProducts] = useState<Product[]>([]);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [selectedCategory, setSelectedCategory] = useState("");
+
+//   // Memoized sorted sizes for filter dropdown
+//   const sortedSizes = useMemo(() => {
+//     const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
+//     // Dono arrays se sizes collect karein
+//     const allSizes = products.flatMap((p) => [
+//       ...(p.metal_sizes || []).map((s) => s.size),
+//       ...(p.marble_sizes || []).map((s) => s.size),
+//     ]);
+//     const uniqueSizes = [...new Set(allSizes)];
+
+//     uniqueSizes.sort((a, b) => {
+//       const upperA = a.toUpperCase();
+//       const upperB = b.toUpperCase();
+//       const indexA = sizeOrder.indexOf(upperA);
+//       const indexB = sizeOrder.indexOf(upperB);
+
+//       if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+//       if (indexA !== -1) return -1;
+//       if (indexB !== -1) return 1;
+//       return a.localeCompare(b, undefined, { numeric: true });
+//     });
+
+//     return uniqueSizes;
+//   }, [products]);
+
+//   // Redirect if no token
+//   useEffect(() => {
+//     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
+//     if (!token) {
+//       window.location.replace("/admin");
+//     }
+//   }, []);
+
+//   // Fetch products
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
+//       if (!token) return;
+
+//       try {
+//         const { data } = await axios.get(`${API_URL}/api/products`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         setProducts(data);
+//       } catch (err) {
+//         console.error("Failed to fetch products", err);
+//       }
+//     };
+//     fetchProducts();
+//   }, [API_URL]);
+
+//   const deleteProduct = async (id: string) => {
+//     if (!window.confirm("Are you sure you want to delete this product?"))
+//       return;
+//     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
+//     if (!token) return;
+
+//     try {
+//       await axios.delete(`${API_URL}/api/products/${id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setProducts((prev) => prev.filter((p) => p._id !== id));
+//     } catch (err) {
+//       console.error("Failed to delete product", err);
+//     }
+//   };
+
+//   // Handler to update stock status
+//   const handleUpdateStatus = async (id: string, newStatus: string) => {
+//     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
+//     if (!token) return;
+
+//     try {
+//       const { data } = await axios.put(
+//         `${API_URL}/api/products/${id}/status`,
+//         { status: newStatus },
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//       handleProductUpdated(data.product);
+//     } catch (err) {
+//       console.error("Failed to update stock status", err);
+//     }
+//   };
+
+//   // Function to handle opening the modal for editing
+//   const handleEditClick = (product: Product) => {
+//     setProductToEdit(product);
+//     setIsModalOpen(true);
+//   };
+
+//   // Function to close modal and reset editing state
+//   const handleCloseModal = () => {
+//     setIsModalOpen(false);
+//     setProductToEdit(null);
+//   };
+
+//   // Callback to update product list after editing
+//   const handleProductUpdated = (updatedProduct: Product) => {
+//     setProducts((prevProducts) =>
+//       prevProducts.map((p) =>
+//         p._id === updatedProduct._id ? updatedProduct : p
+//       )
+//     );
+//   };
+
+//   return (
+//     <div className="flex">
+//       {/* Sidebar */}
+//       <div
+//         className={`fixed top-0 left-0 h-screen bg-white shadow-lg transition-all duration-300 rounded-tr-lg rounded-br-lg border-primary border-r-2 flex flex-col`}
+//         style={{ width: sidebarOpen ? "16rem" : "4rem" }}
+//       >
+//         {/* Sidebar header */}
+//         <div className="flex items-center justify-between p-4 border-b">
+//           {sidebarOpen && (
+//             <span className="font-bold text-lg">Admin Panel</span>
+//           )}
+//           <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+//             <Menu />
+//           </button>
+//         </div>
+
+//         {/* Tabs */}
+//         <div className="flex-1 flex flex-col mt-4">
+//           <button
+//             className={`flex items-center p-4 hover:bg-gray-200 ${
+//               activeTab === "products" ? "bg-gray-200" : ""
+//             }`}
+//             onClick={() => setActiveTab("products")}
+//           >
+//             {sidebarOpen ? (
+//               <span className="flex-1">Product List</span>
+//             ) : (
+//               <Box className="h-5 w-5 mx-auto" />
+//             )}
+//           </button>
+//           {/* <button
+//             className={`flex items-center p-4 hover:bg-gray-200 ${
+//               activeTab === "invoices" ? "bg-gray-200" : ""
+//             }`}
+//             onClick={() => setActiveTab("invoices")}
+//           >
+//             {sidebarOpen ? (
+//               <span className="flex-1">Invoice Generator</span>
+//             ) : (
+//               <FileText className="h-5 w-5 mx-auto" />
+//             )}
+//           </button> */}
+//           <button
+//             className={`flex items-center p-4 hover:bg-gray-200 ${
+//               activeTab === "userinfo" ? "bg-gray-200" : ""
+//             }`}
+//             onClick={() => setActiveTab("userinfo")}
+//           >
+//             {sidebarOpen ? (
+//               <span className="flex-1">User Information</span>
+//             ) : (
+//               <User className="h-5 w-5 mx-auto" />
+//             )}
+//           </button>
+//           <button
+//             className={`flex items-center p-4 hover:bg-gray-200 ${
+//               activeTab === "slider" ? "bg-gray-200" : ""
+//             }`}
+//             onClick={() => setActiveTab("slider")}
+//           >
+//             {sidebarOpen ? (
+//               <span className="flex-1">Slider</span>
+//             ) : (
+//               <SlidersHorizontal className="h-5 w-5 mx-auto" />
+//             )}
+//           </button>
+//           <button
+//             className={`flex items-center p-4 hover:bg-gray-200 ${
+//               activeTab === "allorders" ? "bg-gray-200" : ""
+//             }`}
+//             onClick={() => setActiveTab("allorders")}
+//           >
+//             {sidebarOpen ? (
+//               <span className="flex-1">All Orders</span>
+//             ) : (
+//               <ListOrdered className="h-5 w-5 mx-auto" />
+//             )}
+//           </button>
+//         </div>
+
+//         {/* Logout */}
+//         <button
+//           className="flex items-center w-full hover:bg-gray-200 mt-auto mb-4 p-4"
+//           onClick={() => {
+//             localStorage.removeItem("adminInfo");
+//             window.location.replace("/admin");
+//           }}
+//         >
+//           <LogOut className="mr-2" />
+//           {sidebarOpen && "Logout"}
+//         </button>
+//       </div>
+
+//       {/* Main Content */}
+//       <div
+//         className="flex-1 p-6 overflow-auto"
+//         style={{ marginLeft: sidebarOpen ? "16rem" : "4rem", height: "100vh" }}
+//       >
+//         {activeTab === "products" && (
+//           <div>
+//             <div className="flex justify-between mb-4">
+//               <h2 className="text-xl font-bold">Product List</h2>
+//               <Button
+//                 className="bg-primary hover:bg-primary/90"
+//                 onClick={() => setIsModalOpen(true)} // Open modal for adding
+//               >
+//                 <Plus className="mr-0 h-0 w-0 md:h-4 md:w-4 " /> Add
+//               </Button>
+//             </div>
+
+//             {/* Table */}
+//             <div className="p-4 bg-white rounded-lg shadow">
+//               {/* Filters  */}
+//               <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
+//                 <input
+//                   type="text"
+//                   placeholder="Search products..."
+//                   value={searchTerm}
+//                   onChange={(e) => setSearchTerm(e.target.value)}
+//                   className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                 />
+
+//                 <select
+//                   value={selectedCategory}
+//                   onChange={(e) => setSelectedCategory(e.target.value)}
+//                   className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                 >
+//                   <option value="">All Categories</option>
+//                   {[...new Set(products.map((p) => p.category))].map((cat) => (
+//                     <option key={cat} value={cat}>
+//                       {cat}
+//                     </option>
+//                   ))}
+//                 </select>
+
+//                 <select
+//                   value={selectedSize}
+//                   onChange={(e) => setSelectedSize(e.target.value)}
+//                   className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                 >
+//                   <option value="">All Sizes</option>
+//                   {sortedSizes.map((size) => (
+//                     <option key={size} value={size}>
+//                       {size}
+//                     </option>
+//                   ))}
+//                 </select>
+//               </div>
+
+//               {/* Product Table */}
+//               <div className="overflow-x-auto">
+//                 <table className="min-w-full border-collapse">
+//                   <thead className="bg-gray-100">
+//                     <tr>
+//                       <th className="p-3 text-left">Image</th>
+//                       <th className="p-3 text-left">Name</th>
+//                       <th className="p-3 text-left">Status</th>
+//                       <th className="p-3 text-left">Sizes & Prices</th>
+//                       <th className="p-3 text-left">Actions</th>
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {products
+//                       .filter(
+//                         (p) =>
+//                           p.name
+//                             .toLowerCase()
+//                             .includes(searchTerm.toLowerCase()) &&
+//                           (selectedCategory
+//                             ? p.category === selectedCategory
+//                             : true) &&
+//                           (selectedSize
+//                             ? (p.metal_sizes || []).some(
+//                                 (s) => s.size === selectedSize
+//                               ) ||
+//                               (p.marble_sizes || []).some(
+//                                 (s) => s.size === selectedSize
+//                               )
+//                             : true)
+//                       )
+//                       .map((p) => (
+//                         <tr
+//                           key={p._id}
+//                           className="border-b hover:bg-gray-50 transition-all"
+//                         >
+//                           <td className="p-2 w-20">
+//                             <img
+//                               src={p.images[0]}
+//                               alt={p.name}
+//                               className="w-16 h-16 object-cover rounded"
+//                             />
+//                           </td>
+//                           <td className="p-2 font-medium">{p.name}</td>
+
+//                           {/* === UPDATED STATUS COLUMN === */}
+//                           <td className="p-2">
+//                             <select
+//                               value={p.stock_status}
+//                               onChange={(e) =>
+//                                 handleUpdateStatus(p._id, e.target.value)
+//                               }
+//                               className={`w-full border rounded px-2 py-1 text-sm h-9 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+//                                 p.stock_status === "IN_STOCK"
+//                                   ? "bg-green-100 text-green-800"
+//                                   : p.stock_status === "OUT_OF_STOCK"
+//                                   ? "bg-red-100 text-red-800"
+//                                   : "bg-yellow-100 text-yellow-800"
+//                               }`}
+//                             >
+//                               <option value="IN_STOCK">In Stock</option>
+//                               <option value="OUT_OF_STOCK">Out of Stock</option>
+//                               <option value="BOOKING_CLOSED">
+//                                 Booking Closed
+//                               </option>
+//                             </select>
+//                           </td>
+
+//                           <td className="p-2 space-y-1 text-sm">
+//                             {p.metal_sizes && p.metal_sizes.length > 0 && (
+//                               <div>
+//                                 <strong className="font-semibold">
+//                                   Metal:
+//                                 </strong>
+//                                 {p.metal_sizes.map((s) => (
+//                                   <div key={`metal-${s.size}`}>
+//                                     {s.size}: ₹{s.price}
+//                                   </div>
+//                                 ))}
+//                               </div>
+//                             )}
+//                             {p.marble_sizes && p.marble_sizes.length > 0 && (
+//                               <div className="mt-1">
+//                                 <strong className="font-semibold">
+//                                   Marble:
+//                                 </strong>
+//                                 {p.marble_sizes.map((s) => (
+//                                   <div key={`marble-${s.size}`}>
+//                                     {s.size}: ₹{s.price}
+//                                   </div>
+//                                 ))}
+//                               </div>
+//                             )}
+//                           </td>
+
+//                           {/* === UPDATED ACTIONS COLUMN === */}
+//                           <td className="p-2 flex gap-2">
+//                             <Button
+//                               size="sm"
+//                               variant="outline"
+//                               className="flex-1"
+//                               onClick={() => handleEditClick(p)}
+//                             >
+//                               <Edit className="h-4 w-4 mr-1" /> Edit
+//                             </Button>
+//                             <Button
+//                               size="sm"
+//                               variant="destructive"
+//                               className="flex-1"
+//                               onClick={() => deleteProduct(p._id)}
+//                             >
+//                               <Trash2 className="h-4 w-4 mr-1" /> Delete
+//                             </Button>
+//                           </td>
+//                         </tr>
+//                       ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </div>
+//           </div>
+//         )}
+
+//         {/* ... (Invoice tab) ... */}
+//         {activeTab === "invoices" && <InvoiceGen />}
+//         {activeTab === "userinfo" && <UserInfo />}
+//         {activeTab === "slider" && <SliderManagement />}
+//         {activeTab === "allorders" && <AllOrders />}
+//       </div>
+
+//       {/* Modal */}
+//       {isModalOpen && (
+//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+//           <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] relative flex flex-col">
+//             {/* Close button */}
+//             <button
+//               className="absolute top-2 right-2 z-10"
+//               onClick={handleCloseModal}
+//             >
+//               <X />
+//             </button>
+
+//             <h3 className="text-lg font-bold p-4 text-[hsl(338,73%,67%)] border-b">
+//               {productToEdit ? "Edit Product" : "Add Product"}
+//             </h3>
+
+//             {/* Scrollable content */}
+//             <div className="overflow-y-auto p-4 flex-1">
+//               <AddProductForm
+//                 onClose={handleCloseModal}
+//                 onProductAdded={(newProduct: Product) =>
+//                   setProducts((prev) => [newProduct, ...prev])
+//                 }
+//                 productToEdit={productToEdit}
+//                 onProductUpdated={handleProductUpdated}
+//               />
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default AdminPanel;
+
+
 
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { Product as ProductType } from "@/data/products";
-import { Plus, Edit, Trash2, LogOut, Menu, Box, FileText, X, Download, SlidersHorizontal, User, ListOrdered } from "lucide-react";
-import AddProductForm from "@/components/layout/AddProductForm"; // Make sure this is AddProductForm
-import InvoiceGen from "@/components/layout/InvoiceGen";
+import { Plus, Edit, Trash2, LogOut, Menu, Box, SlidersHorizontal, User, ListOrdered, X } from "lucide-react";
+import AddProductForm from "@/components/layout/AddProductForm";
 import SliderManagement from "@/components/admin/SliderManagement";
 import UserInfo from "@/components/admin/UserInfo";
 import AllOrders from "@/components/admin/AllOrders";
+import Accessories from "@/components/admin/Accessories";
 
-type Product = ProductType & { _id: string };
+interface SizeOption {
+  size: string;
+  price: number | string;
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  category: string;
+  colour: string;
+  metal_sizes: SizeOption[];
+  marble_sizes: SizeOption[];
+  metal_pagdi: SizeOption[];
+  marble_pagdi: SizeOption[];
+  images: string[];
+  style_code: string;
+  stock_status: "IN_STOCK" | "OUT_OF_STOCK" | "BOOKING_CLOSED";
+}
 
 const AdminPanel = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedSize, setSelectedSize] = useState("");
-  const [productToEdit, setProductToEdit] = useState<Product | null>(null); // State for editing
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
 
   const [activeTab, setActiveTab] = useState<
-    "products" | "invoices" | "downloadbill" | "slider" | "userinfo" | "allorders"
+    "products" | "slider" | "userinfo" | "allorders" | "accessories"
   >("products");
   const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Memoized sorted sizes for filter dropdown
+  // Sorted size list
   const sortedSizes = useMemo(() => {
     const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
-    // Dono arrays se sizes collect karein
     const allSizes = products.flatMap((p) => [
       ...(p.metal_sizes || []).map((s) => s.size),
       ...(p.marble_sizes || []).map((s) => s.size),
     ]);
     const uniqueSizes = [...new Set(allSizes)];
-
     uniqueSizes.sort((a, b) => {
       const upperA = a.toUpperCase();
       const upperB = b.toUpperCase();
       const indexA = sizeOrder.indexOf(upperA);
       const indexB = sizeOrder.indexOf(upperB);
-
       if (indexA !== -1 && indexB !== -1) return indexA - indexB;
       if (indexA !== -1) return -1;
       if (indexB !== -1) return 1;
       return a.localeCompare(b, undefined, { numeric: true });
     });
-
     return uniqueSizes;
   }, [products]);
 
-  // Redirect if no token
+  // Auth check
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
     if (!token) {
@@ -65,7 +528,6 @@ const AdminPanel = () => {
     const fetchProducts = async () => {
       const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
       if (!token) return;
-
       try {
         const { data } = await axios.get(`${API_URL}/api/products`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -78,12 +540,11 @@ const AdminPanel = () => {
     fetchProducts();
   }, [API_URL]);
 
+  // Delete product
   const deleteProduct = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this product?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
     if (!token) return;
-
     try {
       await axios.delete(`${API_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -94,11 +555,10 @@ const AdminPanel = () => {
     }
   };
 
-  // Handler to update stock status
+  // Update stock status
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     const token = JSON.parse(localStorage.getItem("adminInfo") || "{}").token;
     if (!token) return;
-
     try {
       const { data } = await axios.put(
         `${API_URL}/api/products/${id}/status`,
@@ -111,25 +571,28 @@ const AdminPanel = () => {
     }
   };
 
-  // Function to handle opening the modal for editing
+  // Edit product
   const handleEditClick = (product: Product) => {
     setProductToEdit(product);
     setIsModalOpen(true);
   };
 
-  // Function to close modal and reset editing state
+  // Close modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setProductToEdit(null);
   };
 
-  // Callback to update product list after editing
+  // Update list after edit
   const handleProductUpdated = (updatedProduct: Product) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((p) =>
-        p._id === updatedProduct._id ? updatedProduct : p
-      )
+    setProducts((prev) =>
+      prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
     );
+  };
+
+  // Add product callback
+  const handleProductAdded = (newProduct: Product) => {
+    setProducts((prev) => [newProduct, ...prev]);
   };
 
   return (
@@ -139,11 +602,8 @@ const AdminPanel = () => {
         className={`fixed top-0 left-0 h-screen bg-white shadow-lg transition-all duration-300 rounded-tr-lg rounded-br-lg border-primary border-r-2 flex flex-col`}
         style={{ width: sidebarOpen ? "16rem" : "4rem" }}
       >
-        {/* Sidebar header */}
         <div className="flex items-center justify-between p-4 border-b">
-          {sidebarOpen && (
-            <span className="font-bold text-lg">Admin Panel</span>
-          )}
+          {sidebarOpen && <span className="font-bold text-lg">Admin Panel</span>}
           <button onClick={() => setSidebarOpen(!sidebarOpen)}>
             <Menu />
           </button>
@@ -151,69 +611,29 @@ const AdminPanel = () => {
 
         {/* Tabs */}
         <div className="flex-1 flex flex-col mt-4">
-          <button
-            className={`flex items-center p-4 hover:bg-gray-200 ${
-              activeTab === "products" ? "bg-gray-200" : ""
-            }`}
-            onClick={() => setActiveTab("products")}
-          >
-            {sidebarOpen ? (
-              <span className="flex-1">Product List</span>
-            ) : (
-              <Box className="h-5 w-5 mx-auto" />
-            )}
-          </button>
-          {/* <button
-            className={`flex items-center p-4 hover:bg-gray-200 ${
-              activeTab === "invoices" ? "bg-gray-200" : ""
-            }`}
-            onClick={() => setActiveTab("invoices")}
-          >
-            {sidebarOpen ? (
-              <span className="flex-1">Invoice Generator</span>
-            ) : (
-              <FileText className="h-5 w-5 mx-auto" />
-            )}
-          </button> */}
-          <button
-            className={`flex items-center p-4 hover:bg-gray-200 ${
-              activeTab === "userinfo" ? "bg-gray-200" : ""
-            }`}
-            onClick={() => setActiveTab("userinfo")}
-          >
-            {sidebarOpen ? (
-              <span className="flex-1">User Information</span>
-            ) : (
-              <User className="h-5 w-5 mx-auto" />
-            )}
-          </button>
-          <button
-            className={`flex items-center p-4 hover:bg-gray-200 ${
-              activeTab === "slider" ? "bg-gray-200" : ""
-            }`}
-            onClick={() => setActiveTab("slider")}
-          >
-            {sidebarOpen ? (
-              <span className="flex-1">Slider</span>
-            ) : (
-              <SlidersHorizontal className="h-5 w-5 mx-auto" />
-            )}
-          </button>
-          <button
-            className={`flex items-center p-4 hover:bg-gray-200 ${
-              activeTab === "allorders" ? "bg-gray-200" : ""
-            }`}
-            onClick={() => setActiveTab("allorders")}
-          >
-            {sidebarOpen ? (
-              <span className="flex-1">All Orders</span>
-            ) : (
-              <ListOrdered className="h-5 w-5 mx-auto" />
-            )}
-          </button>
+          {[
+            { key: "products", label: "Product List", icon: Box },
+            { key: "accessories", label: "Accessories", icon: Box },
+            { key: "userinfo", label: "User Info", icon: User },
+            { key: "slider", label: "Slider", icon: SlidersHorizontal },
+            { key: "allorders", label: "All Orders", icon: ListOrdered },
+          ].map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              className={`flex items-center p-4 hover:bg-gray-200 ${
+                activeTab === key ? "bg-gray-200" : ""
+              }`}
+              onClick={() => setActiveTab(key as any)}
+            >
+              {sidebarOpen ? (
+                <span className="flex-1">{label}</span>
+              ) : (
+                <Icon className="h-5 w-5 mx-auto" />
+              )}
+            </button>
+          ))}
         </div>
 
-        {/* Logout */}
         <button
           className="flex items-center w-full hover:bg-gray-200 mt-auto mb-4 p-4"
           onClick={() => {
@@ -226,7 +646,7 @@ const AdminPanel = () => {
         </button>
       </div>
 
-      {/* Main Content */}
+      {/* Main content */}
       <div
         className="flex-1 p-6 overflow-auto"
         style={{ marginLeft: sidebarOpen ? "16rem" : "4rem", height: "100vh" }}
@@ -237,47 +657,40 @@ const AdminPanel = () => {
               <h2 className="text-xl font-bold">Product List</h2>
               <Button
                 className="bg-primary hover:bg-primary/90"
-                onClick={() => setIsModalOpen(true)} // Open modal for adding
+                onClick={() => setIsModalOpen(true)}
               >
-                <Plus className="mr-0 h-0 w-0 md:h-4 md:w-4 " /> Add
+                <Plus className="mr-2 h-4 w-4" /> Add
               </Button>
             </div>
 
-            {/* Table */}
             <div className="p-4 bg-white rounded-lg shadow">
-              {/* Filters  */}
+              {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="border rounded px-3 py-2 w-full md:w-1/4"
                 />
-
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="border rounded px-3 py-2 w-full md:w-1/4"
                 >
                   <option value="">All Categories</option>
                   {[...new Set(products.map((p) => p.category))].map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
+                    <option key={cat}>{cat}</option>
                   ))}
                 </select>
-
                 <select
                   value={selectedSize}
                   onChange={(e) => setSelectedSize(e.target.value)}
-                  className="border rounded px-3 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="border rounded px-3 py-2 w-full md:w-1/4"
                 >
                   <option value="">All Sizes</option>
                   {sortedSizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
+                    <option key={size}>{size}</option>
                   ))}
                 </select>
               </div>
@@ -290,7 +703,7 @@ const AdminPanel = () => {
                       <th className="p-3 text-left">Image</th>
                       <th className="p-3 text-left">Name</th>
                       <th className="p-3 text-left">Status</th>
-                      <th className="p-3 text-left">Sizes & Prices</th>
+                      <th className="p-3 text-left">Sizes</th>
                       <th className="p-3 text-left">Actions</th>
                     </tr>
                   </thead>
@@ -298,49 +711,31 @@ const AdminPanel = () => {
                     {products
                       .filter(
                         (p) =>
-                          p.name
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase()) &&
-                          (selectedCategory
-                            ? p.category === selectedCategory
-                            : true) &&
+                          p.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                          (selectedCategory ? p.category === selectedCategory : true) &&
                           (selectedSize
-                            ? (p.metal_sizes || []).some(
-                                (s) => s.size === selectedSize
-                              ) ||
-                              (p.marble_sizes || []).some(
+                            ? [...p.metal_sizes, ...p.marble_sizes].some(
                                 (s) => s.size === selectedSize
                               )
                             : true)
                       )
                       .map((p) => (
-                        <tr
-                          key={p._id}
-                          className="border-b hover:bg-gray-50 transition-all"
-                        >
-                          <td className="p-2 w-20">
+                        <tr key={p._id} className="border-b hover:bg-gray-50">
+                          <td className="p-2">
                             <img
                               src={p.images[0]}
                               alt={p.name}
-                              className="w-16 h-16 object-cover rounded"
+                              className="w-16 h-16 rounded object-cover"
                             />
                           </td>
-                          <td className="p-2 font-medium">{p.name}</td>
-
-                          {/* === UPDATED STATUS COLUMN === */}
+                          <td className="p-2">{p.name}</td>
                           <td className="p-2">
                             <select
                               value={p.stock_status}
                               onChange={(e) =>
                                 handleUpdateStatus(p._id, e.target.value)
                               }
-                              className={`w-full border rounded px-2 py-1 text-sm h-9 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                                p.stock_status === "IN_STOCK"
-                                  ? "bg-green-100 text-green-800"
-                                  : p.stock_status === "OUT_OF_STOCK"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-yellow-100 text-yellow-800"
-                              }`}
+                              className="border rounded px-2 py-1"
                             >
                               <option value="IN_STOCK">In Stock</option>
                               <option value="OUT_OF_STOCK">Out of Stock</option>
@@ -349,40 +744,21 @@ const AdminPanel = () => {
                               </option>
                             </select>
                           </td>
-
-                          <td className="p-2 space-y-1 text-sm">
-                            {p.metal_sizes && p.metal_sizes.length > 0 && (
-                              <div>
-                                <strong className="font-semibold">
-                                  Metal:
-                                </strong>
-                                {p.metal_sizes.map((s) => (
-                                  <div key={`metal-${s.size}`}>
-                                    {s.size}: ₹{s.price}
-                                  </div>
-                                ))}
+                          <td className="p-2 text-sm">
+                            {p.metal_sizes?.map((s) => (
+                              <div key={s.size}>
+                                Metal {s.size}: ₹{s.price}
                               </div>
-                            )}
-                            {p.marble_sizes && p.marble_sizes.length > 0 && (
-                              <div className="mt-1">
-                                <strong className="font-semibold">
-                                  Marble:
-                                </strong>
-                                {p.marble_sizes.map((s) => (
-                                  <div key={`marble-${s.size}`}>
-                                    {s.size}: ₹{s.price}
-                                  </div>
-                                ))}
+                            ))}
+                            {p.marble_sizes?.map((s) => (
+                              <div key={s.size}>
+                                Marble {s.size}: ₹{s.price}
                               </div>
-                            )}
+                            ))}
                           </td>
-
-                          {/* === UPDATED ACTIONS COLUMN === */}
                           <td className="p-2 flex gap-2">
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="flex-1"
                               onClick={() => handleEditClick(p)}
                             >
                               <Edit className="h-4 w-4 mr-1" /> Edit
@@ -390,7 +766,6 @@ const AdminPanel = () => {
                             <Button
                               size="sm"
                               variant="destructive"
-                              className="flex-1"
                               onClick={() => deleteProduct(p._id)}
                             >
                               <Trash2 className="h-4 w-4 mr-1" /> Delete
@@ -405,38 +780,31 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* ... (Invoice tab) ... */}
-        {activeTab === "invoices" && <InvoiceGen />}
-        {activeTab === "userinfo" && <UserInfo />}
         {activeTab === "slider" && <SliderManagement />}
+        {activeTab === "userinfo" && <UserInfo />}
         {activeTab === "allorders" && <AllOrders />}
+        {activeTab === "accessories" && <Accessories />}
       </div>
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] relative flex flex-col">
-            {/* Close button */}
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-2xl relative">
             <button
-              className="absolute top-2 right-2 z-10"
               onClick={handleCloseModal}
+              className="absolute top-2 right-2"
             >
               <X />
             </button>
-
-            <h3 className="text-lg font-bold p-4 text-[hsl(338,73%,67%)] border-b">
+            <h3 className="text-lg font-bold p-4 border-b">
               {productToEdit ? "Edit Product" : "Add Product"}
             </h3>
-
-            {/* Scrollable content */}
-            <div className="overflow-y-auto p-4 flex-1">
+            <div className="p-4 max-h-[80vh] overflow-y-auto">
               <AddProductForm
                 onClose={handleCloseModal}
-                onProductAdded={(newProduct: Product) =>
-                  setProducts((prev) => [newProduct, ...prev])
-                }
-                productToEdit={productToEdit}
+                onProductAdded={handleProductAdded}
                 onProductUpdated={handleProductUpdated}
+                productToEdit={productToEdit}
               />
             </div>
           </div>
