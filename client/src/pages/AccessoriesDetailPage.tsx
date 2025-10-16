@@ -6,8 +6,10 @@ import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Minus, Plus } from "lucide-react";
 import { Accessory } from "../components/admin/AddAccessoryForm";
+import SingleProductDialog from "../components/products/SingleProductModal";
 
 const AccessoriesDetailPage = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Accessory | null>(null);
   const [allVariants, setAllVariants] = useState<Accessory[]>([]);
@@ -116,14 +118,29 @@ const AccessoriesDetailPage = () => {
               </div>
             </div>
 
-            {/* 🛒 Add to Cart */}
-            <Button
-              size="sm"
-              className="w-full bg-primary hover:bg-primary/90 text-white font-medium rounded-md shadow-sm"
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </Button>
+        {/* 🛒 Choose From Set */}
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            size="sm"
+            className={`${product.single_product[0] ? ("w-fit px-10 bg-secondary/90 roundes-[5px]") : ( "hidden" ) }`}
+            onClick={() => setIsDialogOpen(true)}
+          >
+            Choose Product from the Set
+          </Button>
+        </div>
+        
+
+      {/* 🛒 Add to Cart */}
+      <div className="space-y-3">
+        <Button
+          size="sm"
+          className="w-full bg-primary hover:bg-primary/90 text-white font-medium rounded-md shadow-sm"
+          onClick={handleAddToCart} // full set
+        >
+          Add to Cart
+        </Button>
+      </div>
           </div>
         </div>
       </div>
@@ -149,6 +166,14 @@ const AccessoriesDetailPage = () => {
           </div>
         )}
       </div>
+      {/* Single Product Dialog */}
+      {product && (
+        <SingleProductDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          product={product}
+        />
+      )}
     </div>
   );
 };

@@ -8,6 +8,12 @@ const accessorySchema = new mongoose.Schema(
     colour: { type: String, required: true },
     price: { type: Number, required: true },
     style_code: { type: String, required: true },
+    single_product: [
+      {
+        size: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, trim: true },
+      },
+    ],
     deity: {
       type: String,
       required: true,

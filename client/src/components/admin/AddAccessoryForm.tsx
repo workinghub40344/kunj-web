@@ -58,6 +58,9 @@ export interface Accessory {
   style_code?: string;
   deity?: string;
   images?: string[];
+  single_product?: [
+    {size:string , price:number},
+  ]
 }
 
 interface AddAccessoryFormProps {
@@ -87,6 +90,14 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const [removedImages, setRemovedImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openCombobox, setOpenCombobox] = useState(false);
+  const [singleProducts, setSingleProducts] = useState<
+    { size: string; price: string }[]
+  >(
+    existingData?.single_product?.map((sp) => ({
+      size: sp.size,
+      price: sp.price.toString(),
+    })) || []
+  );
 
   // Prefill form for editing
   useEffect(() => {
@@ -115,6 +126,27 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     setRemovedImages([]);
   };
 
+  // Add new size row
+  const addSizeRow = () => {
+    setSingleProducts([...singleProducts, { size: "", price: "" }]);
+  };
+
+  // Remove size row
+  const removeSizeRow = (index: number) => {
+    setSingleProducts(singleProducts.filter((_, i) => i !== index));
+  };
+
+  // Update a row
+  const updateSizeRow = (
+    index: number,
+    field: "size" | "price",
+    value: string
+  ) => {
+    const updated = [...singleProducts];
+    updated[index][field] = value;
+    setSingleProducts(updated);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -137,6 +169,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     formData.append("price", price);
     formData.append("style_code", styleCode);
     formData.append("deity", deity);
+    formData.append("single_product", JSON.stringify(singleProducts));
 
     // New images
     images.forEach((img) => formData.append("images", img));
@@ -288,12 +321,16 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
           required
         />
       </div>
-      
+
       {/* Category */}
       <div className="">
         <label className="block mb-1 font-medium">Category</label>
-        <Input type="text" placeholder="e.g., Jewelry"
-          value={category} onChange={(e) => setCategory(e.target.value)} required
+        <Input
+          type="text"
+          placeholder="e.g., Jewelry"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
         />
       </div>
 
@@ -306,6 +343,44 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
           onChange={(e) => setPrice(e.target.value)}
           required
         />
+      </div>
+
+      {/* Single Product: Sizes & Prices */}
+      <div>
+        <label className="block mb-2 font-medium">
+          Single Products & Prices
+        </label>
+        <div className="space-y-2">
+          {singleProducts.map((sp, index) => (
+            <div key={index} className="flex gap-2 items-center">
+              <Input
+                placeholder="Name"
+                value={sp.size}
+                onChange={(e) => updateSizeRow(index, "size", e.target.value)}
+                className="flex-1"
+                required
+              />
+              <Input
+                placeholder="Price"
+                type="text"
+                value={sp.price}
+                onChange={(e) => updateSizeRow(index, "price", e.target.value)}
+                className="flex-1"
+                required
+              />
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => removeSizeRow(index)}
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+        </div>
+        <Button type="button" className="mt-2" onClick={addSizeRow}>
+          + Add Size
+        </Button>
       </div>
 
       {/* Deity */}

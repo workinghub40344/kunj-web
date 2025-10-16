@@ -171,7 +171,7 @@ const Cart = () => {
       cartItems.forEach((item, index) => {
         message += `*${index + 1}. ${item.productName}*\n`;
         message += `   *${item.sizeType} ${
-          item.sizeType === "Accessory"
+          ["Accessory", "Product"].includes(item.sizeType)
             ? `Type: ${item.size}`
             : `Size: ${item.size}`
         }*\n`;
@@ -276,10 +276,13 @@ const Cart = () => {
                     <div className="text-sm text-muted-foreground">
                       <strong>
                         {item.sizeType}{" "}
-                        {item.sizeType === "Accessory" ? `Type:` : `Size:`}
+                        {["Accessory", "Product"].includes(item.sizeType)
+                          ? "Type:"
+                          : "Size:"}
                       </strong>{" "}
-                      {item.sizeType === "Accessory" ? item.size : item.size}
+                      {item.size}
                     </div>
+
                     {item.pagdi && (
                       <div className="text-xs text-green-600 font-semibold pl-4">
                         + Pagdi ({item.pagdi.size})
