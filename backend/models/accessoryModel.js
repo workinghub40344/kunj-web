@@ -19,6 +19,11 @@ const accessorySchema = new mongoose.Schema(
       required: true,
       enum: ['Radha Ji', 'Krishna Ji', 'Radha and Krishna']
     },
+    countInStock: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
     images: [{ type: String, required: true }],
     imagePublicIds: [{ type: String, required: true }],
   },

@@ -16,7 +16,7 @@ interface Accessory {
   name: string;
   category: string;
   price: number;
-  createdAt?: string; // For Date filter
+  createdAt?: string; 
   images: string[];
 }
 

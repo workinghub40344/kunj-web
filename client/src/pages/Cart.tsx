@@ -156,6 +156,7 @@ const Cart = () => {
         orderItems: cartItems,
         totalPrice: total,
       };
+      console.log("Data being sent to backend:", orderData);
       const { data: savedOrder } = await axios.post(
         `${API_URL}/api/orders/create`,
         orderData,

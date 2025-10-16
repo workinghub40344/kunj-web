@@ -91,6 +91,15 @@ const AccessoriesDetailPage = () => {
             {product.description}
           </p>
 
+          {/* Stock Status Badge */}
+          {/* <div>
+                {(product.countInStock as unknown as number) > 0 ? (
+                    <p className="text-secondary/90 w-fit">In Stock :- {product.countInStock}</p>
+                ) : (
+                    <p>Out of Stock</p>
+                )}
+          </div> */}
+
           {/* 🔢 Quantity Selector */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -135,10 +144,11 @@ const AccessoriesDetailPage = () => {
       <div className="space-y-3">
         <Button
           size="sm"
-          className="w-full bg-primary hover:bg-primary/90 text-white font-medium rounded-md shadow-sm"
-          onClick={handleAddToCart} // full set
+          className="w-full bg-primary hover:bg-primary/80 text-white font-medium rounded-md shadow-sm"
+          onClick={handleAddToCart}
+          disabled={(product.countInStock as unknown as number) <= 0}
         >
-          Add to Cart
+          {(product.countInStock as unknown as number) > 0 ? 'Add to Cart' : 'Out of Stock'}
         </Button>
       </div>
           </div>

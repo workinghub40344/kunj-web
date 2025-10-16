@@ -95,8 +95,11 @@ const SingleProductDialog: React.FC<SingleProductDialogProps> = ({
         </div>
 
         <DialogFooter>
-          <Button className="w-full" onClick={handleAddToCart}>
-            Add to Cart
+          <Button
+            className="w-full" onClick={handleAddToCart}
+            disabled={(product.countInStock as unknown as number) <= 0}
+          >
+            {(product.countInStock as unknown as number) > 0 ? 'Add to Cart' : 'Out of Stock'}
           </Button>
         </DialogFooter>
       </DialogContent>

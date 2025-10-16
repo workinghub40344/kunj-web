@@ -1,14 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AddAccessoryForm from "./AddAccessoryForm";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +18,7 @@ interface Accessory {
   style_code?: string;
   deity?: string;
   images?: string[];
+  countInStock: number;
 }
 
 const Accessories = () => {
@@ -119,6 +114,7 @@ const Accessories = () => {
               <th className="text-left py-3 px-4 border-b">Name</th>
               <th className="text-left py-3 px-4 border-b">Style Code</th>
               <th className="text-left py-3 px-4 border-b">Price</th>
+              <th className="text-left py-3 px-4 border-b">Stock</th>
               <th className="text-left py-3 px-4 border-b">Actions</th>
             </tr>
           </thead>
@@ -151,6 +147,8 @@ const Accessories = () => {
                     <td className=" rounded-sm bg-secondary/80 border-b px-5 ml-5">{item.style_code}</td>
                   </div>
                   <td className="py-3 px-4 border-b">₹{item.price}</td>
+                  <td className="py-3 px-4 border-b text-black">{item.countInStock}</td>
+                  {/* Action Button */}
                   <td className="py-3 px-4 border-b">
                     <div className="flex gap-2">
                       <Button

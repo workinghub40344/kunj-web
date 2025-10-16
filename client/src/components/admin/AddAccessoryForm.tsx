@@ -60,7 +60,8 @@ export interface Accessory {
   images?: string[];
   single_product?: [
     {size:string , price:number},
-  ]
+  ];
+  countInStock?: number;
 }
 
 interface AddAccessoryFormProps {
@@ -85,14 +86,13 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const [price, setPrice] = useState("");
   const [styleCode, setStyleCode] = useState("");
   const [deity, setDeity] = useState("Radha and Krishan ji");
+  const [countInStock, setCountInStock] = useState<string | number>('');
   const [images, setImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openCombobox, setOpenCombobox] = useState(false);
-  const [singleProducts, setSingleProducts] = useState<
-    { size: string; price: string }[]
-  >(
+  const [singleProducts, setSingleProducts] = useState<{ size: string; price: string }[]>(
     existingData?.single_product?.map((sp) => ({
       size: sp.size,
       price: sp.price.toString(),
@@ -109,6 +109,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
       setPrice(existingData.price?.toString() || "");
       setStyleCode(existingData.style_code || "");
       setDeity(existingData.deity || "Radha and Krishan ji");
+      setCountInStock(existingData.countInStock || "");
       setExistingImages(existingData.images || []);
     }
   }, [existingData]);
@@ -169,6 +170,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     formData.append("price", price);
     formData.append("style_code", styleCode);
     formData.append("deity", deity);
+    formData.append('countInStock', String(countInStock));
     formData.append("single_product", JSON.stringify(singleProducts));
 
     // New images
@@ -381,6 +383,12 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
         <Button type="button" className="mt-2" onClick={addSizeRow}>
           + Add Size
         </Button>
+      </div>
+
+      {/* Stock */}
+      <div>
+        <label>Items In Stock</label>
+        <Input type="number" value={countInStock} onChange={(e) => setCountInStock(e.target.value)} required placeholder="e.g., 10" />
       </div>
 
       {/* Deity */}

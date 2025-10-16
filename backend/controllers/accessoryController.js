@@ -20,7 +20,7 @@ const uploadFromBuffer = (fileBuffer) => {
 const createAccessory = async (req, res) => {
     let imagePublicIds = [];
     try {
-        const { name, description, category, colour, price, style_code, deity, single_product } = req.body;
+        const { name, description, category, colour, price, style_code, deity, single_product, countInStock } = req.body;
         
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: 'At least one image is required.' });
@@ -34,7 +34,7 @@ const createAccessory = async (req, res) => {
         }
 
         const newAccessory = new Accessory({
-            name, description, category, colour, price: Number(price), style_code, deity, 
+            name, description, category, colour, price: Number(price), style_code, deity, countInStock,
             images, 
             imagePublicIds, 
             single_product:JSON.parse(single_product)
@@ -86,7 +86,7 @@ const updateAccessory = async (req, res) => {
         const accessory = await Accessory.findById(req.params.id);
         if (!accessory) return res.status(404).json({ message: "Accessory not found" });
 
-        const { name, description, category, colour, price, style_code, deity, removedImages, single_product } = req.body;
+        const { name, description, category, colour, price, style_code, deity, removedImages, single_product, countInStock } = req.body;
 
         // 1️⃣ Remove images
         if (removedImages) {
@@ -120,6 +120,7 @@ const updateAccessory = async (req, res) => {
         accessory.price = price ? Number(price) : accessory.price;
         accessory.style_code = style_code || accessory.style_code;
         accessory.deity = deity || accessory.deity;
+        accessory.countInStock = countInStock    || accessory.countInStock
         if (single_product) {
             accessory.single_product = JSON.parse(single_product);
         }

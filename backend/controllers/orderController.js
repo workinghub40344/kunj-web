@@ -1,6 +1,8 @@
 const Order = require('../models/orderModel.js');
 const Counter = require('../models/counterModel.js');
 const User = require('../models/userModel.js');
+const Product = require('../models/Products.js');
+const Accessory = require('../models/accessoryModel.js')
 
 async function getNextSequenceValue(sequenceName) {
   const sequenceDocument = await Counter.findByIdAndUpdate(
@@ -11,46 +13,26 @@ async function getNextSequenceValue(sequenceName) {
   return sequenceDocument.seq;
 }
 
-// const createOrder = async (req, res) => {
-//   try {
-//     const { customerName, customerPhone, orderItems, totalPrice } = req.body;
-
-//     const orderNumber = await getNextSequenceValue('orderId');
-//     const date = new Date();
-//     const year = date.getFullYear().toString().slice(-2);
-//     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-//     const customOrderId = `${year}${orderNumber}${month}`;
-
-//     const order = new Order({
-//         orderId: customOrderId,
-//         customerName,
-//         customerPhone,
-//         orderItems,
-//         totalPrice,
-//     });
-
-//     const createdOrder = await order.save();
-//     const user = await User.findById(req.user._id);
-//     if (user && !user.phone) {
-//       user.phone = req.body.customerPhone;
-//       await user.save();
-//     }
-//     res.status(201).json(createdOrder);
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Server Error creating order' });
-//   }
-// };
-
 const createOrder = async (req, res) => {
   try {
+    // console.log("Data received on backend in orderItems:", req.body.orderItems);
     const { customerPhone, orderItems, totalPrice } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
       res.status(400);
       throw new Error('No order items in cart');
     }
+
+    const cleanedOrderItems = orderItems.map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        quantity: item.quantity,
+        size: item.size,
+        price: item.price,
+        image: item.image,
+        customization: item.customization,
+        pagdi: item.pagdi
+    }));
 
     const orderNumber = await getNextSequenceValue('orderId');
     const date = new Date();
@@ -60,7 +42,7 @@ const createOrder = async (req, res) => {
 
     const order = new Order({
         orderId: customOrderId,
-        orderItems,
+        orderItems: cleanedOrderItems,
         totalPrice,
         customerPhone,
         user: req.user._id,
@@ -68,6 +50,17 @@ const createOrder = async (req, res) => {
     });
 
     const createdOrder = await order.save();
+    // Accessory Inventory Management
+    for (const item of createdOrder.orderItems) {
+      let product = await Product.findById(item.productId);
+      if (!product) {
+        product = await Accessory.findById(item.productId);
+      }
+      if (product && typeof product.countInStock !== 'undefined') {
+        product.countInStock -= item.quantity;
+        await product.save();
+      }
+    }
 
     if (req.user && !req.user.phone) {
         req.user.phone = customerPhone;

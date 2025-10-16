@@ -117,7 +117,7 @@ const MyOrders = () => {
                         <ul className="list-disc pl-5 space-y-2">
                           {order.orderItems.map((item) => (
                             <li key={item._id} className="text-sm text-muted-foreground">
-                              {item.quantity} x {item.productName} (Size: {item.size})
+                              {item.quantity} x {item.productName} ({item.size})
                               {item.pagdi && (
                                 <span className="text-xs text-green-600 font-semibold block pl-2">
                                   + {item.pagdi.type} ({item.pagdi.size})
