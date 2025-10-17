@@ -2,32 +2,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const accessoryNames = [
   "Chokar Har",
@@ -58,9 +41,7 @@ export interface Accessory {
   style_code?: string;
   deity?: string;
   images?: string[];
-  single_product?: [
-    {size:string , price:number},
-  ];
+  single_product: { size: string; price: number }[]
   countInStock?: number;
 }
 
@@ -380,8 +361,8 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
             </div>
           ))}
         </div>
-        <Button type="button" className="mt-2" onClick={addSizeRow}>
-          + Add Size
+        <Button type="button" className="mt-2 bg-secondary" onClick={addSizeRow}>
+          + Add Product from the Set
         </Button>
       </div>
 

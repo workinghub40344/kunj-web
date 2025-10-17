@@ -9,6 +9,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Pencil, Trash2 } from "lucide-react";
 
+
+interface SingleProduct {
+  size: string;
+  price: number;
+}
+
 interface Accessory {
   _id: string;
   name: string;
@@ -19,6 +25,8 @@ interface Accessory {
   deity?: string;
   images?: string[];
   countInStock: number;
+  Size: string;
+  single_product: SingleProduct[];
 }
 
 const Accessories = () => {
@@ -115,6 +123,7 @@ const Accessories = () => {
               <th className="text-left py-3 px-4 border-b">Style Code</th>
               <th className="text-left py-3 px-4 border-b">Price</th>
               <th className="text-left py-3 px-4 border-b">Stock</th>
+              <th className="text-left py-3 px-4 border-b">Other Products</th>
               <th className="text-left py-3 px-4 border-b">Actions</th>
             </tr>
           </thead>
@@ -148,6 +157,17 @@ const Accessories = () => {
                   </div>
                   <td className="py-3 px-4 border-b">₹{item.price}</td>
                   <td className="py-3 px-4 border-b text-black">{item.countInStock}</td>
+                  <td className="py-3 px-4 border-b text-black">
+                    {item.single_product && item.single_product.length > 0 ? (
+                      item.single_product.map((sp, index) => (
+                        <div key={index} className="flex flex-col">
+                          <span>{sp.size} - ₹{sp.price}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <span>No Single Products</span>
+                    )}
+                  </td>
                   {/* Action Button */}
                   <td className="py-3 px-4 border-b">
                     <div className="flex gap-2">
