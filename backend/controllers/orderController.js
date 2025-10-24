@@ -24,7 +24,7 @@ const createOrder = async (req, res) => {
     }
 
     const cleanedOrderItems = orderItems.map(item => ({
-        productId: item.productId,
+        productId: item.productId.split('-')[0],
         productName: item.productName,
         quantity: item.quantity,
         size: item.size,

@@ -7,6 +7,7 @@ const accessorySchema = new mongoose.Schema(
     category: { type: String, required: true },
     colour: { type: String, required: true },
     price: { type: Number, required: true },
+    priceForKrishna: { type: Number, default: 0 },
     style_code: { type: String, required: true },
     single_product: [
       {
@@ -14,6 +15,12 @@ const accessorySchema = new mongoose.Schema(
         price: { type: Number, required: true, trim: true },
       },
     ],
+    productType: {
+        type: String,
+        required: true,
+        enum: ['Set', 'Single Product'],
+        default: 'Single Product'
+    },
     deity: {
       type: String,
       required: true,
@@ -32,6 +39,8 @@ const accessorySchema = new mongoose.Schema(
 
 accessorySchema.index({ name: 'text', description: 'text' });
 accessorySchema.index({ deity: 1 });
+accessorySchema.index({ style_code: 1 });
 
 const Accessory = mongoose.model('Accessory', accessorySchema);
 module.exports = Accessory;
+

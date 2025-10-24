@@ -7,9 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Minus, Plus } from "lucide-react";
 import { Accessory } from "../components/admin/AddAccessoryForm";
 import SingleProductDialog from "../components/products/SingleProductModal";
+import SetSelectionModal from "@/components/products/SetSelectionModal";
+
 
 const AccessoriesDetailPage = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSetModalOpen, setIsSetModalOpen] = useState(false);
+  const [isSingleDialogOpen, setIsSingleDialogOpen] = useState(false);
+
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Accessory | null>(null);
   const [allVariants, setAllVariants] = useState<Accessory[]>([]);
@@ -50,6 +54,12 @@ const AccessoriesDetailPage = () => {
 
   const handleAddToCart = () => {
     if (!product) return;
+
+    if (product.productType === "Set") {
+      setIsSetModalOpen(true);
+      return;
+    }
+
     addToCart({
       productId: product._id,
       productName: product.name,
@@ -91,15 +101,6 @@ const AccessoriesDetailPage = () => {
             {product.description}
           </p>
 
-          {/* Stock Status Badge */}
-          {/* <div>
-                {(product.countInStock as unknown as number) > 0 ? (
-                    <p className="text-secondary/90 w-fit">In Stock :- {product.countInStock}</p>
-                ) : (
-                    <p>Out of Stock</p>
-                )}
-          </div> */}
-
           {/* 🔢 Quantity Selector */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -128,20 +129,21 @@ const AccessoriesDetailPage = () => {
             </div>
 
         {/* 🛒 Choose From Set */}
-        <div className="flex justify-center">
-          <Button
-            variant="outline"
-            size="sm"
-            className={`${product.single_product[0] ? ("w-fit px-10 bg-secondary/90 roundes-[5px]") : ( "hidden" ) }`}
-            onClick={() => setIsDialogOpen(true)}
-          >
-            Choose Product from the Set
-          </Button>
-        </div>
+        {product?.single_product?.length > 0 && (
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setIsSingleDialogOpen(true)}
+            >
+              Choose From The Set
+            </Button>
+          </div>
+        )}
         
 
-      {/* 🛒 Add to Cart */}
-      <div className="space-y-3">
+        {/* 🛒 Add to Cart */}
+        <div className="space-y-3">
         <Button
           size="sm"
           className="w-full bg-primary hover:bg-primary/80 text-white font-medium rounded-md shadow-sm"
@@ -150,11 +152,14 @@ const AccessoriesDetailPage = () => {
         >
           {(product.countInStock as unknown as number) > 0 ? 'Add to Cart' : 'Out of Stock'}
         </Button>
-      </div>
+        </div>
           </div>
+
         </div>
       </div>
+      
       <hr className="mt-10 bg-gray-400 h-[2px]" />
+
       {/* 🎨 Related Variants */}
       <div className="md:px-8 mt-2">
         {relatedProducts.length > 0 && (
@@ -176,14 +181,27 @@ const AccessoriesDetailPage = () => {
           </div>
         )}
       </div>
-      {/* Single Product Dialog */}
+
+      {/* ✅ Set Selection Modal (for Add to Cart) */}
+      {product && product.productType === "Set" && (
+        <SetSelectionModal
+          open={isSetModalOpen}
+          onOpenChange={setIsSetModalOpen}
+          product={product}
+          quantity={quantity}
+        />
+      )}
+
+      {/* ✅ Single Product Dialog (for Choose From the Set) */}
       {product && (
         <SingleProductDialog
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
+          open={isSingleDialogOpen}
+          onOpenChange={setIsSingleDialogOpen}
           product={product}
         />
       )}
+
+
     </div>
   );
 };

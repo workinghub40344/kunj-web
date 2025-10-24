@@ -35,6 +35,7 @@ export interface Accessory {
   _id?: string;
   name: string;
   price: number;
+  priceForKrishna: number;
   colour?: string;
   description?: string;
   category?: string;
@@ -43,6 +44,7 @@ export interface Accessory {
   images?: string[];
   single_product: { size: string; price: number }[]
   countInStock?: number;
+  productType?: string;
 }
 
 interface AddAccessoryFormProps {
@@ -65,8 +67,10 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const [category, setCategory] = useState("");
   const [colour, setColour] = useState("");
   const [price, setPrice] = useState("");
+  const [priceForKrishna, setPriceForKrishna] = useState("");
   const [styleCode, setStyleCode] = useState("");
-  const [deity, setDeity] = useState("Radha and Krishan ji");
+  const [deity, setDeity] = useState("Radha Ji");
+  const [productType, setProductType] = useState("Single Product");
   const [countInStock, setCountInStock] = useState<string | number>('');
   const [images, setImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -92,6 +96,8 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
       setDeity(existingData.deity || "Radha and Krishan ji");
       setCountInStock(existingData.countInStock || "");
       setExistingImages(existingData.images || []);
+      setPriceForKrishna(existingData.priceForKrishna?.toString() || "");
+      setProductType(existingData.productType || "Single Product");
     }
   }, [existingData]);
 
@@ -106,6 +112,10 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     setImages([]);
     setExistingImages([]);
     setRemovedImages([]);
+    setSingleProducts([]);
+    setCountInStock('');
+    setPriceForKrishna("");
+    setProductType("Single Product");
   };
 
   // Add new size row
@@ -153,6 +163,9 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     formData.append("deity", deity);
     formData.append('countInStock', String(countInStock));
     formData.append("single_product", JSON.stringify(singleProducts));
+    formData.append("priceForKrishna", priceForKrishna);
+    formData.append("productType", productType);
+
 
     // New images
     images.forEach((img) => formData.append("images", img));
@@ -317,9 +330,9 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
         />
       </div>
 
-      {/* Price */}
+      {/* Price for Radha ji / Products */}
       <div>
-        <label className="block mb-1 font-medium">Price</label>
+        <label className="block mb-1 font-medium"><span className="text-red-600">Price for Radha ji</span> / <span className="text-green-700">Products</span></label>
         <Input
           type="text"
           value={price}
@@ -327,6 +340,18 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
           required
         />
       </div>
+
+      {/* Price for Krishna */}
+      <div>
+        <label className="block mb-1 font-medium">Price For Krishna Ji</label>
+        <Input
+          type="text"
+          value={priceForKrishna}
+          onChange={(e) => setPriceForKrishna(e.target.value)}
+          required
+        />
+      </div>
+
 
       {/* Single Product: Sizes & Prices */}
       <div>
@@ -385,6 +410,20 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
             <SelectItem value="Radha and Krishna">
               Radha & Krishna (Common)
             </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Product Type */}
+      <div>
+        <label className="block mb-1 font-medium text-red-600">Product Type</label>
+        <Select value={productType} onValueChange={setProductType}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Product Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Set">Set</SelectItem>
+            <SelectItem value="Single Product">Single Product</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -452,3 +491,5 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
 };
 
 export default AddAccessoryForm;
+
+
