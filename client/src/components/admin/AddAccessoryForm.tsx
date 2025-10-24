@@ -35,7 +35,7 @@ export interface Accessory {
   _id?: string;
   name: string;
   price: number;
-  priceForKrishna: number;
+  priceForKrishna?: number;
   colour?: string;
   description?: string;
   category?: string;

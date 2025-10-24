@@ -2,13 +2,18 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import AddAccessoryForm from "./AddAccessoryForm";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Pencil, Trash2 } from "lucide-react";
-
 
 interface SingleProduct {
   size: string;
@@ -18,6 +23,7 @@ interface SingleProduct {
 interface Accessory {
   _id: string;
   name: string;
+  category: string;
   price: number;
   colour?: string;
   description?: string;
@@ -41,13 +47,30 @@ const Accessories = () => {
   const [selectedAccessory, setSelectedAccessory] = useState<Accessory | null>(
     null
   );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [styleCode, setStyleCode] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
+  const [styleCodes, setStyleCodes] = useState<string[]>([]);
 
   // ✅ Fetch All Accessories
   const fetchAccessories = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${API_URL}/api/accessories`);
-      setAccessories(res.data);
+      const data = res.data;
+      setAccessories(data);
+      // ✅ Extract unique categories & style codes dynamically
+      const uniqueCategories = Array.from(
+        new Set(data.map((item: Accessory) => item.category).filter(Boolean))
+      ) as string[];
+
+      const uniqueStyleCodes = Array.from(
+        new Set(data.map((item: Accessory) => item.style_code).filter(Boolean))
+      ) as string[];
+
+      setCategories(uniqueCategories);
+      setStyleCodes(uniqueStyleCodes);
     } catch (err) {
       toast({
         title: "Error loading accessories",
@@ -70,7 +93,10 @@ const Accessories = () => {
       await axios.delete(`${API_URL}/api/accessories/${id}`, {
         headers: { Authorization: `Bearer ${adminUser?.token}` },
       });
-      toast({ title: "Deleted!", description: "Accessory deleted successfully." });
+      toast({
+        title: "Deleted!",
+        description: "Accessory deleted successfully.",
+      });
       fetchAccessories();
     } catch (err) {
       toast({
@@ -87,6 +113,18 @@ const Accessories = () => {
     setIsEditModalOpen(true);
   };
 
+  // Filter Function
+  const filteredAccessories = accessories.filter((item) => {
+    const matchesName = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesStyleCode = styleCode ? item.style_code === styleCode : true;
+    const matchesCategory = selectedCategory
+      ? item.category === selectedCategory
+      : true;
+    return matchesName && matchesStyleCode && matchesCategory;
+  });
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -96,7 +134,9 @@ const Accessories = () => {
         {/* Add Accessory Button (Modal Trigger) */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setIsAddModalOpen(true)}>Add Accessory</Button>
+            <Button onClick={() => setIsAddModalOpen(true)}>
+              Add Accessory
+            </Button>
           </DialogTrigger>
 
           <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
@@ -111,6 +151,75 @@ const Accessories = () => {
             />
           </DialogContent>
         </Dialog>
+      </div>
+      {/* Filter Section */}
+      <div className="bg-gray-50 p-4 mb-6 rounded-lg shadow-sm flex flex-wrap gap-4 items-end">
+        {/* Search by Name */}
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-600 mb-1">
+            Search by Name
+          </label>
+          <input
+            type="text"
+            placeholder="Enter name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 w-52"
+          />
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-600 mb-1">
+            Category
+          </label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 w-52 bg-white"
+          >
+            <option value="">All</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Style Code Filter */}
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-600 mb-1">
+            Style Code
+          </label>
+          <select
+            value={styleCode}
+            onChange={(e) => setStyleCode(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 w-52 bg-white"
+          >
+            <option value="">All</option>
+            {styleCodes
+              .sort((a, b) => a.localeCompare(b))
+              .map((code) => (
+                <option key={code} value={code}>
+                  {code.toUpperCase()}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        {/* ✅ Reset Button */}
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setSearchTerm("");
+            setSelectedCategory("");
+            setStyleCode("");
+            fetchAccessories();
+          }}
+        >
+          Reset Filters
+        </Button>
       </div>
 
       {/* Accessories List */}
@@ -142,7 +251,7 @@ const Accessories = () => {
                 </td>
               </tr>
             ) : (
-              accessories.map((item) => (
+              filteredAccessories.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50 transition">
                   <td className="py-3 px-4 border-b">
                     <img
@@ -153,15 +262,21 @@ const Accessories = () => {
                   </td>
                   <td className="py-3 px-4 border-b">{item.name}</td>
                   <div className="flex justify-start items-center pt-6">
-                    <td className=" rounded-sm bg-secondary/80 border-b px-5 ml-5">{item.style_code}</td>
+                    <td className=" rounded-sm bg-secondary/80 border-b px-5 ml-5">
+                      {item.style_code}
+                    </td>
                   </div>
                   <td className="py-3 px-4 border-b">₹{item.price}</td>
-                  <td className="py-3 px-4 border-b text-black">{item.countInStock}</td>
+                  <td className="py-3 px-4 border-b text-black">
+                    {item.countInStock}
+                  </td>
                   <td className="py-3 px-4 border-b text-black">
                     {item.single_product && item.single_product.length > 0 ? (
                       item.single_product.map((sp, index) => (
                         <div key={index} className="flex flex-col">
-                          <span>{sp.size} - ₹{sp.price}</span>
+                          <span>
+                            {sp.size} - ₹{sp.price}
+                          </span>
                         </div>
                       ))
                     ) : (
