@@ -120,11 +120,22 @@ const AccessoriesDetailPage = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => {
+                    if (product && quantity < (product.countInStock as unknown as number)) {
+                      setQuantity((q) => q + 1);
+                    } else {
+                      toast({
+                        title: "Stock Limit Reached",
+                        description: `Only ${product.countInStock} item(s) available in stock.`,
+                        variant: "destructive",
+                      });
+                    }
+                  }}
                   className="hover:bg-primary"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
+
               </div>
             </div>
 

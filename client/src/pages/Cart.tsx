@@ -201,10 +201,11 @@ const Cart = () => {
       clearCart();
       setCustomerPhone("");
     } catch (error) {
+      const message = error.response?.data?.message || "Could not save your order.";
       console.error("Failed to save order", error);
       toast({
-        title: "Error",
-        description: "Could not save your order. Please try again.",
+        title: "Order Failed",
+        description: message,
         variant: "destructive",
       });
     }
