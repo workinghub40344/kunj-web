@@ -7,10 +7,12 @@ import SliderManagement from "@/components/admin/SliderManagement";
 import UserInfo from "@/components/admin/UserInfo";
 import AllOrders from "@/components/admin/AllOrders";
 import Accessories from "@/components/admin/Accessories";
+import ProductDetailsModal from "../components/admin/ProductDetailsModal";
+
 
 interface SizeOption {
   size: string;
-  price: number | string;
+  price: number;
 }
 
 interface Product {
@@ -41,6 +43,8 @@ const AdminPanel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   // Sorted size list
   const sortedSizes = useMemo(() => {
@@ -171,7 +175,7 @@ const AdminPanel = () => {
               className={`flex items-center p-4 hover:bg-gray-200 ${
                 activeTab === key ? "bg-gray-200" : ""
               }`}
-              onClick={() => setActiveTab(key as any)}
+              onClick={() => setActiveTab(key as typeof activeTab)}
             >
               {sidebarOpen ? (
                 <span className="flex-1">{label}</span>
@@ -201,6 +205,7 @@ const AdminPanel = () => {
       >
         {activeTab === "products" && (
           <div>
+            {/* Header */}
             <div className="flex justify-between mb-4">
               <h2 className="text-xl font-bold">Product List</h2>
               <Button
@@ -211,6 +216,7 @@ const AdminPanel = () => {
               </Button>
             </div>
 
+            {/* Product Table Container */}
             <div className="p-4 bg-white rounded-lg shadow">
               {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
@@ -251,7 +257,6 @@ const AdminPanel = () => {
                       <th className="p-3 text-left">Image</th>
                       <th className="p-3 text-left">Name</th>
                       <th className="p-3 text-left">Status</th>
-                      <th className="p-3 text-left">Sizes</th>
                       <th className="p-3 text-left">Actions</th>
                     </tr>
                   </thead>
@@ -292,19 +297,18 @@ const AdminPanel = () => {
                               </option>
                             </select>
                           </td>
-                          <td className="p-2 text-sm">
-                            {p.metal_sizes?.map((s) => (
-                              <div key={s.size}>
-                                Metal {s.size}: ₹{s.price}
-                              </div>
-                            ))}
-                            {p.marble_sizes?.map((s) => (
-                              <div key={s.size}>
-                                Marble {s.size}: ₹{s.price}
-                              </div>
-                            ))}
-                          </td>
+                        
                           <td className="p-2 flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedProduct(p);
+                                setIsDetailsOpen(true);
+                              }}
+                            >
+                              View Details
+                            </Button>
                             <Button
                               size="sm"
                               onClick={() => handleEditClick(p)}
@@ -358,6 +362,13 @@ const AdminPanel = () => {
           </div>
         </div>
       )}
+
+      {/* Product Details Modal */}
+      <ProductDetailsModal
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+        product={selectedProduct}
+      />
     </div>
   );
 };
