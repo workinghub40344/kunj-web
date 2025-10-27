@@ -34,10 +34,8 @@ export const InvoiceModal = ({
         const imgX = (pdfWidth - canvasWidth * ratio) / 2;
         const imgY = 15;
 
-        pdf.addImage(
-          imgData, "PNG", imgX, imgY,
-          canvasWidth * ratio, canvasHeight * ratio
-        );
+        pdf.addImage(imgData, "JPEG", imgX, imgY, canvasWidth * ratio, canvasHeight * ratio, '', 'FAST');
+
         pdf.save(`invoice-${order.orderId}.pdf`); // 'selectedOrder' ko 'order' se replace kiya
       });
     }
