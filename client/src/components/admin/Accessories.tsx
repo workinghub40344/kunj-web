@@ -2,25 +2,21 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AddAccessoryForm from "./AddAccessoryForm";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Pencil, Trash2 } from "lucide-react";
+import AccessoryDetailsModal from "@/components/admin/AccessoryDetailsModal";
+
 
 interface SingleProduct {
   size: string;
   price: number;
 }
 
-interface Accessory {
+export interface Accessory {
   _id: string;
   name: string;
   category: string;
@@ -52,6 +48,8 @@ const Accessories = () => {
   const [styleCode, setStyleCode] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [styleCodes, setStyleCodes] = useState<string[]>([]);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
 
   // ✅ Fetch All Accessories
   const fetchAccessories = useCallback(async () => {
@@ -127,7 +125,7 @@ const Accessories = () => {
 
   return (
     <div className="p-6">
-      {/* Header */}
+      {/* Header with Add Accessory Button */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Accessories Management</h1>
 
@@ -152,6 +150,7 @@ const Accessories = () => {
           </DialogContent>
         </Dialog>
       </div>
+
       {/* Filter Section */}
       <div className="bg-gray-50 p-4 mb-6 rounded-lg shadow-sm flex flex-wrap gap-4 items-end">
         {/* Search by Name */}
@@ -232,7 +231,6 @@ const Accessories = () => {
               <th className="text-left py-3 px-4 border-b">Style Code</th>
               <th className="text-left py-3 px-4 border-b">Price</th>
               <th className="text-left py-3 px-4 border-b">Stock</th>
-              <th className="text-left py-3 px-4 border-b">Other Products</th>
               <th className="text-left py-3 px-4 border-b">Actions</th>
             </tr>
           </thead>
@@ -270,22 +268,20 @@ const Accessories = () => {
                   <td className="py-3 px-4 border-b text-black">
                     {item.countInStock}
                   </td>
-                  <td className="py-3 px-4 border-b text-black">
-                    {item.single_product && item.single_product.length > 0 ? (
-                      item.single_product.map((sp, index) => (
-                        <div key={index} className="flex flex-col">
-                          <span>
-                            {sp.size} - ₹{sp.price}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <span>No Single Products</span>
-                    )}
-                  </td>
+
                   {/* Action Button */}
                   <td className="py-3 px-4 border-b">
                     <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAccessory(item);
+                          setIsDetailsOpen(true);
+                        }}
+                      >
+                        View Details
+                      </Button>
                       <Button
                         variant="outline"
                         size="icon"
@@ -329,6 +325,13 @@ const Accessories = () => {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* Accessory Details Modal */}
+      <AccessoryDetailsModal
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+        accessory={selectedAccessory}
+      />
     </div>
   );
 };
