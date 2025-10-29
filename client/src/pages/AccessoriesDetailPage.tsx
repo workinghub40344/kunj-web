@@ -19,6 +19,7 @@ const AccessoriesDetailPage = () => {
   const [allVariants, setAllVariants] = useState<Accessory[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [customization, setCustomization] = useState("");
 
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -66,6 +67,7 @@ const AccessoriesDetailPage = () => {
       productName: product.name,
       size: product.category,
       sizeType: "Accessory",
+      customization: customization || "",
       quantity: quantity,
       price: product.price,
       image: product.images[0],
@@ -143,6 +145,14 @@ const AccessoriesDetailPage = () => {
 
               </div>
             </div>
+        {/* Customization */}
+        <textarea
+          placeholder="Customization For Sizes/Colours and other details...(Optional)"
+          value={customization}
+          onChange={(e) => setCustomization(e.target.value)}
+          className="w-full border rounded-md p-2 text-xs"
+          rows={1}
+        />
 
         {/* 🛒 Choose From Set */}
         {product?.single_product?.length > 0 && (
@@ -205,6 +215,7 @@ const AccessoriesDetailPage = () => {
           onOpenChange={setIsSetModalOpen}
           product={product}
           quantity={quantity}
+          customization={customization}
         />
       )}
 

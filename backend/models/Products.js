@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    itemCode: { type: String, required: true, trim: true },
+    itemCode: { type: String, trim: true },
     metal_pagdi: [
       {
         size: { type: String, required: true, trim: true },

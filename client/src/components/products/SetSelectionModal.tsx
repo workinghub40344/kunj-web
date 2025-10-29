@@ -11,6 +11,7 @@ interface SetSelectionModalProps {
   onOpenChange: (open: boolean) => void;
   product: Accessory;
   quantity: number;
+  customization: string;
 }
 
 
@@ -19,6 +20,7 @@ const SetSelectionModal: React.FC<SetSelectionModalProps> = ({
   onOpenChange,
   product,
   quantity,
+  customization,
 }) => {
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -49,6 +51,7 @@ const SetSelectionModal: React.FC<SetSelectionModalProps> = ({
       productId: `${product._id}-${selectedSet}`,
       productName: `${product.name} (${setName})`,
       size: product.category,
+      customization: customization || "",
       itemCode: product.itemCode,
       sizeType: "Accessory",
       quantity,
