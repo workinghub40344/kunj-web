@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
-import { SizeCombobox } from "@/components/layout/SizeCombobox";
+import { SizePriceModal } from "@/components/layout/SizePriceModal";
 
 interface SizeOption { size: string; price: number | string; }
 
@@ -49,7 +49,9 @@ const AddProductForm = ({
   const [marble_pagdi, setMarblePagdi] = useState<SizeOption[]>([{ size: "", price: 0 }]);
   const [metal_pagdi, setMetalPagdi] = useState<SizeOption[]>([{ size: "", price: 0 }]);
   const [styleCode, setStyleCode] = useState("");
+  const [modalType, setModalType] = useState<string | null>(null);
   const API_URL = import.meta.env.VITE_API_URL;
+
 
   // NEW State for managing images
   const [newImages, setNewImages] = useState<File[]>([]); // For new file uploads
@@ -249,201 +251,37 @@ const AddProductForm = ({
           />
         </div>
 
-        {/* Metal Sizes & Prices */}
-        <div className="p-3 border rounded-md">
-          <label className="block mb-2 font-medium text-red-600">Metal Sizes & Prices</label>
-          {metal_sizes.map((size, index) => (
-            <div key={index} className="flex gap-2 mb-2 items-center">
-              <SizeCombobox
-                placeholder="Size"
-                value={size.size}
-                onChange={(newValue) => {
-                  const updatedSizes = [...metal_sizes];
-                  updatedSizes[index].size = newValue;
-                  setMetalSizes(updatedSizes);
-                }}
-              />
-              <Input
-                className="border border-gray-400 focus:border-none"
-                type="text"
-                min="0"
-                placeholder="Price"
-                value={size.price}
-                onChange={(e) => {
-                  const updatedSizes = [...metal_sizes];
-                  updatedSizes[index].price = e.target.value;
-                  setMetalSizes(updatedSizes);
-                }}
-              />
-              {index > 0 && (
-                <Button
-                  type="button"
-                  onClick={() =>
-                    setMetalSizes(metal_sizes.filter((_, i) => i !== index))
-                  }
-                  variant="destructive"
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            onClick={() =>
-              setMetalSizes([...metal_sizes, { size: "", price: "" }])
-            }
-          >
-            Add Metal Size
-          </Button>
-        </div>
-        {/* Metal Pagdi */}
-        <div className="p-3 border rounded-md">
-          <label className="block mb-2 font-medium text-red-600">Metal Pagdi Sizes & Prices</label>
-          {metal_pagdi.map((size, index) => (
-            <div key={index} className="flex gap-2 mb-2 items-center">
-              <SizeCombobox
-                placeholder="Size (e.g., S, M, L)"
-                value={size.size}
-                onChange={(newValue) => {
-                  const updatedSizes = [...metal_pagdi];
-                  updatedSizes[index].size = newValue;
-                  setMetalPagdi(updatedSizes);
-                }}
-              />
-              <Input
-                className="border border-gray-400 focus:border-none"
-                type="text"
-                min="0"
-                placeholder="Price"
-                value={size.price}
-                onChange={(e) => {
-                  const updatedSizes = [...metal_pagdi];
-                  updatedSizes[index].price = e.target.value;
-                  setMetalPagdi(updatedSizes);
-                }}
-              />
-              {index > 0 && (
-                <Button
-                  type="button"
-                  onClick={() =>
-                    setMetalPagdi(metal_pagdi.filter((_, i) => i !== index))
-                  }
-                  variant="destructive"
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            onClick={() =>
-              setMetalPagdi([...metal_pagdi, { size: "", price: "" }])
-            }
-          >
-            Add Metal Pagdi Size
-          </Button>
-        </div>
+        {/* Metal Sizes Button */}
+          <div className="p-3 border rounded-md">
+            <label className="block mb-2 font-medium text-red-600">Metal Sizes & Prices</label>
+            <Button type="button" variant="outline" onClick={() => setModalType('metal_sizes')}>
+              Manage Metal Sizes ({metal_sizes.length} added)
+            </Button>
+          </div>
+          
+          {/* Metal Pagdi Button */}
+          <div className="p-3 border rounded-md">
+            <label className="block mb-2 font-medium text-red-600">Metal Pagdi Sizes & Prices</label>
+            <Button type="button" variant="outline" onClick={() => setModalType('metal_pagdi')}>
+              Manage Metal Pagdi Sizes ({metal_pagdi.length} added)
+            </Button>
+          </div>
 
-        {/* Marble Sizes & Prices */}
-        <div className="p-3 border rounded-md">
-          <label className="block mb-2 font-medium text-green-600">
-            Marble Sizes & Prices
-          </label>
-          {marble_sizes.map((size, index) => (
-            <div key={index} className="flex gap-2 mb-2 items-center">
-              <SizeCombobox
-                placeholder="Size (e.g., 8mm, 10mm)"
-                value={size.size}
-                onChange={(newValue) => {
-                  const updatedSizes = [...marble_sizes];
-                  updatedSizes[index].size = newValue;
-                  setMarbleSizes(updatedSizes);
-                }}
-              />
-              <Input
-                className="border border-gray-400 focus:border-none"
-                type="text"
-                min="0"
-                placeholder="Price"
-                value={size.price}
-                onChange={(e) => {
-                  const updatedSizes = [...marble_sizes];
-                  updatedSizes[index].price = e.target.value;
-                  setMarbleSizes(updatedSizes);
-                }}
-              />
-              {index > 0 && (
-                <Button
-                  type="button"
-                  onClick={() =>
-                    setMarbleSizes(marble_sizes.filter((_, i) => i !== index))
-                  }
-                  variant="destructive"
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            onClick={() =>
-              setMarbleSizes([...marble_sizes, { size: "", price: "" }])
-            }
-          >
-            Add Marble Size
-          </Button>
-        </div>
-        {/* Marble Pagdi */}
-        <div className="p-3 border rounded-md">
-          <label className="block mb-2 font-medium text-green-600">Marble Pagdi Sizes & Prices</label>
-          {marble_pagdi.map((size, index) => (
-            <div key={index} className="flex gap-2 mb-2 items-center">
-              <SizeCombobox
-                placeholder="Size (e.g., S, M, L)"
-                value={size.size}
-                onChange={(newValue) => {
-                  const updatedSizes = [...marble_pagdi];
-                  updatedSizes[index].size = newValue;
-                  setMarblePagdi(updatedSizes);
-                }}
-              />
-              <Input
-                className="border border-gray-400 focus:border-none"
-                type="text"
-                min="0"
-                placeholder="Price"
-                value={size.price}
-                onChange={(e) => {
-                  const updatedSizes = [...marble_pagdi];
-                  updatedSizes[index].price = e.target.value;
-                  setMarblePagdi(updatedSizes);
-                }}
-              />
-              {index > 0 && (
-                <Button
-                  type="button"
-                  onClick={() =>
-                    setMarblePagdi(marble_pagdi.filter((_, i) => i !== index))
-                  }
-                  variant="destructive"
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            onClick={() =>
-              setMarblePagdi([...marble_pagdi, { size: "", price: "" }])
-            }
-          >
-            Add Marble Pagdi Size
-          </Button>
-        </div>
+          {/* Marble Sizes Button */}
+          <div className="p-3 border rounded-md">
+            <label className="block mb-2 font-medium text-green-600">Marble Sizes & Prices</label>
+            <Button type="button" variant="outline" onClick={() => setModalType('marble_sizes')}>
+              Manage Marble Sizes ({marble_sizes.length} added)
+            </Button>
+          </div>
+          
+          {/* Marble Pagdi Button */}
+          <div className="p-3 border rounded-md">
+            <label className="block mb-2 font-medium text-green-600">Marble Pagdi Sizes & Prices</label>
+            <Button type="button" variant="outline" onClick={() => setModalType('marble_pagdi')}>
+              Manage Marble Pagdi Sizes ({marble_pagdi.length} added)
+            </Button>
+          </div>
 
         {/* Images */}
         <div>
@@ -494,6 +332,39 @@ const AddProductForm = ({
             : "Add Product"}
         </Button>
       </form>
+    
+    {/* ===== MODALS ===== */}
+    <div className="">
+      <SizePriceModal
+          title="Manage Metal Sizes"
+          isOpen={modalType === 'metal_sizes'}
+          onClose={() => setModalType(null)}
+          currentSizes={metal_sizes}
+          onSave={(newSizes) => setMetalSizes(newSizes)}
+        />
+        <SizePriceModal
+          title="Manage Marble Sizes"
+          isOpen={modalType === 'marble_sizes'}
+          onClose={() => setModalType(null)}
+          currentSizes={marble_sizes}
+          onSave={(newSizes) => setMarbleSizes(newSizes)}
+        />
+        <SizePriceModal
+          title="Manage Metal Pagdi Sizes"
+          isOpen={modalType === 'metal_pagdi'}
+          onClose={() => setModalType(null)}
+          currentSizes={metal_pagdi}
+          onSave={(newSizes) => setMetalPagdi(newSizes)}
+        />
+        <SizePriceModal
+          title="Manage Marble Pagdi Sizes"
+          isOpen={modalType === 'marble_pagdi'}
+          onClose={() => setModalType(null)}
+          currentSizes={marble_pagdi}
+          onSave={(newSizes) => setMarblePagdi(newSizes)}
+        />
+    </div>
+    
     </div>
   );
 };
