@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema({
   customerPhone: { type: String, required: true },
   orderItems: [
     {
+      itemCode: { type: String },
       productId: { type: String, required: true },
       productName: { type: String, required: true },
       quantity: { type: Number, required: true },

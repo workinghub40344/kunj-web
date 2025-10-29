@@ -6,15 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
-import { useAuth, type UserInfo } from "@/context/AuthContext"; // useAuth aur UserInfo import karein
+import { useAuth, type UserInfo } from "@/context/AuthContext";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import axios from "axios";
 import { auth, googleProvider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
@@ -180,6 +174,7 @@ const Cart = () => {
           message += `   *+ Pagdi:* ${item.pagdi.type} (${item.pagdi.size}) - ₹${item.pagdi.price}\n`;
         }
         message += `   *Quantity:* ${item.quantity}\n`;
+        message += `   *ItemCode:* ${item.itemCode}\n`;
         if (item.customization) {
           message += `   *Customization:* _${item.customization}_\n`;
         }
