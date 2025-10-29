@@ -254,7 +254,7 @@ const AddProductForm = ({
         {/* Metal Sizes Button */}
           <div className="p-3 border rounded-md">
             <label className="block mb-2 font-medium text-red-600">Metal Sizes & Prices</label>
-            <Button type="button" variant="outline" onClick={() => setModalType('metal_sizes')}>
+            <Button type="button" variant="outline" onClick={() => setModalType('metal_sizes')} className="bg-primary">
               Manage Metal Sizes ({metal_sizes.length} added)
             </Button>
           </div>
@@ -262,7 +262,7 @@ const AddProductForm = ({
           {/* Metal Pagdi Button */}
           <div className="p-3 border rounded-md">
             <label className="block mb-2 font-medium text-red-600">Metal Pagdi Sizes & Prices</label>
-            <Button type="button" variant="outline" onClick={() => setModalType('metal_pagdi')}>
+            <Button type="button" variant="outline" onClick={() => setModalType('metal_pagdi')} className="bg-primary">
               Manage Metal Pagdi Sizes ({metal_pagdi.length} added)
             </Button>
           </div>
@@ -270,7 +270,7 @@ const AddProductForm = ({
           {/* Marble Sizes Button */}
           <div className="p-3 border rounded-md">
             <label className="block mb-2 font-medium text-green-600">Marble Sizes & Prices</label>
-            <Button type="button" variant="outline" onClick={() => setModalType('marble_sizes')}>
+            <Button type="button" variant="outline" onClick={() => setModalType('marble_sizes')} className="bg-secondary">
               Manage Marble Sizes ({marble_sizes.length} added)
             </Button>
           </div>
@@ -278,7 +278,7 @@ const AddProductForm = ({
           {/* Marble Pagdi Button */}
           <div className="p-3 border rounded-md">
             <label className="block mb-2 font-medium text-green-600">Marble Pagdi Sizes & Prices</label>
-            <Button type="button" variant="outline" onClick={() => setModalType('marble_pagdi')}>
+            <Button type="button" variant="outline" onClick={() => setModalType('marble_pagdi')} className="bg-secondary">
               Manage Marble Pagdi Sizes ({marble_pagdi.length} added)
             </Button>
           </div>
