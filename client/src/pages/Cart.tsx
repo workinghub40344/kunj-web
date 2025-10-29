@@ -257,6 +257,7 @@ const Cart = () => {
                   <div className="flex-1 space-y-2">
                     <div className="flex justify-between items-start">
                       <div>
+                        <p className="text-xs">IC : <span className="text-secondary">{item.itemCode}</span></p>
                         <h3 className="font-semibold text-lg">
                           {item.productName}
                         </h3>

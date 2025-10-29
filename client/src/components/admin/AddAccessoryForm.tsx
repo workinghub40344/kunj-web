@@ -34,6 +34,7 @@ const accessoryNames = [
 export interface Accessory {
   _id?: string;
   name: string;
+  itemCode?: string;
   price: number;
   priceForKrishna?: number;
   colour?: string;
@@ -63,6 +64,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [name, setName] = useState("");
+  const [itemCode, setItemCode] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [colour, setColour] = useState("");
@@ -88,6 +90,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   useEffect(() => {
     if (existingData) {
       setName(existingData.name || "");
+      setItemCode(existingData.itemCode || "");
       setDescription(existingData.description || "");
       setCategory(existingData.category || "");
       setColour(existingData.colour || "");
@@ -103,6 +106,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
 
   const resetForm = () => {
     setName("");
+    setItemCode("");
     setDescription("");
     setCategory("");
     setColour("");
@@ -155,13 +159,14 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
 
     const formData = new FormData();
     formData.append("name", name);
+    formData.append("itemCode", itemCode);
     formData.append("description", description);
     formData.append("category", category);
     formData.append("colour", colour);
     formData.append("price", price);
     formData.append("style_code", styleCode);
     formData.append("deity", deity);
-    formData.append('countInStock', String(countInStock));
+    formData.append("countInStock", String(countInStock));
     formData.append("single_product", JSON.stringify(singleProducts));
     formData.append("priceForKrishna", priceForKrishna);
     formData.append("productType", productType);
@@ -241,6 +246,17 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
         <Input
           value={styleCode}
           onChange={(e) => setStyleCode(e.target.value)}
+          placeholder="e.g., RJL-HR-01"
+          required
+        />
+      </div>
+
+      {/* Item Code */}
+      <div>
+        <label className="block mb-1 font-medium">Item Code</label>
+        <Input
+          value={itemCode}
+          onChange={(e) => setItemCode(e.target.value)}
           placeholder="e.g., RJL-HR-01"
           required
         />

@@ -50,14 +50,18 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 <strong className="text-secondary">Status:</strong>{" "}
                 {product.stock_status}
               </p>
-              <p className="text-black mb-5">
-                <strong className="text-secondary">Category:</strong>{" "}
-                {product.category}
-              </p>
+              <div className="">
+                <p className="text-black mb-5">
+                  <strong className="text-secondary">Category:</strong>{" "}
+                  {product.category}
+                </p>
+                
+              </div>
               <p className="text-black mb-5">
                 <strong className="text-secondary">Description:</strong>{" "}
                 {product.description || "No description"}
               </p>
+              <p className="text-xs">IC : <span className="text-secondary">{product.itemCode}</span></p>
             </div>
           </div>
           <hr className="h-1 bg-gray-800 " />

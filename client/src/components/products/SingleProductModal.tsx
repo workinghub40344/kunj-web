@@ -28,6 +28,7 @@ const SingleProductDialog: React.FC<SingleProductDialogProps> = ({
   const handleAddToCart = () => {
     if (!selectedSingle) return;
     addToCart({
+      itemCode: product.itemCode,
       productId: product._id,
       productName: product.name,
       size: selectedSingle.size,

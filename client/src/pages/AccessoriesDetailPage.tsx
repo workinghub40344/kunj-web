@@ -61,6 +61,7 @@ const AccessoriesDetailPage = () => {
     }
 
     addToCart({
+      itemCode: product.itemCode,
       productId: product._id,
       productName: product.name,
       size: product.category,
@@ -92,7 +93,10 @@ const AccessoriesDetailPage = () => {
 
         {/* 🧾 Product Details */}
         <div className="flex flex-col md:w-[60%]">
+          <div className="flex justify-between items-center">
           <p className="text-sm text-muted-foreground">{product.deity}</p>
+          
+          </div>
           <h1 className="text-xl md:text-2xl font-bold mt-1">{product.name}</h1>
           <p className="text-sm text-secondary">{product.category}</p>
           <p className="text-xl font-semibold my-3 text-primary">₹{product.price}</p>
@@ -100,6 +104,7 @@ const AccessoriesDetailPage = () => {
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
             {product.description}
           </p>
+          <p className="text-red-500 text-xs mb-3"> IC <span className="text-red-900 text-xs">:</span> <span className="text-black">{product.itemCode}</span></p>
 
           {/* 🔢 Quantity Selector */}
           <div className="space-y-3">
@@ -165,7 +170,7 @@ const AccessoriesDetailPage = () => {
         </Button>
         </div>
           </div>
-
+          
         </div>
       </div>
       

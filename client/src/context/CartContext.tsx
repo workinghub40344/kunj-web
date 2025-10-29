@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface CartItem {
   id: string;
+  itemCode: string;
   productId: string;
   productName: string;
   size: string;
@@ -53,6 +54,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   setCartItems((prev) => {
     const existingItem = prev.find(
       (item) =>
+        item.itemCode === newItem.itemCode &&
         item.productId === newItem.productId &&
         item.size === newItem.size &&
         item.sizeType === newItem.sizeType && 

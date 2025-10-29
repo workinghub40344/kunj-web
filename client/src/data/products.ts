@@ -8,6 +8,7 @@ import product1 from "@/assets/product-1.jpg";
 export interface Product {
   _id: string;
   name: string;
+  itemCode:string;
   description: string;
   images: string[];
   category: string;
@@ -30,6 +31,7 @@ export interface Product {
 export const products: Product[] = [
   {
     _id:"1",
+    itemCode:"RJL001",
     name: "Radha Ji Red Lehenga",
     description: "Traditional red lehenga for Radha Ji, perfect for festive occasions.",
     images: [product1],

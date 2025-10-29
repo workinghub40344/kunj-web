@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const accessorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    itemCode: { type: String, required: true, unique: true },
     description: { type: String },
     category: { type: String, required: true },
     colour: { type: String, required: true },

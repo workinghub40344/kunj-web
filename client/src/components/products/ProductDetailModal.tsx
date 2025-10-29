@@ -106,12 +106,16 @@ export const ProductDetailModal = ({
         {/* Right Side Section */}
         <div className="flex flex-col space-y-6 lg:col-span-2 lg:order-3">
           <div>
-            <Badge variant="secondary" className="mb-2 rounded-[2px]">
-              {product.category}
-            </Badge>
+            
+              <Badge variant="secondary" className="mb-2 rounded-[2px]">
+                {product.category}
+              </Badge>
+              <p className="text-xs mb-2">IC : <span className="text-secondary">{product.itemCode}</span></p>
+            
             <p className="text-muted-foreground whitespace-normal break-words">
               {product.description}
             </p>
+            
           </div>
 
           {/* Size, Quantity & Customization */}

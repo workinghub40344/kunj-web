@@ -85,7 +85,6 @@ export const ProductGrid = ({
               </p>
               
               <div className="space-y-3 mt-auto">
-                {/* ===== YAHAN BADLAV KIYA GAYA HAI ===== */}
                 {/* Metal Size Section */}
                 <div>
                   <label className="text-xs text-muted-foreground">Metal Size</label>

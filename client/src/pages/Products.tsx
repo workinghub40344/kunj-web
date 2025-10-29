@@ -129,6 +129,7 @@ const Products = () => {
   };
 
   addToCart({
+    itemCode: product.itemCode,
     productId: product._id,
     productName: product.name,
     size: selectedSize,

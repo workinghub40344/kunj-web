@@ -49,6 +49,7 @@ const SetSelectionModal: React.FC<SetSelectionModalProps> = ({
       productId: `${product._id}-${selectedSet}`,
       productName: `${product.name} (${setName})`,
       size: product.category,
+      itemCode: product.itemCode,
       sizeType: "Accessory",
       quantity,
       price: finalPrice,

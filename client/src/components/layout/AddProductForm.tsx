@@ -12,6 +12,7 @@ interface SizeOption { size: string; price: number | string; }
 
 interface ProductType {
   name: string;
+  itemCode: string;
   description: string;
   category: string;
   colour: string;
@@ -39,6 +40,7 @@ const AddProductForm = ({
 }: AddProductFormProps) => {
 
   const [name, setName] = useState("");
+  const [itemCode, setItemCode] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [colour, setColour] = useState("");
@@ -62,6 +64,7 @@ const AddProductForm = ({
   useEffect(() => {
     if (isEditMode) {
       setName(productToEdit.name);
+      setItemCode(productToEdit.itemCode);
       setDescription(productToEdit.description);
       setCategory(productToEdit.category);
       setColour(productToEdit.colour || "");
@@ -119,6 +122,7 @@ const AddProductForm = ({
 
     const formData = new FormData();
     formData.append("name", name);
+    formData.append("itemCode", itemCode);
     formData.append("description", description);
     formData.append("category", category);
     formData.append("colour", colour);
@@ -181,6 +185,20 @@ const AddProductForm = ({
             value={styleCode}
             onChange={(e) => setStyleCode(e.target.value)}
             placeholder="e.g., RJL001"
+            required
+          />
+        </div>
+
+        {/* Item Code */}
+        <div>
+          <label className="block mb-1 font-medium">
+            Item Code
+          </label>
+          <Input
+            className="border border-gray-400 focus:border-none"
+            value={itemCode}
+            onChange={(e) => setItemCode(e.target.value)}
+            placeholder="e.g., RJL112"
             required
           />
         </div>
