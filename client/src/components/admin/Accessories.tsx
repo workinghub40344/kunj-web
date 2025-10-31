@@ -21,7 +21,7 @@ export interface Accessory {
   name: string;
   category: string;
   price: number;
-  colour?: string;
+  colour: string[];
   description?: string;
   style_code?: string;
   deity?: string;

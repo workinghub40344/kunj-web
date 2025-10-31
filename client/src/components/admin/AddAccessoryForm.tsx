@@ -37,7 +37,7 @@ export interface Accessory {
   itemCode?: string;
   price: number;
   priceForKrishna?: number;
-  colour?: string;
+  colour: string[];
   description?: string;
   category?: string;
   style_code?: string;
@@ -67,7 +67,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const [itemCode, setItemCode] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [colour, setColour] = useState("");
+  const [colour, setColour] = useState<string>("");
   const [existingColours, setExistingColours] = useState<string[]>([]);
   const [price, setPrice] = useState("");
   const [priceForKrishna, setPriceForKrishna] = useState("");
@@ -94,7 +94,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
       setItemCode(existingData.itemCode || "");
       setDescription(existingData.description || "");
       setCategory(existingData.category || "");
-      setColour(existingData.colour || "");
+      setColour(Array.isArray(existingData.colour) ? existingData.colour[0] || "" : "");
       setExistingColours(
         Array.isArray(existingData.colour) ? existingData.colour : existingData.colour ? [existingData.colour] : []
       );

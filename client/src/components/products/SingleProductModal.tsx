@@ -21,12 +21,27 @@ const SingleProductDialog: React.FC<SingleProductDialogProps> = ({
     product.single_product?.[0] || null
   );
   const [quantity, setQuantity] = useState(1);
+  const [selectedColour, setSelectedColour] = useState<string>("");
 
   const { addToCart } = useCart();
   const { toast } = useToast();
 
   const handleAddToCart = () => {
     if (!selectedSingle) return;
+
+    if (
+      Array.isArray(product.colour) &&
+      product.colour.length > 0 &&
+      !selectedColour
+    ) {
+      toast({
+        title: "Select Colour",
+        description: "Please choose a colour before adding to cart.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     addToCart({
       itemCode: product.itemCode,
       productId: product._id,
@@ -34,6 +49,11 @@ const SingleProductDialog: React.FC<SingleProductDialogProps> = ({
       size: selectedSingle.size,
       sizeType: "Product",
       quantity,
+      colour:
+        selectedColour ||
+        (typeof product.colour === "string"
+          ? product.colour
+          : ""),
       price: selectedSingle.price,
       image: product.images[0],
     });
@@ -64,6 +84,7 @@ const SingleProductDialog: React.FC<SingleProductDialogProps> = ({
                     (p) => p.size === val
                   );
                   setSelectedSingle(sp || null);
+                  setSelectedColour("");
                 }}
               >
                 <SelectTrigger>
@@ -83,6 +104,41 @@ const SingleProductDialog: React.FC<SingleProductDialogProps> = ({
               </p>
             )}
           </div>
+
+          {/* 🎨 Colour Selection */}
+          {selectedSingle &&
+            Array.isArray(product.colour) &&
+            product.colour.length > 0 && (
+              <div>
+                <label className="block mb-1 font-medium text-sm">
+                  Select Colour:
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {product.colour.map((clr, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setSelectedColour(clr)}
+                      className={`px-3 py-1 rounded-md border text-xs transition-all duration-200 ${
+                        selectedColour === clr
+                          ? "bg-primary text-white border-primary shadow-md scale-105"
+                          : "border-gray-300 text-gray-700 hover:border-primary hover:text-primary"
+                      }`}
+                    >
+                      {clr}
+                    </button>
+                  ))}
+                </div>
+                {selectedColour && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Selected:{" "}
+                    <span className="font-medium text-primary">
+                      {selectedColour}
+                    </span>
+                  </p>
+                )}
+              </div>
+            )}
 
           {/* Quantity */}
           <div className="flex items-center gap-3">
