@@ -8,6 +8,7 @@ export interface CartItem {
   itemCode: string;
   productId: string;
   productName: string;
+  colour?: string;
   size: string;
   sizeType: string;
   pagdi?: {
@@ -56,6 +57,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       (item) =>
         item.itemCode === newItem.itemCode &&
         item.productId === newItem.productId &&
+        item.colour === newItem.colour &&
         item.size === newItem.size &&
         item.sizeType === newItem.sizeType && 
         item.customization === newItem.customization &&

@@ -13,67 +13,6 @@ async function getNextSequenceValue(sequenceName) {
   return sequenceDocument.seq;
 }
 
-// const createOrder = async (req, res) => {
-//   try {
-//     // console.log("Data received on backend in orderItems:", req.body.orderItems);
-//     const { customerPhone, orderItems, totalPrice } = req.body;
-
-//     if (!orderItems || orderItems.length === 0) {
-//       res.status(400);
-//       throw new Error('No order items in cart');
-//     }
-
-//     const cleanedOrderItems = orderItems.map(item => ({
-//         productId: item.productId.split('-')[0],
-//         productName: item.productName,
-//         quantity: item.quantity,
-//         size: item.size,
-//         price: item.price,
-//         image: item.image,
-//         customization: item.customization,
-//         pagdi: item.pagdi
-//     }));
-
-//     const orderNumber = await getNextSequenceValue('orderId');
-//     const date = new Date();
-//     const year = date.getFullYear().toString().slice(-2);
-//     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-//     const customOrderId = `${year}${orderNumber}${month}`;
-
-//     const order = new Order({
-//         orderId: customOrderId,
-//         orderItems: cleanedOrderItems,
-//         totalPrice,
-//         customerPhone,
-//         user: req.user._id,
-//         customerName: req.user.name,
-//     });
-
-//     const createdOrder = await order.save();
-//     // Accessory Inventory Management
-//     for (const item of createdOrder.orderItems) {
-//       let product = await Product.findById(item.productId);
-//       if (!product) {
-//         product = await Accessory.findById(item.productId);
-//       }
-//       if (product && typeof product.countInStock !== 'undefined') {
-//         product.countInStock -= item.quantity;
-//         await product.save();
-//       }
-//     }
-
-//     if (req.user && !req.user.phone) {
-//         req.user.phone = customerPhone;
-//         await req.user.save();
-//     }
-    
-//     res.status(201).json(createdOrder);
-
-//   } catch (error) {
-//     console.error("Error creating order:", error);
-//     res.status(500).json({ message: 'Server Error creating order' });
-//   }
-// };
 
 const createOrder = async (req, res) => {
   try {
@@ -94,6 +33,7 @@ const createOrder = async (req, res) => {
       price: item.price,
       image: item.image,
       customization: item.customization,
+      colour: item.colour,
       pagdi: item.pagdi
     }));
 

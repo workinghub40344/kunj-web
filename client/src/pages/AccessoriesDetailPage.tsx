@@ -21,6 +21,7 @@ const AccessoriesDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [customization, setCustomization] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedColour, setSelectedColour] = useState<string>("");
 
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -57,6 +58,15 @@ const AccessoriesDetailPage = () => {
   const handleAddToCart = () => {
     if (!product) return;
 
+    if (Array.isArray(product.colour) && product.colour.length > 0 && !selectedColour) {
+      toast({
+        title: "Please Select a Colour",
+        description: "Choose a colour before adding to cart.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (product.productType === "Set") {
       setIsSetModalOpen(true);
       return;
@@ -69,6 +79,7 @@ const AccessoriesDetailPage = () => {
       size: product.category,
       sizeType: "Accessory",
       customization: customization || "",
+      colour: selectedColour || "",
       quantity: quantity,
       price: product.price,
       image: product.images[0],
@@ -158,7 +169,32 @@ const AccessoriesDetailPage = () => {
             {product.description}
           </p>
           <p className="text-red-500 text-xs mb-3"> IC <span className="text-red-900 text-xs">:</span> <span className="text-black">{product.itemCode}</span></p>
-
+          {/* 🎨 Select Colour */}
+          {Array.isArray(product.colour) && product.colour.length > 0 && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-1">Select Colour:</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                {product.colour.map((clr: string, index: number) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setSelectedColour(clr)}
+                    className={`flex items-center justify-center px-4 py-1 rounded-[5px] border text-xs font-medium transition-all duration-200
+                      ${
+                        selectedColour === clr
+                          ? "bg-primary text-white border-primary shadow-md scale-105"
+                          : "border-gray-300 text-gray-700 hover:border-primary hover:text-primary"
+                      }`}
+                  >
+                    {clr}
+                  </button>
+                ))}
+              </div>
+              {selectedColour && (
+                <p className="text-xs text-gray-500 mt-1">Selected: <span className="font-medium text-primary">{selectedColour}</span></p>
+              )}
+            </div>
+          )}
           {/* 🔢 Quantity Selector */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -267,6 +303,7 @@ const AccessoriesDetailPage = () => {
           product={product}
           quantity={quantity}
           customization={customization}
+          colour={selectedColour} 
         />
       )}
 

@@ -12,6 +12,7 @@ interface SetSelectionModalProps {
   product: Accessory;
   quantity: number;
   customization: string;
+  colour?: string;
 }
 
 
@@ -21,6 +22,7 @@ const SetSelectionModal: React.FC<SetSelectionModalProps> = ({
   product,
   quantity,
   customization,
+  colour,
 }) => {
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -52,6 +54,7 @@ const SetSelectionModal: React.FC<SetSelectionModalProps> = ({
       productName: `${product.name} (${setName})`,
       size: product.category,
       customization: customization || "",
+      colour: colour || "",
       itemCode: product.itemCode,
       sizeType: "Accessory",
       quantity,

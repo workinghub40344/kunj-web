@@ -173,6 +173,9 @@ const Cart = () => {
         if (item.pagdi) {
           message += `   *+ Pagdi:* ${item.pagdi.type} (${item.pagdi.size}) - ₹${item.pagdi.price}\n`;
         }
+        if (item.colour) {
+          message += `   *Colour:* ${item.colour}\n`;
+        }
         message += `   *Quantity:* ${item.quantity}\n`;
         message += `   *ItemCode:* ${item.itemCode}\n`;
         if (item.customization) {
@@ -256,9 +259,12 @@ const Cart = () => {
                         <h3 className="font-semibold text-lg">
                           {item.productName}
                         </h3>
-                        <Badge variant="secondary" className="mt-1">
-                          Krishna Poshak
-                        </Badge>
+                        {item.colour && (
+                          <p className="text-sm text-gray-600">
+                            Colour: <span className="font-medium">{item.colour}</span>
+                          </p>
+                        )}
+
                       </div>
                       <Button
                         variant="ghost"
