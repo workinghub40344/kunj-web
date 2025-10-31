@@ -1,3 +1,4 @@
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,23 @@ export const ProductGrid = ({
     getProductPrice,
     getStockBadge,
 }: ProductGridProps) => {
-  if (products.length === 0) {
+
+  // Pagination Logics
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
+
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const currentProducts = useMemo(() => {
+    const start = (currentPage - 1) * productsPerPage;
+    return products.slice(start, start + productsPerPage);
+  }, [products, currentPage]);
+
+  useEffect(() => {
+  setCurrentPage(1);
+}, [products]);
+
+if (products.length === 0) {
     return (
       <div className="text-center py-16 col-span-full">
         <p className="text-muted-foreground text-xl">
@@ -51,8 +68,9 @@ export const ProductGrid = ({
   }
 
   return (
+    <div className=""> 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-      {products.map((product) => {
+      {currentProducts.map((product) => {
         const state = productStates[product._id];
         return (
           <Card key={product._id} className="product-card group flex flex-col">
@@ -153,6 +171,67 @@ export const ProductGrid = ({
           </Card>
         );
       })}
+    </div>
+
+      {/* Pagination UI */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8 flex-wrap">
+          {/* Prev */}
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            Prev
+          </Button>
+
+          {/* Dynamic Pages with ... */}
+          {(() => {
+            const pagesToShow: (number | string)[] = [];
+            const maxButtons = 5;
+          
+            if (currentPage > 3) pagesToShow.push(1);
+            if (currentPage > 4) pagesToShow.push("...");
+          
+            for (
+              let i = Math.max(1, currentPage - 1);
+              i <= Math.min(totalPages, currentPage + 1);
+              i++
+            ) {
+              pagesToShow.push(i);
+            }
+          
+            if (currentPage < totalPages - 3) pagesToShow.push("...");
+            if (currentPage < totalPages - 2) pagesToShow.push(totalPages);
+          
+            return pagesToShow.map((page, i) =>
+              page === "..." ? (
+                <span key={i} className="px-2 text-muted-foreground">
+                  ...
+                </span>
+              ) : (
+                <Button
+                  key={i}
+                  variant={currentPage === page ? "default" : "outline"}
+                  onClick={() => setCurrentPage(page as number)}
+                >
+                  {page}
+                </Button>
+              )
+            );
+          })()}
+
+          {/* Next */}
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+
     </div>
   );
 };

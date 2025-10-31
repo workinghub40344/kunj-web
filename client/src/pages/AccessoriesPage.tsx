@@ -28,7 +28,9 @@ const AccessoriesPage = () => {
   const [selectedPrice, setSelectedPrice] = useState<"low" | "high" | null>(null);
   const [selectedDate, setSelectedDate] = useState<"newest" | "oldest" | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const itemsPerPage = 8;
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -48,10 +50,18 @@ const AccessoriesPage = () => {
     fetchAccessories();
   }, [API_URL]);
 
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Total pages
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
   // Handle Filtering
   useEffect(() => {
     let temp = [...accessories];
-
+    setCurrentPage(1);
     // Search Filter
     if (searchTerm.trim() !== "") {
       temp = temp.filter(
@@ -182,7 +192,7 @@ const AccessoriesPage = () => {
 
       {/* Accessories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filtered.map((acc) => (
+        {currentItems.map((acc) => (
           <Link to={`/accessories/${acc._id}`} key={acc._id}>
             <Card className="h-full">
               <div className="aspect-square overflow-hidden rounded-t-lg">
@@ -200,6 +210,74 @@ const AccessoriesPage = () => {
           </Link>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          {/* Prev Button */}
+          <Button
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            Prev
+          </Button>
+      
+          {/* Dynamic Page Numbers */}
+          {(() => {
+            const pagesToShow: (number | string)[] = [];
+            const maxButtons = 5; 
+          
+            // Always show first page
+            if (currentPage > 3) pagesToShow.push(1);
+          
+            // Left dots
+            if (currentPage > 4) pagesToShow.push("...");
+          
+            // Main middle range
+            for (
+              let i = Math.max(1, currentPage - 1);
+              i <= Math.min(totalPages, currentPage + 1);
+              i++
+            ) {
+              pagesToShow.push(i);
+            }
+          
+            // Right dots
+            if (currentPage < totalPages - 3) pagesToShow.push("...");
+          
+            // Always show last page
+            if (currentPage < totalPages - 2) pagesToShow.push(totalPages);
+          
+            return pagesToShow.map((page, index) =>
+              page === "..." ? (
+                <span key={index} className="px-2">
+                  ...
+                </span>
+              ) : (
+                <Button
+                  key={index}
+                  variant={currentPage === page ? "default" : "outline"}
+                  onClick={() => setCurrentPage(page as number)}
+                >
+                  {page}
+                </Button>
+              )
+            );
+          })()}
+
+          {/* Next Button */}
+          <Button
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+
+
     </div>
   );
 };
