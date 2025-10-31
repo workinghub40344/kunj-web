@@ -37,6 +37,25 @@ const AccessoryDetailsModal = ({ open, onOpenChange, accessory }: AccessoryDetai
             <p className="mb-5 text-red-600"><strong className="text-black">Price:</strong> ₹{accessory.price}</p>
             <p className="mb-5 text-red-600"><strong className="text-black">Stock:</strong> {accessory.countInStock}</p>
             {accessory.set_type && <p className="mb-5 text-red-600"><strong className="text-black">Set Type:</strong> {accessory.set_type}</p>}
+            
+            {/* Colours */}
+            <div className="flex items-center flex-wrap gap-2">
+              <span className="font-medium">Colour :</span>
+              {Array.isArray(accessory.colour) ? (
+                accessory.colour.map((clr: string, i: number) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 rounded-[5px] bg-primary text-white text-sm shadow-sm"
+                  >
+                    {clr}
+                  </span>
+                ))
+              ) : (
+                <span className="px-3 py-1 rounded-[5px] bg-primary text-white text-sm shadow-sm">
+                  {accessory.colour}
+                </span>
+              )}
+            </div>
             {accessory.description && <p className="text-gray-600"><strong className="text-black">Description:</strong> {accessory.description}</p>}
           </div>
         </div>

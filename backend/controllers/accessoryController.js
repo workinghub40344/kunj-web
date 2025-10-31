@@ -52,7 +52,7 @@ const createAccessory = async (req, res) => {
         itemCode,
         description,
         category,
-        colour,
+        colour: JSON.parse(colour),
         price: Number(price),
         style_code,
         deity,
@@ -157,7 +157,7 @@ const updateAccessory = async (req, res) => {
     accessory.itemCode = itemCode || accessory.itemCode;
     accessory.description = description || accessory.description;
     accessory.category = category || accessory.category;
-    accessory.colour = colour || accessory.colour;
+    if (colour) accessory.colour = JSON.parse(colour);
     accessory.price = price ? Number(price) : accessory.price;
     accessory.style_code = style_code || accessory.style_code;
     accessory.deity = deity || accessory.deity;

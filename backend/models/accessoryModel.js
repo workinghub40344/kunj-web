@@ -6,7 +6,7 @@ const accessorySchema = new mongoose.Schema(
     itemCode: { type: String, unique: true },
     description: { type: String },
     category: { type: String, required: true },
-    colour: { type: String, required: true },
+    colour: { type: [String], required: true },
     price: { type: Number, required: true },
     priceForKrishna: { type: Number, default: 0 },
     style_code: { type: String, required: true },

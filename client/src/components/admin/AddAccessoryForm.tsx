@@ -68,6 +68,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [colour, setColour] = useState("");
+  const [existingColours, setExistingColours] = useState<string[]>([]);
   const [price, setPrice] = useState("");
   const [priceForKrishna, setPriceForKrishna] = useState("");
   const [styleCode, setStyleCode] = useState("");
@@ -94,6 +95,9 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
       setDescription(existingData.description || "");
       setCategory(existingData.category || "");
       setColour(existingData.colour || "");
+      setExistingColours(
+        Array.isArray(existingData.colour) ? existingData.colour : existingData.colour ? [existingData.colour] : []
+      );
       setPrice(existingData.price?.toString() || "");
       setStyleCode(existingData.style_code || "");
       setDeity(existingData.deity || "Radha and Krishan ji");
@@ -110,6 +114,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     setDescription("");
     setCategory("");
     setColour("");
+    setExistingColours([]);
     setPrice("");
     setStyleCode("");
     setDeity("Radha and Krishan ji");
@@ -162,7 +167,6 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     formData.append("itemCode", itemCode);
     formData.append("description", description);
     formData.append("category", category);
-    formData.append("colour", colour);
     formData.append("price", price);
     formData.append("style_code", styleCode);
     formData.append("deity", deity);
@@ -170,6 +174,7 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
     formData.append("single_product", JSON.stringify(singleProducts));
     formData.append("priceForKrishna", priceForKrishna);
     formData.append("productType", productType);
+    formData.append("colour", JSON.stringify(existingColours));
 
 
     // New images
@@ -324,15 +329,53 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
         />
       </div>
 
-      {/* Colour */}
+
+      {/* Colour (Multiple) */}
       <div>
-        <label className="block mb-1 font-medium">Colour</label>
-        <Input
-          value={colour}
-          onChange={(e) => setColour(e.target.value)}
-          required
-        />
+        <label className="block mb-1 font-medium">Colours</label>
+
+        {/* Add colour input */}
+        <div className="flex gap-2 mb-2">
+          <Input
+            type="text"
+            placeholder="Add colour (e.g., Red)"
+            value={colour}
+            onChange={(e) => setColour(e.target.value)}
+          />
+          <Button
+            type="button"
+            onClick={() => {
+              if (!colour.trim()) return;
+              setExistingColours([...existingColours, colour.trim()]);
+              setColour("");
+            }}
+          >
+            Add
+          </Button>
+        </div>
+          
+        {/* Show added colours */}
+        <div className="flex flex-wrap gap-2">
+          {existingColours.map((c, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-1 bg-gray-200 px-2 py-1 rounded"
+            >
+              <span>{c}</span>
+              <button
+                type="button"
+                className="text-red-600"
+                onClick={() =>
+                  setExistingColours(existingColours.filter((_, idx) => idx !== i))
+                }
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
+
 
       {/* Category */}
       <div className="">
