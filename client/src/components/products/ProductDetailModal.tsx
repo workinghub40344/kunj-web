@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   DialogContent,
   DialogHeader,
@@ -48,6 +49,7 @@ export const ProductDetailModal = ({
   onAddToCart,
   getProductPrice,
 }: ProductDetailModalProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   if (!product) return null;
 
   return (
@@ -58,14 +60,63 @@ export const ProductDetailModal = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 py-4">
         {/* Product Image */}
-        <div className="lg:col-span-2 lg:order-2">
-          <div className="aspect-square overflow-hidden rounded-lg">
+        <div className="lg:col-span-2 lg:order-2 relative flex items-start justify-center">
+          {/* Left Arrow */}
+          {product.images?.length > 1 && (
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentImageIndex((prev) =>
+                  prev === 0 ? product.images.length - 1 : prev - 1
+                )
+              }
+              className="absolute left-1 top-[30%] bg-white/70 hover:bg-white text-gray-700 hover:text-black shadow-md rounded-full p-2 transition-all"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+          )}
+
+          {/* Image */}
+          <div className="aspect-square overflow-hidden rounded-lg shadow-sm">
             <img
-              src={product.images[0]}
+              src={product.images?.[currentImageIndex] || product.images?.[0]}
               alt={product.name}
               className="w-full h-full object-cover"
             />
           </div>
+        
+          {/* Right Arrow */}
+          {product.images?.length > 1 && (
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentImageIndex((prev) =>
+                  prev === product.images.length - 1 ? 0 : prev + 1
+                )
+              }
+              className="absolute right-1 top-[30%] bg-white/70 hover:bg-white text-gray-700 hover:text-black shadow-md rounded-full p-2 transition-all"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Colour Options */}
@@ -106,16 +157,16 @@ export const ProductDetailModal = ({
         {/* Right Side Section */}
         <div className="flex flex-col space-y-6 lg:col-span-2 lg:order-3">
           <div>
-            
-              <Badge variant="secondary" className="mb-2 rounded-[2px]">
-                {product.category}
-              </Badge>
-              <p className="text-xs mb-2">IC : <span className="text-secondary">{product.itemCode}</span></p>
-            
+            <Badge variant="secondary" className="mb-2 rounded-[2px]">
+              {product.category}
+            </Badge>
+            <p className="text-xs mb-2">
+              IC : <span className="text-secondary">{product.itemCode}</span>
+            </p>
+
             <p className="text-muted-foreground whitespace-normal break-words">
               {product.description}
             </p>
-            
           </div>
 
           {/* Size, Quantity & Customization */}

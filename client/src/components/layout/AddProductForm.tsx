@@ -50,6 +50,7 @@ const AddProductForm = ({
   const [metal_pagdi, setMetalPagdi] = useState<SizeOption[]>([{ size: "", price: 0 }]);
   const [styleCode, setStyleCode] = useState("");
   const [modalType, setModalType] = useState<string | null>(null);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const API_URL = import.meta.env.VITE_API_URL;
 
 
@@ -282,42 +283,67 @@ const AddProductForm = ({
               Manage Marble Pagdi Sizes ({marble_pagdi.length} added)
             </Button>
           </div>
+        
 
         {/* Images */}
-        <div>
-          <label className="block mb-1 font-medium">Images</label>
-          {/* Display existing images with remove button */}
-          {isEditMode && existingImages.length > 0 && (
-            <div className="flex flex-wrap gap-2 border p-2 rounded-md mb-2">
-              {existingImages.map((url) => (
-                <div key={url} className="relative">
-                  <img
-                    src={url}
-                    alt="existing product"
-                    className="w-20 h-20 object-cover rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveExistingImage(url)}
-                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-0.5"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+<div>
+  <label className="block mb-1 font-medium">Images</label>
 
-          <label className="block mb-1 font-medium text-sm text-gray-600">
-            {isEditMode ? "Upload New Images" : "Upload Images"}
-          </label>
-          <input
-            className="border border-gray-400 focus:border-none"
-            type="file"
-            multiple
-            onChange={(e) => setNewImages(Array.from(e.target.files || []))}
+  {/* Existing images (only in edit mode) */}
+  {isEditMode && existingImages.length > 0 && (
+    <div className="flex flex-wrap gap-2 border p-2 rounded-md mb-2">
+      {existingImages.map((url) => (
+        <div key={url} className="relative">
+          <img
+            src={url}
+            alt="existing product"
+            className="w-20 h-20 object-cover rounded"
+          />
+          <button
+            type="button"
+            onClick={() => handleRemoveExistingImage(url)}
+            className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-0.5"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <label className="block mb-1 font-medium text-sm text-gray-600">
+    {isEditMode ? "Upload New Images" : "Upload Images"}
+  </label>
+  <input
+    className="border border-gray-400 focus:border-none"
+    type="file"
+    multiple
+    onChange={(e) => {
+      const files = Array.from(e.target.files || []);
+      setNewImages(files);
+
+      // ✅ Create preview URLs
+      const previewUrls = files.map((file) => URL.createObjectURL(file));
+      setPreviewImages(previewUrls);
+    }}
+  />
+
+  {/* ✅ Preview newly selected images */}
+  {newImages.length > 0 && (
+    <div className="flex flex-wrap gap-2 border p-2 rounded-md mt-2">
+      {previewImages.map((url, index) => (
+        <div key={index} className="relative">
+          <img
+            src={url}
+            alt="preview"
+            className="w-20 h-20 object-cover rounded"
           />
         </div>
+      ))}
+    </div>
+  )}
+</div>
+
 
         {/* Submit */}
         <Button

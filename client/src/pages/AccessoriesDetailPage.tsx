@@ -20,6 +20,7 @@ const AccessoriesDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [customization, setCustomization] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -85,13 +86,63 @@ const AccessoriesDetailPage = () => {
     <div className="container mx-auto py-8 px-3">
       <div className="flex flex-col md:flex-row justify-evenly items-center gap-8 flex-wrap md:flex-nowrap">
         {/* 🖼️ Product Image */}
-        <div className="relative rounded-lg overflow-hidden shadow-md md:w-[30%]">
+        <div className="relative rounded-lg overflow-hidden shadow-md md:w-[30%] flex items-center justify-center">
+          {/* ← Left Arrow */}
+          {product.images?.length > 1 && (
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentImageIndex((prev) =>
+                  prev === 0 ? product.images.length - 1 : prev - 1
+                )
+              }
+              className="absolute left-2 bg-white/70 hover:bg-white text-gray-700 hover:text-black shadow-md rounded-full p-2 transition-all z-50"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+          )}
+
+          {/* 🖼️ Main Image */}
           <img
-            src={product.images[0]}
+            src={product.images?.[currentImageIndex] || product.images?.[0]}
             alt={product.name}
             className="h-96 w-full aspect-square object-cover transition-transform duration-300 hover:scale-105"
           />
+
+          {/* → Right Arrow */}
+          {product.images?.length > 1 && (
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentImageIndex((prev) =>
+                  prev === product.images.length - 1 ? 0 : prev + 1
+                )
+              }
+              className="absolute right-2 bg-white/70 hover:bg-white text-gray-700 hover:text-black shadow-md rounded-full p-2 transition-all"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          )}
         </div>
+
 
         {/* 🧾 Product Details */}
         <div className="flex flex-col md:w-[60%]">

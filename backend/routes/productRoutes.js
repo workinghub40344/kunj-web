@@ -9,7 +9,7 @@ const productController = require("../controllers/productController.js");
 router.post(
   "/",
   // protect admin,
-  upload.array("images"),
+  upload.array("images", 3),
   productController.addProduct
 );
 
@@ -25,7 +25,7 @@ router.put(
 
 router.put(
   "/:id",
-  upload.array("images"),
+  upload.array("images", 3),
   productController.updateProduct
 );
 
