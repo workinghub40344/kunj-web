@@ -9,8 +9,8 @@ router.get('/', getAllAccessories);
 router.get('/:id', getAccessoryById);
 
 // Admin Only Routes
-router.post('/', protect, upload.array('images', 3), createAccessory);
-router.put('/:id', protect, upload.array('images', 3), updateAccessory);
+router.post('/', protect, upload.array('images', 5), createAccessory);
+router.put('/:id', protect, upload.array('images', 5), updateAccessory);
 router.delete('/:id', protect, deleteAccessory);
 
 module.exports = router;

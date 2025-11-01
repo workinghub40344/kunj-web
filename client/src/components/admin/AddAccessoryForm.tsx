@@ -527,12 +527,22 @@ const AddAccessoryForm: React.FC<AddAccessoryFormProps> = ({
         {images.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {images.map((img, i) => (
-              <img
-                key={i}
-                src={URL.createObjectURL(img)}
-                alt="preview"
-                className="w-16 h-16 object-cover rounded border"
-              />
+              <div key={i} className="relative w-16 h-16">
+                <img
+                  src={URL.createObjectURL(img)}
+                  alt="preview"
+                  className="w-full h-full object-cover rounded border"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setImages(images.filter((_, idx) => idx !== i))
+                  }
+                  className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
+                >
+                  ×
+                </button>
+              </div>
             ))}
           </div>
         )}
