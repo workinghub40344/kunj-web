@@ -286,63 +286,77 @@ const AddProductForm = ({
         
 
         {/* Images */}
-<div>
-  <label className="block mb-1 font-medium">Images</label>
+        <div>
+          <label className="block mb-1 font-medium">Images</label>
 
-  {/* Existing images (only in edit mode) */}
-  {isEditMode && existingImages.length > 0 && (
-    <div className="flex flex-wrap gap-2 border p-2 rounded-md mb-2">
-      {existingImages.map((url) => (
-        <div key={url} className="relative">
-          <img
-            src={url}
-            alt="existing product"
-            className="w-20 h-20 object-cover rounded"
+          {/* Existing images (only in edit mode) */}
+          {isEditMode && existingImages.length > 0 && (
+            <div className="flex flex-wrap gap-2 border p-2 rounded-md mb-2">
+              {existingImages.map((url) => (
+                <div key={url} className="relative">
+                  <img
+                    src={url}
+                    alt="existing product"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExistingImage(url)}
+                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-0.5"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <label className="block mb-1 font-medium text-sm text-gray-600">
+            {isEditMode ? "Upload New Images" : "Upload Images"}
+          </label>
+          <input
+            className="border border-gray-400 focus:border-none"
+            type="file"
+            multiple
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []);
+              setNewImages(files);
+            
+              // ✅ Create preview URLs
+              const previewUrls = files.map((file) => URL.createObjectURL(file));
+              setPreviewImages(previewUrls);
+            }}
           />
-          <button
-            type="button"
-            onClick={() => handleRemoveExistingImage(url)}
-            className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-0.5"
-          >
-            <X size={14} />
-          </button>
+
+          {/* ✅ Preview newly selected images */}
+          {newImages.length > 0 && (
+            <div className="flex flex-wrap gap-2 border p-2 rounded-md mt-2">
+              {previewImages.map((url, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={url}
+                    alt="preview"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                  {/* ❌ Remove button for new selected images */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updatedImages = newImages.filter((_, i) => i !== index);
+                      const updatedPreviews = previewImages.filter((_, i) => i !== index);
+                      setNewImages(updatedImages);
+                      setPreviewImages(updatedPreviews);
+                    }}
+                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full px-[7px] hover:bg-red-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
         </div>
-      ))}
-    </div>
-  )}
-
-  <label className="block mb-1 font-medium text-sm text-gray-600">
-    {isEditMode ? "Upload New Images" : "Upload Images"}
-  </label>
-  <input
-    className="border border-gray-400 focus:border-none"
-    type="file"
-    multiple
-    onChange={(e) => {
-      const files = Array.from(e.target.files || []);
-      setNewImages(files);
-
-      // ✅ Create preview URLs
-      const previewUrls = files.map((file) => URL.createObjectURL(file));
-      setPreviewImages(previewUrls);
-    }}
-  />
-
-  {/* ✅ Preview newly selected images */}
-  {newImages.length > 0 && (
-    <div className="flex flex-wrap gap-2 border p-2 rounded-md mt-2">
-      {previewImages.map((url, index) => (
-        <div key={index} className="relative">
-          <img
-            src={url}
-            alt="preview"
-            className="w-20 h-20 object-cover rounded"
-          />
-        </div>
-      ))}
-    </div>
-  )}
-</div>
 
 
         {/* Submit */}
