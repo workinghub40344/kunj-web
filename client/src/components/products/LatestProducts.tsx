@@ -120,7 +120,9 @@ const LatestProducts = () => {
     }));
   };
 
-  const getProductPrice = (
+  
+
+  const computeProductPrice = (
     product: Product,
     size?: string,
     type?: "metal" | "marble"
@@ -208,6 +210,7 @@ const LatestProducts = () => {
     };
 
     addToCart({
+      itemCode: product.itemCode,
       productId: product._id,
       productName: product.name,
       size: selectedSize,
@@ -330,11 +333,12 @@ const LatestProducts = () => {
               handleOtherStateChange(selectedProduct._id, "customization", text)
             }
             onAddToCart={() => handleAddToCart(selectedProduct)}
+            
 
             getProductPrice={(p, s, q) => {
               const state = productStates[p._id];
               const type = state?.selectedSizeType;
-              const unitPrice = getProductPrice(p, s, type);
+              const unitPrice = computeProductPrice(p, s, type);
               return unitPrice * (q || 1);
             }}
           />
