@@ -74,9 +74,11 @@ export const InvoiceModal = ({
                 </div>
               </div>
               <h3 className="font-bold text-lg mb-2">Order Details:</h3>
+              {/* Table for order items */}
               <table className="w-full">
                 <thead className="bg-gray-100">
                   <tr className="border-b">
+                    <th className="p-2 text-left">Image</th>
                     <th className="p-2 text-left">Product Name</th>
                     <th className="p-2 text-center">Size & Name</th>
                     <th className="p-2 text-center">Quantity</th>
@@ -90,6 +92,9 @@ export const InvoiceModal = ({
                     const totalItemPrice = unitPrice * item.quantity;
                     return (
                       <tr key={item._id} className="border-b">
+                        <td className="">
+                          <img src={item.image} alt={item.productName} className="h-12 w-12 object-cover rounded" />
+                        </td>
                         <td className="p-2">
                           {item.productName}
                           {item.pagdi && (
