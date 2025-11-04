@@ -2,14 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 interface Accessory {
   _id: string;
@@ -197,9 +192,10 @@ const AccessoriesPage = () => {
             <Card className="h-full">
               <div className="aspect-square overflow-hidden rounded-t-lg">
                 <img
-                  src={acc.images[0]}
+                  src={getOptimizedImage(acc.images?.[0], 1000)}
+                  loading="lazy"
                   alt={acc.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               </div>
               <CardContent className="p-4">

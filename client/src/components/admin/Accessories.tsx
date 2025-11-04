@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Pencil, Trash2 } from "lucide-react";
 import AccessoryDetailsModal from "@/components/admin/AccessoryDetailsModal";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 
 interface SingleProduct {
@@ -253,7 +254,8 @@ const Accessories = () => {
                 <tr key={item._id} className="hover:bg-gray-50 transition">
                   <td className="py-3 px-4 border-b">
                     <img
-                      src={item.images?.[0] || "/placeholder.jpg"}
+                      src={getOptimizedImage(item.images?.[0], 1000)}
+                      loading="lazy"
                       alt={item.name}
                       className="w-14 h-14 object-cover rounded"
                     />

@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Accessory } from "@/components/admin/Accessories";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 interface Accessory1 extends Accessory {
   set_type?: string;
@@ -25,9 +26,10 @@ const AccessoryDetailsModal = ({ open, onOpenChange, accessory }: AccessoryDetai
           {/* Image */}
           <div className="w-[45%]">
             <img
-              src={accessory.images?.[0] || "/placeholder.jpg"}
+              src={getOptimizedImage(accessory.images?.[0], 1000)}
+              loading="lazy"
               alt={accessory.name}
-              className="rounded-lg w-full h-72 object-contain "
+              className="w-full h-72 object-cover object-center rounded-lg"
             />
           </div>
 

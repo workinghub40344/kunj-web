@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Product } from "@/data/products"; //interface for products
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 interface ProductSize {
   size: string;
@@ -38,10 +34,10 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
           <div className="flex gap-5 overflow-x-auto justify-start items-center">
             {product.images?.map((img: string, index: number) => (
               <img
-                key={index}
-                src={img}
+                src={getOptimizedImage(product.images?.[0], 1000)}
+                loading="lazy"
                 alt={product.name}
-                className="w-72 h-72 rounded-lg object-cover"
+                className="w-72 h-72 object-cover rounded-lg"
               />
             ))}
             {/* Basic Details */}

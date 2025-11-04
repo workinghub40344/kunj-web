@@ -1,20 +1,11 @@
 import React, { useState } from "react";
-import {
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import type { Product } from "@/data/products";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 interface ProductDetailModalProps {
   product: Product;
@@ -88,9 +79,10 @@ export const ProductDetailModal = ({
           {/* Image */}
           <div className="aspect-square overflow-hidden rounded-lg shadow-sm">
             <img
-              src={product.images?.[currentImageIndex] || product.images?.[0]}
+              src={getOptimizedImage(product.images?.[0], 1000)}
+              loading="lazy"
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-lg"
             />
           </div>
         
@@ -139,9 +131,10 @@ export const ProductDetailModal = ({
                   >
                     <div className="w-16 h-16 lg:w-full lg:h-20 overflow-hidden rounded-md">
                       <img
-                        src={variant.images[0]}
-                        alt={variant.name}
-                        className="w-full h-full object-cover"
+                        src={getOptimizedImage(product.images?.[0], 1000)}
+                        loading="lazy"
+                        alt={product.name}
+                        className="w-full h-full object-cover "
                       />
                     </div>
                     <p className="block lg:block text-xs text-center text-muted-foreground mt-1 truncate">

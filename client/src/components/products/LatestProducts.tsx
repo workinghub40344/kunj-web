@@ -10,6 +10,7 @@ import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { PagdiModal } from "@/components/products/PagdiSizeModal";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 
 type ProductState = {
@@ -272,9 +273,10 @@ const LatestProducts = () => {
             >
               <div className="aspect-square overflow-hidden rounded-t-lg">
                 <img
-                  src={product.images[0]}
+                  src={getOptimizedImage(product.images?.[0], 1000)}
+                  loading="lazy"
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               </div>
               <CardContent className="p-6">

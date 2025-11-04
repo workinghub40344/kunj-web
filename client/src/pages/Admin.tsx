@@ -8,6 +8,7 @@ import UserInfo from "@/components/admin/UserInfo";
 import AllOrders from "@/components/admin/AllOrders";
 import Accessories from "@/components/admin/Accessories";
 import ProductDetailsModal from "../components/admin/ProductDetailsModal";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 
 interface SizeOption {
@@ -276,7 +277,8 @@ const AdminPanel = () => {
                         <tr key={p._id} className="border-b hover:bg-gray-50">
                           <td className="p-2">
                             <img
-                              src={p.images[0]}
+                              src={getOptimizedImage(p.images[0], 400)}
+                              loading="lazy"
                               alt={p.name}
                               className="w-16 h-16 rounded object-cover"
                             />

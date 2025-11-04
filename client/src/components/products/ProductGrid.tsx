@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { ShoppingCart } from "lucide-react";
 import type { Product } from "@/data/products";
-import type { ProductState } from "@/pages/Products"; 
+import type { ProductState } from "@/pages/Products";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 interface ProductGridProps {
   products: Product[];
@@ -79,10 +80,12 @@ if (products.length === 0) {
               onClick={() => setSelectedProduct(product)}
             >
               <img
-                src={product.images[0]}
+                src={getOptimizedImage(product.images?.[0], 1000)}
+                loading="lazy"
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover rounded-lg"
               />
+
               {getStockBadge(product.stock_status)}
               {product.stock_status !== "IN_STOCK" && (
                 <div className="absolute inset-0 bg-black/30"></div>

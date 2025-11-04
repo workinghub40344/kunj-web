@@ -8,6 +8,7 @@ import { Minus, Plus } from "lucide-react";
 import { Accessory } from "../components/admin/AddAccessoryForm";
 import SingleProductDialog from "../components/products/SingleProductModal";
 import SetSelectionModal from "@/components/products/SetSelectionModal";
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 
 const AccessoriesDetailPage = () => {
@@ -36,6 +37,7 @@ const AccessoriesDetailPage = () => {
 
         setProduct(productRes.data);
         setAllVariants(allAccessoriesRes.data);
+        setCurrentImageIndex(0);
       } catch (error) {
         console.error("Failed to fetch product details", error);
       } finally {
@@ -124,10 +126,11 @@ const AccessoriesDetailPage = () => {
 
           {/* 🖼️ Main Image */}
           <img
-            src={product.images?.[currentImageIndex] || product.images?.[0]}
+            src={getOptimizedImage(product.images?.[currentImageIndex], 1000)}
             alt={product.name}
             className="h-96 w-full aspect-square object-cover transition-transform duration-300 hover:scale-105"
           />
+
 
           {/* → Right Arrow */}
           {product.images?.length > 1 && (
@@ -283,13 +286,15 @@ const AccessoriesDetailPage = () => {
                 <Link to={`/accessories/${variant._id}`} key={variant._id}>
                   <div className="w-40 h-40 border rounded-md overflow-hidden hover:border-primary transition-all">
                     <img
-                      src={variant.images[0]}
+                      src={getOptimizedImage(variant.images?.[0], 400)}
+                      loading="lazy"
                       alt={variant.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
                 </Link>
               ))}
+
             </div>
           </div>
         )}
