@@ -188,7 +188,7 @@ const Cart = () => {
       const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
         message
       )}`;
-      window.open(url, "_blank");
+      window.location.href = url;
 
       toast({
         title: "Order Saved & Redirecting!",
