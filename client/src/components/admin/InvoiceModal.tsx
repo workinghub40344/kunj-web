@@ -23,7 +23,13 @@ export const InvoiceModal = ({
   const handleDownloadPdf = () => {
     const input = invoiceRef.current;
     if (input && order) {
-      html2canvas(input, { scale: 3 }).then((canvas) => {
+      html2canvas(input, { 
+        scale: 3,
+        useCORS: true,
+        allowTaint: false,
+        logging: true,
+        imageTimeout: 0,
+      }).then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF("p", "mm", "a4");
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -36,7 +42,7 @@ export const InvoiceModal = ({
 
         pdf.addImage(imgData, "JPEG", imgX, imgY, canvasWidth * ratio, canvasHeight * ratio, '', 'FAST');
 
-        pdf.save(`invoice-${order.orderId}.pdf`); // 'selectedOrder' ko 'order' se replace kiya
+        pdf.save(`invoice-${order.orderId}.pdf`);
       });
     }
   };

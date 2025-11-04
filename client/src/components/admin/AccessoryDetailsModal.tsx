@@ -26,7 +26,7 @@ const AccessoryDetailsModal = ({ open, onOpenChange, accessory }: AccessoryDetai
           {/* Image */}
           <div className="w-[45%]">
             <img
-              src={getOptimizedImage(accessory.images?.[0], 1000)}
+              src={getOptimizedImage(accessory.images?.[0], 400)}
               loading="lazy"
               alt={accessory.name}
               className="w-full h-72 object-cover object-center rounded-lg"

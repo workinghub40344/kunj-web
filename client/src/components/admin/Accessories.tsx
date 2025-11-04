@@ -261,11 +261,9 @@ const Accessories = () => {
                     />
                   </td>
                   <td className="py-3 px-4 border-b">{item.name}</td>
-                  <div className="flex justify-start items-center pt-6">
-                    <td className=" rounded-sm bg-secondary/80 border-b px-5 ml-5">
-                      {item.style_code}
-                    </td>
-                  </div>
+                  <td className="border-b rounded-sm text-secondary pl-5">
+                    {item.style_code}
+                  </td>
                   <td className="py-3 px-4 border-b">₹{item.price}</td>
                   <td className="py-3 px-4 border-b text-black">
                     {item.countInStock}
