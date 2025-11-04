@@ -9,27 +9,8 @@ import AllOrders from "@/components/admin/AllOrders";
 import Accessories from "@/components/admin/Accessories";
 import ProductDetailsModal from "../components/admin/ProductDetailsModal";
 import { getOptimizedImage } from "@/lib/cloudinary";
+import type { Product, SizeOption } from "@/data/products";
 
-
-interface SizeOption {
-  size: string;
-  price: number;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  category: string;
-  colour: string;
-  metal_sizes: SizeOption[];
-  marble_sizes: SizeOption[];
-  metal_pagdi: SizeOption[];
-  marble_pagdi: SizeOption[];
-  images: string[];
-  style_code: string;
-  stock_status: "IN_STOCK" | "OUT_OF_STOCK" | "BOOKING_CLOSED";
-}
 
 const AdminPanel = () => {
   const API_URL = import.meta.env.VITE_API_URL;

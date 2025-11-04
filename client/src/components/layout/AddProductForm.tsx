@@ -7,29 +7,14 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 import { SizePriceModal } from "@/components/layout/SizePriceModal";
+import type { Product, SizeOption } from "@/data/products";
 
-interface SizeOption { size: string; price: number | string; }
-
-interface ProductType {
-  name: string;
-  itemCode: string;
-  description: string;
-  category: string;
-  colour: string;
-  metal_sizes: SizeOption[];
-  marble_sizes: SizeOption[];
-  metal_pagdi: SizeOption[];
-  marble_pagdi: SizeOption[];
-  images: string[];
-  style_code: string;
-  stock_status: "IN_STOCK" | "OUT_OF_STOCK" | "BOOKING_CLOSED";
-}
 
 interface AddProductFormProps {
   onClose: () => void;
-  onProductAdded: (newProduct: ProductType & { _id: string }) => void;
-  onProductUpdated: (updatedProduct: ProductType & { _id: string }) => void;
-  productToEdit: (ProductType & { _id: string }) | null;
+  onProductAdded: (newProduct: Product & { _id: string }) => void;
+  onProductUpdated: (updatedProduct: Product & { _id: string }) => void;
+  productToEdit: (Product & { _id: string }) | null;
 }
 
 const AddProductForm = ({
@@ -74,22 +59,22 @@ const AddProductForm = ({
       setMetalPagdi(
         productToEdit.metal_pagdi.length > 0
           ? productToEdit.metal_pagdi
-          : [{ size: "", price: "" }]
+          : [{ size: "", price: 0 }]
       );
       setMarblePagdi(
         productToEdit.marble_pagdi.length > 0
           ? productToEdit.marble_pagdi
-          : [{ size: "", price: "" }]
+          : [{ size: "", price: 0 }]
       )
       setMetalSizes(
         productToEdit.metal_sizes.length > 0
           ? productToEdit.metal_sizes
-          : [{ size: "", price: "" }]
+          : [{ size: "", price: 0 }]
       );
       setMarbleSizes(
         productToEdit.marble_sizes.length > 0
           ? productToEdit.marble_sizes
-          : [{ size: "", price: "" }]
+          : [{ size: "", price: 0 }]
       );
       setExistingImages(productToEdit.images);
       setStyleCode(productToEdit.style_code || "");

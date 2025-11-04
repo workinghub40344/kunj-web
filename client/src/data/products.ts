@@ -5,28 +5,27 @@ import product1 from "@/assets/product-1.jpg";
 
 
 
+export interface SizeOption {
+  size: string;
+  price: number;
+}
+
 export interface Product {
   _id: string;
   name: string;
-  itemCode:string;
   description: string;
-  images: string[];
   category: string;
-  colour:string;
-  style_code:string;
-  metal_sizes: {
-    size: string;
-    price: number;
-  }[];
-  marble_sizes: {
-    size: string;
-    price: number;
-  }[];
-  metal_pagdi?: { size: string; price: number; }[];
-  marble_pagdi?: { size: string; price: number; }[];
-  featured?: boolean;
+  colour: string;
+  images: string[];
+  style_code: string;
   stock_status: "IN_STOCK" | "OUT_OF_STOCK" | "BOOKING_CLOSED";
+  itemCode?: string;
+  metal_sizes?: SizeOption[];
+  marble_sizes?: SizeOption[];
+  metal_pagdi?: SizeOption[];
+  marble_pagdi?: SizeOption[];
 }
+
 
 export const products: Product[] = [
   {
@@ -48,7 +47,6 @@ export const products: Product[] = [
       { size: "4-inch", price: 349 },
       { size: "5-inch", price: 3909 }
     ],
-    featured: true,
     stock_status: 'IN_STOCK',
   },
   // {

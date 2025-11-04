@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { SizeOption } from "@/data/products";
+
 
 const sizeArr = [
   "1-no", "2-no", "3-no", "4-no", "5-no", "6-no", "7-no", "8-no",
@@ -12,7 +14,6 @@ const sizeArr = [
   "24-inch", "30-inch", "36-inch",
 ];
 
-interface SizeOption { size: string; price: number | string; }
 interface SizePriceModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -45,7 +46,7 @@ export const SizePriceModal = ({ isOpen, onClose, onSave, currentSizes, title }:
     const newSizes: SizeOption[] = sizeArr
       .map(size => ({
         size,
-        price: localSizes[size] || ""
+        price: Number(localSizes[size]) || 0
       }))
       .filter(item => String(item.price).trim() !== "" && Number(item.price) >= 0);
 
