@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/data/products";
 import type { ProductState } from "@/pages/Products";
+import { getOptimizedImage } from "@/lib/cloudinary";
+import { useEffect, useState } from "react";
 
 interface PagdiOption { size: string; price: number; type: string; }
 
@@ -20,6 +22,14 @@ export const PagdiModal = ({
     productState,
     onConfirm,
 }: PagdiModalProps) => {
+  const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+    setLoading(true);
+    const timeout = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timeout);
+  }, [isOpen]);
+
   if (!product || !productState) return null;
 
   const pagdiArray =
@@ -40,6 +50,10 @@ export const PagdiModal = ({
       }
     : undefined;
 
+
+
+
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -50,11 +64,15 @@ export const PagdiModal = ({
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 text-center">
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="w-40 h-40 object-cover mx-auto rounded-lg mb-4 shadow-lg"
-          />
+          {loading ? (
+              <div className="h-40 w-full flex items-center justify-center">Loading...</div>
+            ) : (
+              <img
+                src={getOptimizedImage(product.images?.[0], 400)}
+                alt={product.name}
+                className="w-40 h-40 object-cover mx-auto rounded-lg mb-4 shadow-lg"
+              />
+            )}
           <p>
             You've selected: <strong>{product.name}</strong>
           </p>

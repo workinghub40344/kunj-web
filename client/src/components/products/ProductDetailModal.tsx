@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -41,6 +41,17 @@ export const ProductDetailModal = ({
   getProductPrice,
 }: ProductDetailModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    setCurrentImageIndex(0);
+    setLoading(true);
+    const timeout = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timeout);
+  }, [product._id]);
+
+
+  if (!product.images || product.images.length === 0) return null;
   if (!product) return null;
 
   return (
@@ -77,14 +88,19 @@ export const ProductDetailModal = ({
           )}
 
           {/* Image */}
-          <div className="aspect-square overflow-hidden rounded-lg shadow-sm">
-            <img
-              src={getOptimizedImage(product.images?.[0], 1000)}
-              loading="lazy"
-              alt={product.name}
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
+          {loading ? (
+              <div className="w-full h-[400px] flex items-center justify-center">Loading...</div>
+            ) : (
+              <div className="aspect-square overflow-hidden rounded-lg shadow-sm">
+                <img
+                  src={getOptimizedImage(product.images?.[currentImageIndex], 1000)}
+                  alt={product.name}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+          )}
+
+          
         
           {/* Right Arrow */}
           {product.images?.length > 1 && (
@@ -131,9 +147,9 @@ export const ProductDetailModal = ({
                   >
                     <div className="w-16 h-16 lg:w-full lg:h-20 overflow-hidden rounded-md">
                       <img
-                        src={getOptimizedImage(product.images?.[0], 1000)}
+                        src={getOptimizedImage(variant.images?.[0], 1000)}
                         loading="lazy"
-                        alt={product.name}
+                        alt={variant.name}
                         className="w-full h-full object-cover "
                       />
                     </div>
