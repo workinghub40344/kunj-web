@@ -32,15 +32,14 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
         <div className="space-y-4">
           {/* Image */}
           <div className="flex gap-5 overflow-x-auto justify-start items-center">
-            {product.images?.map((img: string, index: number) => (
+            {product.images && product.images.length > 0 && (
               <img
-                key={index}
-                src={getOptimizedImage(img, 400)}
+                src={getOptimizedImage(product.images[0], 400)}
                 loading="lazy"
                 alt={product.name}
                 className="w-72 h-72 object-cover rounded-lg"
               />
-            ))}
+            )}
             {/* Basic Details */}
             <div className="">
               <p className="text-black mb-5">
