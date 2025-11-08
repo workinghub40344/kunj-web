@@ -5,7 +5,7 @@ import Logo from "@/assets/Logo-1.jpg";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { FileDown } from "lucide-react";
-import type { IOrder } from "@/components/admin/DownloadBill"; 
+import type { IOrder } from "@/data/orderType"; 
 
 interface InvoiceModalProps {
   order: IOrder | null;
@@ -84,7 +84,6 @@ export const InvoiceModal = ({
               <table className="w-full">
                 <thead className="bg-gray-100">
                   <tr className="border-b">
-                    <th className="p-2 text-left">Image</th>
                     <th className="p-2 text-left">Product Name</th>
                     <th className="p-2 text-center">Size & Name</th>
                     <th className="p-2 text-center">Quantity</th>
@@ -98,18 +97,20 @@ export const InvoiceModal = ({
                     const totalItemPrice = unitPrice * item.quantity;
                     return (
                       <tr key={item._id} className="border-b">
-                        <td className="">
-                          <img src={item.image} alt={item.productName} className="h-12 w-12 object-cover rounded" />
-                        </td>
                         <td className="p-2">
                           {item.productName}
                           {item.pagdi && (
-                            <span className="text-xs text-gray-500 block">
+                            <span className="text-xs text-primary block">
                               + {item.pagdi.type} ({item.pagdi.size})
                             </span>
                           )}
                         </td>
-                        <td className="p-2 text-center">{item.size}</td>
+                        <td className="p-2 text-center">
+                          {item.size}
+                          {["Metal", "Marble"].includes(item.sizeType) && item.sizeType ? (
+                            <> ({item.sizeType})</>
+                          ) : null}
+                        </td>
                         <td className="p-2 text-center">{item.quantity}</td>
                         <td className="p-2 text-right">₹{unitPrice.toFixed(2)}</td>
                         <td className="p-2 text-right font-semibold">₹{totalItemPrice.toFixed(2)}</td>

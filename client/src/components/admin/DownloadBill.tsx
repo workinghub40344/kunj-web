@@ -7,30 +7,8 @@ import { Search, RefreshCw } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { OrderTable } from "@/components/admin/OrderTable";
 import { InvoiceModal } from "@/components/admin/InvoiceModal";
+import type { IOrder } from "@/data/orderType";
 
-export interface IOrderItem {
-  productName: string;
-  quantity: number;
-  size: string;
-  price: number;
-  image: string;
-  customization?: string;
-  _id: string;
-  pagdi?: {
-    type: string;
-    size: string;
-    price: number;
-  };
-}
-export interface IOrder {
-  _id: string;
-  orderId: string;
-  customerName: string;
-  customerPhone: string;
-  orderItems: IOrderItem[];
-  totalPrice: number;
-  createdAt: string;
-}
 
 const DownloadBill = ({ userId }: { userId?: string }) => {
   const { user: adminUser } = useAuth();

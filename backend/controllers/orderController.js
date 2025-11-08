@@ -30,6 +30,7 @@ const createOrder = async (req, res) => {
       productName: item.productName,
       quantity: item.quantity,
       size: item.size,
+      sizeType: item.sizeType,
       price: item.price,
       image: item.image,
       customization: item.customization,
