@@ -2,6 +2,7 @@
 export interface IOrderItem {
     productName: string;
     quantity: number;
+    itemCode?: string;
     size: string;
     sizeType: string;
     price: number;
