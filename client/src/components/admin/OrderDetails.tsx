@@ -104,7 +104,7 @@ return (
           {/* Details Section */}
           <div className="flex-1 p-3 flex flex-col justify-between">
             <div>
-              <h4 className="text-base font-semibold text-gray-800 truncate">
+              <h4 className="text-base text-wrap mb-1 font-semibold text-gray-800 truncate">
                 {item.productName}
               </h4>
               <p className="text-xs text-gray-500">
