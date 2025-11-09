@@ -40,7 +40,7 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Dresses", path: "/products" },
-    { name: "Products", path: "/accessories" },
+    { name: "Accessories", path: "/accessories" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];

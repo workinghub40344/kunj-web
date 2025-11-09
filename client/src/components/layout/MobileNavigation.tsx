@@ -10,7 +10,7 @@ const MobileNavigation = () => {
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Dresses", path: "/products", icon: Shirt },
-    { name: "Products", path: "/Accessories", icon: Gem },
+    { name: "Accessories", path: "/accessories", icon: Gem },
     { name: "Cart", path: "/cart", icon: ShoppingCart, hasCount: true },
     { name: "About", path: "/about", icon: Info },
   ];
