@@ -43,16 +43,17 @@ export const SizePriceModal = ({ isOpen, onClose, onSave, currentSizes, title }:
   };
 
   const handleSave = () => {
-    const newSizes: SizeOption[] = sizeArr
-      .map(size => ({
-        size,
-        price: Number(localSizes[size]) || 0
-      }))
-      .filter(item => String(item.price).trim() !== "" && Number(item.price) >= 0);
+  const newSizes: SizeOption[] = Object.entries(localSizes)
+    .filter(([_, price]) => price !== "" && !isNaN(Number(price)) && Number(price) > 0)
+    .map(([size, price]) => ({
+      size,
+      price: Number(price)
+    }));
 
-    onSave(newSizes);
-    onClose();
+  onSave(newSizes);
+  onClose();
   };
+
 
   // Separate arrays for clarity
   const noSizes = sizeArr.filter(size => size.endsWith("-no"));
