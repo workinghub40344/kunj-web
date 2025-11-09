@@ -80,7 +80,7 @@ if (products.length === 0) {
               onClick={() => setSelectedProduct(product)}
             >
               <img
-                src={getOptimizedImage(product.images?.[0], 1000)}
+                src={getOptimizedImage(product.images?.[0], 800)}
                 loading="lazy"
                 alt={product.name}
                 className="w-full h-full object-cover rounded-lg"

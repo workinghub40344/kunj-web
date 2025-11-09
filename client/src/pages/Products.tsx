@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
 import { ProductDetailModal } from "@/components/products/ProductDetailModal";
-import { ProductGrid } from "@/components/products/ProductGrid"; // Naya component import karein
+import { ProductGrid } from "@/components/products/ProductGrid";
 import { useProducts } from "@/context/ProductContext";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";

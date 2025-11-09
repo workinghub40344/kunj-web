@@ -192,7 +192,7 @@ const AccessoriesPage = () => {
             <Card className="h-full">
               <div className="aspect-square overflow-hidden rounded-t-lg">
                 <img
-                  src={getOptimizedImage(acc.images?.[0], 1000)}
+                  src={getOptimizedImage(acc.images?.[0], 800)}
                   loading="lazy"
                   alt={acc.name}
                   className="w-full h-full object-cover rounded-lg"

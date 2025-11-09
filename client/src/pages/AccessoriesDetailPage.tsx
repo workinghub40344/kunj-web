@@ -126,7 +126,7 @@ const AccessoriesDetailPage = () => {
 
           {/* 🖼️ Main Image */}
           <img
-            src={getOptimizedImage(product.images?.[currentImageIndex], 1000)}
+            src={getOptimizedImage(product.images?.[currentImageIndex], 800)}
             alt={product.name}
             className="h-96 w-full aspect-square object-cover transition-transform duration-300 hover:scale-105"
           />

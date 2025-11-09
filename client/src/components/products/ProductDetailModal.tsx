@@ -93,7 +93,7 @@ export const ProductDetailModal = ({
             ) : (
               <div className="aspect-square overflow-hidden rounded-lg shadow-sm">
                 <img
-                  src={getOptimizedImage(product.images?.[currentImageIndex], 1000)}
+                  src={getOptimizedImage(product.images?.[currentImageIndex], 800)}
                   alt={product.name}
                   className="w-full h-full object-cover rounded-lg"
                 />

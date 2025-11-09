@@ -254,7 +254,7 @@ const Accessories = () => {
                 <tr key={item._id} className="hover:bg-gray-50 transition">
                   <td className="py-3 px-4 border-b">
                     <img
-                      src={getOptimizedImage(item.images?.[0], 1000)}
+                      src={getOptimizedImage(item.images?.[0], 900)}
                       loading="lazy"
                       alt={item.name}
                       className="w-14 h-14 object-cover rounded"

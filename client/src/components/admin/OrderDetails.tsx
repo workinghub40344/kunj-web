@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { IOrder } from "@/data/orderType"
+import { getOptimizedImage } from "@/lib/cloudinary";
 
 
 
@@ -90,7 +90,8 @@ return (
           <div className="flex justify-center items-center bg-gray-50 p-3">
             {item.image ? (
               <img
-                src={item.image}
+                src={getOptimizedImage(item.image, 300)}
+                loading="lazy"
                 alt={item.productName}
                 className="w-[140px] h-[140px] object-cover rounded-lg shadow-sm"
               />
