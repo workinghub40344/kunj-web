@@ -36,7 +36,7 @@ const HeroSlider = () => {
                             <Card className="h-full">
                                 <CardContent className="flex items-center justify-center p-0 h-full">
                                     <img 
-                                        src={getOptimizedImage(image.imageUrl, 1000)} 
+                                        src={getOptimizedImage(image.imageUrl, 1200)} 
                                         alt={`Slider Image ${index + 1}`} 
                                         loading="lazy"
                                         className="w-full h-full object-cover"
