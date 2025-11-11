@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { getOptimizedImage } from '@/lib/cloudinary';
 
 interface SliderImage {
     imageUrl: string;
@@ -35,8 +36,9 @@ const HeroSlider = () => {
                             <Card className="h-full">
                                 <CardContent className="flex items-center justify-center p-0 h-full">
                                     <img 
-                                        src={image.imageUrl} 
+                                        src={getOptimizedImage(image.imageUrl, 1000)} 
                                         alt={`Slider Image ${index + 1}`} 
+                                        loading="lazy"
                                         className="w-full h-full object-cover"
                                     />
                                 </CardContent>
