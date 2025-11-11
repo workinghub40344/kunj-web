@@ -16,6 +16,7 @@ async function getNextSequenceValue(sequenceName) {
 
 const createOrder = async (req, res) => {
   try {
+    console.log("🟢 New Order Request Received:", req.body);
     const { customerPhone, orderItems, totalPrice } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
@@ -23,20 +24,27 @@ const createOrder = async (req, res) => {
       throw new Error('No order items in cart');
     }
 
-    // Clean order items
-    const cleanedOrderItems = orderItems.map(item => ({
-      itemCode: item.itemCode,
-      productId: item.productId.split('-')[0],
-      productName: item.productName,
-      quantity: item.quantity,
-      size: item.size,
-      sizeType: item.sizeType,
-      price: item.price,
-      image: item.image,
-      customization: item.customization,
-      colour: item.colour,
-      pagdi: item.pagdi
-    }));
+    // ✅ Clean + Validate order items
+    const cleanedOrderItems = orderItems.map((item, index) => {
+      if (!item.itemCode || !item.productId || !item.productName) {
+        throw new Error(`Invalid item at index ${index}: Missing required fields (itemCode, productId, or productName).`);
+      }
+    
+      return {
+        itemCode: item.itemCode.trim(),
+        productId: item.productId.split('-')[0],
+        productName: item.productName.trim(),
+        quantity: Number(item.quantity) || 1,
+        size: item.size?.trim() || "",
+        sizeType: item.sizeType?.trim() || "",
+        price: Number(item.price) || 0,
+        image: item.image?.trim() || "",
+        customization: item.customization?.trim() || "",
+        colour: item.colour?.trim() || "",
+        pagdi: item.pagdi || null,
+      };
+    });
+
 
     // ✅ Stock validation before creating order
     for (const item of cleanedOrderItems) {
@@ -82,7 +90,7 @@ const createOrder = async (req, res) => {
         product = await Accessory.findById(item.productId);
       }
       if (product && typeof product.countInStock !== 'undefined') {
-        product.countInStock -= item.quantity;
+        product.countInStock = Math.max(product.countInStock - item.quantity, 0);
         await product.save();
       }
     }
@@ -92,12 +100,12 @@ const createOrder = async (req, res) => {
       req.user.phone = customerPhone;
       await req.user.save();
     }
-
     res.status(201).json(createdOrder);
 
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("❌ Error creating order:", error);
     res.status(500).json({ message: 'Server Error creating order' });
+
   }
 };
 

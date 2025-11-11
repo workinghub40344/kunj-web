@@ -61,13 +61,14 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   setCartItems((prev) => {
     const existingItem = prev.find(
       (item) =>
-        item.itemCode === newItem.itemCode &&
         item.productId === newItem.productId &&
-        item.colour === newItem.colour &&
+        item.itemCode === newItem.itemCode &&
         item.size === newItem.size &&
-        item.sizeType === newItem.sizeType && 
+        item.sizeType === newItem.sizeType &&
+        item.colour === newItem.colour &&
         item.customization === newItem.customization &&
-        (!!item.pagdi === !!newItem.pagdi)
+        (item.pagdi?.type === newItem.pagdi?.type) &&
+        (item.pagdi?.size === newItem.pagdi?.size)
     );
 
     if (existingItem) {
@@ -82,9 +83,11 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       );
     } else {
       const cartItem: CartItem = {
-        ...newItem,
+        ...structuredClone(newItem),
         id: Date.now().toString() + Math.random().toString(36),
       };
+
+      Object.freeze(cartItem);
 
       toast({
         title: "Added to Cart",
