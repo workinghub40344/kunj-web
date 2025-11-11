@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
+
 
 export interface CartItem {
   id: string;
@@ -48,7 +50,11 @@ interface CartProviderProps {
 }
 
 export const CartProvider = ({ children }: CartProviderProps) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  const savedCart = localStorage.getItem("cartItems");
+  return savedCart ? JSON.parse(savedCart) : [];
+});
+
   const { toast } = useToast();
 
   const addToCart = (newItem: Omit<CartItem, "id">) => {
@@ -117,7 +123,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem("cartItems");
   };
+
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   return (
     <CartContext.Provider

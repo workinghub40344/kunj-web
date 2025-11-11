@@ -54,7 +54,7 @@ const Cart = () => {
     getTotalPrice,
     clearCart,
   } = useCart();
-  const { user, login } = useAuth();
+  const { user, login, updateUser } = useAuth();
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [customerPhone, setCustomerPhone] = useState("");
@@ -143,6 +143,7 @@ const Cart = () => {
     }
 
     try {
+      updateUser({ phone: customerPhone });
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       const orderData = {
         customerName: user.name,

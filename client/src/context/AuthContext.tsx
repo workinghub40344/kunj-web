@@ -16,6 +16,7 @@ interface AuthContextType {
   loading: boolean;
   login: (userData: UserInfo) => void;
   logout: () => void;
+  updateUser: (updatedData: Partial<UserInfo>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,11 +63,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
   };
 
+  const updateUser = (updatedData: Partial<UserInfo>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updatedUser = { ...prev, ...updatedData };
+      localStorage.setItem("userInfo", JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
   const value = {
     user,
     loading,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
