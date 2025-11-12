@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import axios from "axios";
 import { auth, googleProvider } from "@/firebase";
 import { signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 interface user {
   _id: string;
@@ -60,6 +61,7 @@ const Cart = () => {
   const [customerPhone, setCustomerPhone] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user && user.phone) {
@@ -159,46 +161,38 @@ const Cart = () => {
       );
 
       const phoneNumber = "919529663375";
-      let message = `Hello Kunj *_Creation_*, New Order Received!\n\n`;
-      message += `*Order ID:* ${savedOrder.orderId}\n`;
-      message += `*Customer Name:* ${orderData.customerName}\n`;
-      message += `*Phone Number:* ${customerPhone}\n\n`;
-      message += `--- *Order Details* ---\n`;
-      cartItems.forEach((item, index) => {
-        message += `*${index + 1}. ${item.productName}*\n`;
-        message += `   *${item.sizeType} ${
-          ["Accessory", "Product"].includes(item.sizeType)
-            ? `Type: ${item.size}`
-            : `Size: ${item.size}`
-        }*\n`;
-        if (item.pagdi) {
-          message += `   *+ Pagdi:* ${item.pagdi.type} (${item.pagdi.size}) - ₹${item.pagdi.price}\n`;
-        }
-        if (item.colour) {
-          message += `   *Colour:* ${item.colour}\n`;
-        }
-        message += `   *Quantity:* ${item.quantity}\n`;
-        message += `   *ItemCode:* ${item.itemCode}\n`;
-        if (item.customization) {
-          message += `   *Customization:* _${item.customization}_\n`;
-        }
-        message += `-------------------------------\n`;
-      });
-      message += `*Total Amount:* ₹${total}\n`;
+      let message = `Hello Kunj Creation, New Order Received!\n\n`;
+        message += `Order ID: ${savedOrder.orderId}\n`;
+        message += `Customer Name: ${orderData.customerName}\n`;
+        message += `Phone Number: ${customerPhone}\n\n`;
+        message += `--- Order Details ---\n`;
+        
+        cartItems.forEach((item, index) => {
+          message += `${index + 1}. ${item.productName}\n`;
+          message += `   Item Code: ${item.itemCode}\n`;
+          message += `   Size: ${item.size}\n`;
+          if (item.customization) {
+            message += `   Note: ${item.customization}\n`;
+          }
+          message += `-----------------------\n`;
+        });
+      
+        message += `Total Amount: ₹${total}\n`;
 
-      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-        message
-      )}`;
-      window.location.href = url;
 
+      const uniqueId = Date.now();
+      const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0&_t=${uniqueId}`;
       toast({
-        title: "Order Saved & Redirecting!",
-        description: "Your order has been saved successfully.",
+        title: "Order Saved!",
+        description: "Redirecting to WhatsApp...",
       });
 
       setIsUserInfoModalOpen(false);
       clearCart();
       setCustomerPhone("");
+
+      navigate("/order-success", { state: { url: url } });
+
     } catch (error) {
       const message = error.response?.data?.message || "Could not save your order.";
       console.error("Failed to save order", error);

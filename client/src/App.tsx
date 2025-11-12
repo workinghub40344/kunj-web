@@ -15,6 +15,7 @@ import { ProductProvider } from "./context/ProductContext";
 import MyOrders from "./components/layout/MyOrders";
 import AccessoriesPage from "./pages/AccessoriesPage";
 import AccessoriesDetailPage from "./pages/AccessoriesDetailPage";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const App = () => (
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/cart" element={<Cart />} />
+                      <Route path="/order-success" element={<OrderConfirmation />} />
                       <Route path="/my-orders" element={<MyOrders />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
