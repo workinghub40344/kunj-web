@@ -16,7 +16,7 @@ async function getNextSequenceValue(sequenceName) {
 
 const createOrder = async (req, res) => {
   try {
-    console.log("🟢 New Order Request Received:", req.body);
+    // console.log("🟢 New Order Request Received:", req.body);
     const { customerPhone, orderItems, totalPrice } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
