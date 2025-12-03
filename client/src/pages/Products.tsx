@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, Filter, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,9 +28,21 @@ const Products = () => {
   const [productStates, setProductStates] = useState<Record<string, ProductState>>({});
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [pagdiModalProduct, setPagdiModalProduct] = useState<Product | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { addToCart } = useCart();
   const { toast } = useToast();
+
+  // Deep linking: Open modal if product ID is in URL
+  useEffect(() => {
+    const productIdFromUrl = searchParams.get("product");
+    if (productIdFromUrl && products.length > 0) {
+      const productToOpen = products.find((p) => p._id === productIdFromUrl);
+      if (productToOpen) {
+        setSelectedProduct(productToOpen);
+      }
+    }
+  }, [searchParams, products]);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -428,7 +441,16 @@ const Products = () => {
         getProductPrice={getProductPrice}
         getStockBadge={getStockBadge}
       />
-      <Dialog open={!!selectedProduct} onOpenChange={(isOpen) => { if (!isOpen) setSelectedProduct(null); }}>
+      <Dialog open={!!selectedProduct} onOpenChange={(isOpen) => { 
+        if (!isOpen) {
+          setSelectedProduct(null);
+          // Remove query param when closing modal
+          setSearchParams((params) => {
+            params.delete("product");
+            return params;
+          });
+        }
+      }}>
         {selectedProduct && (
           <ProductDetailModal
             product={selectedProduct}

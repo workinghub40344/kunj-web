@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import type { Product } from "@/data/products";
 import { getOptimizedImage } from "@/lib/cloudinary";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductDetailModalProps {
   product: Product;
@@ -42,6 +43,7 @@ export const ProductDetailModal = ({
 }: ProductDetailModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast(); // Using the hook
   
   useEffect(() => {
     setCurrentImageIndex(0);
@@ -57,7 +59,38 @@ export const ProductDetailModal = ({
   return (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold">{product.name}</DialogTitle>
+        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+          {product.name}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              const url = `${window.location.origin}/products?product=${product._id}`;
+              navigator.clipboard.writeText(url);
+              toast({
+                title: "Link Copied!",
+                description: "Product link copied to clipboard.",
+              });
+            }}
+            className="bg-primary"
+            title="Share Product"
+          >
+             <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.287.696.287 1.093s-.107.77-.287 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.935-2.186 2.25 2.25 0 00-3.935 2.186z"
+                />
+              </svg>
+          </Button>
+        </DialogTitle>
       </DialogHeader>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 py-4">
