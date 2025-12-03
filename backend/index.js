@@ -3,8 +3,11 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 const mongoose = require("mongoose"); 
 const connectDB = require("./config/db");
+const { errorHandler } = require("./middleware/errorMiddleware");
+
 const adminRoutes = require("./routes/adminRoutes");
 const productRoutes = require("./routes/productRoutes.js");
 const orderRoutes = require("./routes/orderRoutes.js");
@@ -14,9 +17,29 @@ const accessoryRoutes = require('./routes/accessoryRoutes.js');
 
 const app = express();
 
+// --- Security Middleware ---
+app.use(helmet());
 
+// --- CORS Configuration ---
+const allowedOrigins = [
+  "https://kunjcreationindia.com",
+  "https://www.kunjcreationindia.com",
+  "http://localhost:5173",
+  "http://localhost:8080"
+];
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -54,6 +77,9 @@ app.use('/api/accessories', accessoryRoutes);
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
+
+// --- Error Handling Middleware ---
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
