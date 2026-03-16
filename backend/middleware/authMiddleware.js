@@ -30,8 +30,18 @@ const protectUser = async (req, res, next) => {
         token = req.headers.authorization.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await User.findById(decoded.id).select("-password");
+
+        // ✅ FIX: Agar token valid hai lekin user DB mein nahi mila (deleted account etc.)
+        if (!req.user) {
+          return res.status(401).json({ message: "User not found. Please login again." });
+        }
+
         next();
       } catch (error) {
+        // ✅ FIX: Token expire hone par alag aur clear error message
+        if (error.name === "TokenExpiredError") {
+          return res.status(401).json({ message: "Session expired. Please login again." });
+        }
         res.status(401).json({ message: "Not authorized, token failed" });
       }
     } else {

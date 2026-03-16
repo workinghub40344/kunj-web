@@ -55,7 +55,7 @@ const Cart = () => {
     getTotalPrice,
     clearCart,
   } = useCart();
-  const { user, login, updateUser } = useAuth();
+  const { user, login, logout, updateUser } = useAuth();
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [customerPhone, setCustomerPhone] = useState("");
@@ -153,7 +153,6 @@ const Cart = () => {
         orderItems: cartItems,
         totalPrice: total,
       };
-      console.log("Data being sent to backend:", orderData);
       const { data: savedOrder } = await axios.post(
         `${API_URL}/api/orders/create`,
         orderData,
@@ -162,22 +161,22 @@ const Cart = () => {
 
       const phoneNumber = "919529663375";
       let message = `Hello Kunj Creation, New Order Received!\n\n`;
-        message += `Order ID: ${savedOrder.orderId}\n`;
-        message += `Customer Name: ${orderData.customerName}\n`;
-        message += `Phone Number: ${customerPhone}\n\n`;
-        message += `--- Order Details ---\n`;
-        
-        cartItems.forEach((item, index) => {
-          message += `${index + 1}. ${item.productName}\n`;
-          message += `   Item Code: ${item.itemCode}\n`;
-          message += `   Size: ${item.size}\n`;
-          if (item.customization) {
-            message += `   Note: ${item.customization}\n`;
-          }
-          message += `-----------------------\n`;
-        });
-      
-        message += `Total Amount: ₹${total}\n`;
+      message += `Order ID: ${savedOrder.orderId}\n`;
+      message += `Customer Name: ${orderData.customerName}\n`;
+      message += `Phone Number: ${customerPhone}\n\n`;
+      message += `--- Order Details ---\n`;
+
+      cartItems.forEach((item, index) => {
+        message += `${index + 1}. ${item.productName}\n`;
+        message += `   Item Code: ${item.itemCode}\n`;
+        message += `   Size: ${item.size}\n`;
+        if (item.customization) {
+          message += `   Note: ${item.customization}\n`;
+        }
+        message += `-----------------------\n`;
+      });
+
+      message += `Total Amount: ₹${total}\n`;
 
 
       const uniqueId = Date.now();
@@ -194,11 +193,26 @@ const Cart = () => {
       navigate("/order-success", { state: { url: url } });
 
     } catch (error) {
-      const message = error.response?.data?.message || "Could not save your order.";
-      console.error("Failed to save order", error);
+      const statusCode = error.response?.status;
+      const serverMessage = error.response?.data?.message || "Could not save your order.";
+      console.error("Failed to save order", statusCode, serverMessage);
+
+      // ✅ FIX: Agar session expire ya invalid token ho, auto-logout karo
+      if (statusCode === 401) {
+        logout();
+        setIsUserInfoModalOpen(false);
+        setIsLoginModalOpen(true);
+        toast({
+          title: "Session Expired",
+          description: "Aapka session expire ho gaya. Please login karein aur dobara try karein.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Order Failed",
-        description: message,
+        description: serverMessage,
         variant: "destructive",
       });
     }
