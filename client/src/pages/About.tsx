@@ -1,5 +1,7 @@
+import React from "react";
 import { Heart, Leaf, Users, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import SEO from "@/components/seo/SEO";
 
 const About = () => {
   const values = [
@@ -31,6 +33,10 @@ const About = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO 
+        title="Our Story | Kunj Creation - Heritage of Divine Poshak"
+        description="Learn about Kunj Creation, our heritage, and our devotion to crafting the finest poshak, jewelry, and accessories for Thakur Ji and Radha Krishna."
+      />
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="container mx-auto px-4 text-center">

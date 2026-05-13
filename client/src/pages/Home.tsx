@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import BgImg from "@/assets/bg.png";
 import HeroSlider from "@/components/layout/HeroSlider";
 import LatestProducts from "@/components/products/LatestProducts";
+import SEO from "@/components/seo/SEO";
 
 const Home = () => {
   const features = [
@@ -50,6 +51,10 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 selection:bg-primary/20">
+      <SEO 
+        title="Kunj Creation - Premium Divine Poshak for Krishna & Radha"
+        description="Explore our exquisite collection of handcrafted Poshak, marble dresses, and divine accessories for Thakur Ji and Radha-Krishna. Pure devotion in every thread."
+      />
       
       {/* 1. Hero Section (Unchanged Functionality) */}
       <section className="relative w-full">

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { getOptimizedImage } from "@/lib/cloudinary";
+import SEO from "@/components/seo/SEO";
 
 interface Accessory {
   _id: string;
@@ -19,6 +20,7 @@ const AccessoriesPage = () => {
   const [accessories, setAccessories] = useState<Accessory[]>([]);
   const [filtered, setFiltered] = useState<Accessory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<"low" | "high" | null>(null);
   const [selectedDate, setSelectedDate] = useState<"newest" | "oldest" | null>(null);
@@ -38,6 +40,7 @@ const AccessoriesPage = () => {
         setFiltered(data);
       } catch (error) {
         console.error("Failed to fetch accessories", error);
+        setError("Failed to load accessories. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -99,8 +102,23 @@ const AccessoriesPage = () => {
     setSearchTerm("");
   };
 
-  if (loading)
-    return <p className="text-center py-16">Loading accessories...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <SEO title="Loading Accessories | Kunj Creation" description="Loading divine accessories." />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 py-12">
+        <SEO title="Error Loading Accessories | Kunj Creation" description="An error occurred while loading accessories." />
+        {error}
+      </div>
+    );
+  }
 
   // Get unique categories
   const categories = Array.from(
@@ -108,8 +126,12 @@ const AccessoriesPage = () => {
   );
 
   return (
-    <div className="container mx-auto py-8 px-3">
-      <h1 className="text-3xl font-bold mb-6">Accessories</h1>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <SEO 
+        title="Divine Accessories - Mukut, Mala, Basuri & More | Kunj Creation"
+        description="Complete your deity's adornment with our premium handcrafted accessories. Explore our collection of beautiful Mukut, Mala, Basuri, and intricate jewelry."
+      />
+      <h1 className="text-3xl font-serif font-bold text-neutral-900 mb-8">Divine Accessories</h1>
 
       {/* Filter Section */}
       <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 p-1 border border-primary rounded-sm bg-white shadow-sm">

@@ -10,6 +10,7 @@ import { ProductDetailModal } from "@/components/products/ProductDetailModal";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { useProducts } from "@/context/ProductContext";
 import type { Product } from "@/data/products";
+import SEO from "@/components/seo/SEO";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -252,11 +253,31 @@ const Products = () => {
     setSelectedColour("all");
   };
 
-  if (loading) return <p className="text-center text-lg p-8">Loading products...</p>;
-  if (error) return <p className="text-center text-lg p-8 text-destructive">{error}</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <SEO title="Loading Products | Kunj Creation" description="Loading our divine collection of poshak." />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 py-12">
+        <SEO title="Error Loading Products | Kunj Creation" description="An error occurred while loading products." />
+        {error}
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-8 py-8">
+    <div className="min-h-screen bg-neutral-50 py-12">
+      <SEO 
+        title="Divine Poshak Collection - Metal & Marble Attire | Kunj Creation"
+        description="Shop our exquisite range of handcrafted poshak for Thakur Ji, Radha Rani, and Laddu Gopal. Available in premium materials with custom sizes."
+      />
+      <div className="container mx-auto px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -483,6 +504,7 @@ const Products = () => {
         onConfirm={handleConfirmAddToCart}
       />
 
+    </div>
     </div>
   );
 };
