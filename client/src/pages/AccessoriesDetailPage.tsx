@@ -9,6 +9,7 @@ import { Accessory } from "../components/admin/AddAccessoryForm";
 import SingleProductDialog from "../components/products/SingleProductModal";
 import SetSelectionModal from "@/components/products/SetSelectionModal";
 import { getOptimizedImage } from "@/lib/cloudinary";
+import SEO from "@/components/seo/SEO";
 
 
 const AccessoriesDetailPage = () => {
@@ -95,8 +96,34 @@ const AccessoriesDetailPage = () => {
   if (loading) return <p className="text-center py-16">Loading...</p>;
   if (!product) return <p className="text-center py-16">Product not found.</p>;
 
+  const productSchema = JSON.stringify({
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.images?.[0] ? getOptimizedImage(product.images[0], 800) : "",
+    "description": product.description,
+    "sku": product.itemCode,
+    "brand": {
+      "@type": "Brand",
+      "name": "Kunj Creation"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": window.location.href,
+      "priceCurrency": "INR",
+      "price": product.price,
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": (product.countInStock as unknown as number) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    }
+  });
+
   return (
     <div className="container mx-auto py-8 px-3">
+      <SEO 
+        title={`${product.name} | Kunj Creation`} 
+        description={product.description || `Buy ${product.name} at Kunj Creation. Premium divine accessories.`} 
+        schema={productSchema}
+      />
       <div className="flex flex-col md:flex-row justify-evenly items-center gap-8 flex-wrap md:flex-nowrap">
         {/* 🖼️ Product Image */}
         <div className="relative rounded-lg overflow-hidden shadow-md md:w-[30%] flex items-center justify-center">

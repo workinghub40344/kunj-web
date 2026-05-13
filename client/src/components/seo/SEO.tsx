@@ -5,9 +5,10 @@ interface SEOProps {
   description: string;
   name?: string;
   type?: string;
+  schema?: string;
 }
 
-export default function SEO({ title, description, name = "Kunj Creation", type = "website" }: SEOProps) {
+export default function SEO({ title, description, name = "Kunj Creation", type = "website", schema }: SEOProps) {
   return (
     <Helmet>
       {/* Standard metadata tags */}
@@ -27,6 +28,13 @@ export default function SEO({ title, description, name = "Kunj Creation", type =
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       {/* End Twitter tags */}
+
+      {/* Structured Data (Schema.org) */}
+      {schema && (
+        <script type="application/ld+json">
+          {schema}
+        </script>
+      )}
     </Helmet>
   );
 }
