@@ -55,7 +55,7 @@ const Cart = () => {
     getTotalPrice,
     clearCart,
   } = useCart();
-  const { user, login, logout, updateUser } = useAuth();
+  const { user, login, logout, updateUser, refreshToken } = useAuth();
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [customerPhone, setCustomerPhone] = useState("");
@@ -197,14 +197,69 @@ const Cart = () => {
       const serverMessage = error.response?.data?.message || "Could not save your order.";
       console.error("Failed to save order", statusCode, serverMessage);
 
-      // ✅ FIX: Agar session expire ya invalid token ho, auto-logout karo
+      // ✅ Agar session expire ho to pehle silently refresh try karo
       if (statusCode === 401) {
+        toast({
+          title: "Session Refresh Ho Raha Hai...",
+          description: "Please ek second wait karein.",
+        });
+
+        const newToken = await refreshToken();
+
+        if (newToken) {
+          // Token refresh ho gaya! Ab dobara order try karo
+          try {
+            const config = { headers: { Authorization: `Bearer ${newToken}` } };
+            const orderData = {
+              customerName: user.name,
+              customerPhone,
+              orderItems: cartItems,
+              totalPrice: total,
+            };
+            const { data: retryOrder } = await axios.post(
+              `${API_URL}/api/orders/create`,
+              orderData,
+              config
+            );
+
+            const phoneNumber = "919529663375";
+            let message = `Hello Kunj Creation, New Order Received!\n\n`;
+            message += `Order ID: ${retryOrder.orderId}\n`;
+            message += `Customer Name: ${orderData.customerName}\n`;
+            message += `Phone Number: ${customerPhone}\n\n`;
+            message += `--- Order Details ---\n`;
+            cartItems.forEach((item, index) => {
+              message += `${index + 1}. ${item.productName}\n`;
+              message += `   Item Code: ${item.itemCode}\n`;
+              message += `   Size: ${item.size}\n`;
+              if (item.customization) {
+                message += `   Note: ${item.customization}\n`;
+              }
+              message += `-----------------------\n`;
+            });
+            message += `Total Amount: ₹${total}\n`;
+
+            const uniqueId = Date.now();
+            const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0&_t=${uniqueId}`;
+
+            toast({ title: "Order Saved!", description: "Redirecting to WhatsApp..." });
+            setIsUserInfoModalOpen(false);
+            clearCart();
+            setCustomerPhone("");
+            navigate("/order-success", { state: { url: url } });
+            return; // ✅ Kaam ho gaya, bahar nikal jao
+          } catch {
+            // Retry bhi fail ho gaya
+          }
+        }
+
+        // Token refresh bhi fail hua ya retry bhi fail hua — ab logout karo
         logout();
         setIsUserInfoModalOpen(false);
         setIsLoginModalOpen(true);
         toast({
-          title: "Session Expired",
-          description: "Aapka session expire ho gaya. Please login karein aur dobara try karein.",
+          title: "Session Expire Ho Gayi",
+          description: "Aapka session expire ho gaya. Please dobara login karein.",
           variant: "destructive",
         });
         return;
@@ -216,6 +271,7 @@ const Cart = () => {
         variant: "destructive",
       });
     }
+
   };
 
   if (cartItems.length === 0) {
